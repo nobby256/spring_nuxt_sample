@@ -1,0 +1,44 @@
+# SpringBootとしてのログレベルを開発用に設定します
+# 詳細：https://docs.spring.io/spring-boot/reference/features/logging.html
+# 開発モードを有効にする
+debug: true
+
+logging:
+  pattern:
+    correlation: "[%32X{traceId}]" # correlationの出力パターンのカスタマイズ（traceId-spanIdから変更）
+  # ログレベルの設定
+  level:
+    root: INFO # 基本となるログレベルの設定
+    org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger: INFO # debug=trueで出力されるAutoConfigurationレポートは流石に量が多すぎるため抑制する
+
+server:
+  port: 8080
+  servlet:
+    session:
+      tracking-modes:
+        - cookie
+
+# /actuator/shutdownの有効化
+management:
+  endpoint.shutdown.access: unrestricted
+  endpoints.web.exposure.include: health, shutdown
+
+spring:
+  application:
+    name: demo
+  mvc:
+    log-request-details: true # DispatcherServletが出力するリクエストログの情報量を増やす
+
+  web:
+    resources:
+      chain:
+        cache: false # 開発中はfalse, 本番ではtrue
+
+  security:
+    # テスト用ユーザとしてUserDetailsServiceのビルドイン実装であるInMemoryUserDetailsManagerを使用します。
+    # UserDetailsServiceを実装した場合は下記の記述は削除てください。
+    user:
+      name: user
+      password: "{noop}password"
+      roles:
+        - Developer
