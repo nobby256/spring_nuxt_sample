@@ -1,1 +1,42 @@
+// =====================================================
+// Gradleプラグインのバージョンを一元管理します。
+// =====================================================
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+	}
+	plugins {
+		id 'org.springframework.boot' version springBootVersion
+		id 'io.spring.dependency-management' version '1.1.7'
+		id 'com.github.spotbugs' version '6.1.13'
+		id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+	}
+}
+// =====================================================
+// Gradleプラグインをロードします。
+// =====================================================
+plugins {
+	id 'org.springframework.boot' apply false
+	id 'io.spring.dependency-management' apply false
+	id 'com.github.spotbugs' apply false
+	id 'org.gradle.toolchains.foojay-resolver-convention'
+}
+
+// =====================================================
+// プロジェクト全体で利用するリポジトリを指定します。
+// =====================================================
+dependencyResolutionManagement {
+	repositories {
+		mavenCentral()
+	}
+}
+
+// =====================================================
+// プロジェクトの名前を指定します
+// =====================================================
 rootProject.name = 'demo'
+
+// =====================================================
+// サブプロジェクトを指定します
+// =====================================================
+include 'demo-library'

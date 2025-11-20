@@ -1,42 +1,185 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.7'
-	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.springframework.boot'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-description = 'Demo project for Spring Boot'
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
+ext {
+	// 各種ディレクトリ
+	confDir = "${projectDir}/config"
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
-repositories {
-	mavenCentral()
+	//品質チェックエラー発生時はビルドを停止する
+	ignoreCheckFailures = Boolean.valueOf(ignoreCheckError)
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation project(':demo-library')
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+allprojects {
+	apply plugin: 'java'
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
+		withSourcesJar()
+		withJavadocJar() //JavaDocJarが不要な場合はコメントにしてください
+	}
+	test {
+		useJUnitPlatform()
+
+		// テストエラーをビルドエラーとしない
+		ignoreFailures = ignoreCheckFailures
+		finalizedBy 'jacocoTestReport'
+
+		reports {
+			// ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+			html.required = true
+			junitXml {
+				outputPerTestCase = true
+				//mergeReruns = true
+			}
+		}
+	}
+	sourceSets {
+		main {
+			java {
+				exclude '**/.gitkeep'
+			}
+			resources {
+				exclude '**/.gitkeep'
+			}
+		}
+		test {
+			java {
+				exclude '**/.gitkeep'
+			}
+			resources {
+				exclude '**/.gitkeep'
+			}
+		}
+		
+	}
+	tasks.withType(JavaCompile) {
+		options.encoding = 'UTF-8'
+		options.compilerArgs += ['-Xlint:deprecation,unchecked']
+	}
+	tasks.withType(Javadoc) {
+		failOnError = !ignoreCheckFailures
+		options.locale = 'ja_JP'
+		options.encoding = 'UTF-8'
+
+		// javadoc側ではコメントの存在チェックを行わないようにする。
+		// （存在した場合の表記チェックはそのまま残す）
+		// 切っ掛けはJDK21のjavadocでデフォルトコンストラクタの存在が強要されるようになった事。
+		// このチェックはデフォルトコンストラクタが定義されているがコメントは無いという状態を警告するのではなく、
+		// デフォルトコンストラクタの定義が無くても警告が発せられる。
+		// つまり、この警告を抑えるにはデフォルトコンストラクタを作成し、コメントも記述しなければならない。
+		// しかしそれではlombokを積極的に使っているアプリ側は非常に困る。
+		// そこで、javadocではコメントの存在チェックを行わず、checkstyle側でコメントの存在チェックを行うことにした。
+		// checkstyleはソースコードとして定義されているものにしかチェックを行わない為、lombokが生成するコードはチェック対象外となる。
+		options.addBooleanOption('Xdoclint:all,-missing', true)
+	}
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+
+	apply plugin: 'io.spring.dependency-management'
+	dependencyManagement {
+		imports {
+			mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		}
+		dependencies {
+
+		}
+	}
+
+	apply plugin: 'jacoco'
+	jacoco {
+		toolVersion = '0.8.13'
+	}
+	jacocoTestReport {
+		dependsOn 'test'
+		reports {
+			// ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+			html.required = true
+			xml.required = true
+		}
+	}
+
+	apply plugin: 'checkstyle'
+	checkstyle {
+		toolVersion = '10.26.1'
+		ignoreFailures = ignoreCheckFailures
+		configFile = new File("${confDir}/checkstyle/checkstyle.xml")
+
+		// テストに対しては実行しない
+		checkstyleTest.enabled = false
+	}
+
+	apply plugin: 'com.github.spotbugs'
+	spotbugs {
+		ignoreFailures = ignoreCheckFailures
+		excludeFilter = file("${confDir}/spotbugs/exclusion_filter.xml")
+		showProgress = false
+
+		// テストに対しては実行しない
+		spotbugsTest.enabled = false
+	}
+	spotbugsMain {
+		// ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+		reports {
+			xml {
+				required = true
+			}
+			html {
+				required = true
+				stylesheet = 'fancy-hist.xsl'
+			}
+		}
+	}
+}
+
+subprojects {
+	apply plugin: 'maven-publish'
+	publishing {
+		publications {
+			// Spring Bootにおいて、publishする際の調整
+			mavenJava(MavenPublication) {
+				from components.java
+				versionMapping {
+					usage('java-api') {
+						fromResolutionOf('runtimeClasspath')
+					}
+					usage('java-runtime') {
+						fromResolutionResult()
+					}
+				}
+			}
+		}
+		repositories {
+			// ビルドしたライブラリのjarは、mavenRepositoryの形式で以下のパスに配置される
+			maven {
+				name = 'local-repo'
+				url = rootProject.layout.buildDirectory.dir("local-repo")
+			}
+		}
+	}
 }
