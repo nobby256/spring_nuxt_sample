@@ -203,7 +203,7 @@ public class HttpSecurityCustomizer {
             }
             String requestedSessionId = request.getRequestedSessionId();
             boolean isRequestedSessionIdValid = request.isRequestedSessionIdValid();
-            if (requestedSessionId != null && isRequestedSessionIdValid) {
+            if (requestedSessionId != null && !isRequestedSessionIdValid) {
                 // PrincipalがAnonymousと判定された前提で、下記の条件が成り立つときはセッションタイムアウトと判定
                 // ・セッションIDが送られてきて、かつ、そのIDが無効の場合
                 logger.debug("Responding with 401 status code");

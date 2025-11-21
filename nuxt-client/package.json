@@ -1,0 +1,28 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "postinstall": "nuxt prepare",
+    "generate": "nuxt generate",
+    "postgenerate": "npm run copy:dist",
+    "copy:dist": "bash copy-dist.sh",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "0.11.3",
+    "@vee-validate/nuxt": "4.15.1",
+    "@vee-validate/yup": "4.15.1",
+    "nprogress": "0.2.0",
+    "nuxt": "4.2.1"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "1.10.0",
+    "@types/node": "22.19.0",
+    "@types/nprogress": "0.2.3",
+    "vue-tsc": "3.1.3"
+  }
+}

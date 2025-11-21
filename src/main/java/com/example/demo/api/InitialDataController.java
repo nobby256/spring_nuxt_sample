@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * SPAのサンプルプログラム（エラーハンドリング）から呼び出されるRESTコントローラ。
  */
 @RestController
-@RequestMapping(path = "/api/initial-data", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/initial-data")
 public class InitialDataController {
 
     /** サンプルのウエイト(ms)。 */

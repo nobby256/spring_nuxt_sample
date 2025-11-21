@@ -2,12 +2,22 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-DemoApplication<demo-spring_nuxt_sample>",
+            "name": "Spring Boot",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "mainClass": "com.example.demo.DemoApplication",
             "projectName": "demo-spring_nuxt_sample",
             "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot<dev client>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.demo.DemoApplication",
+            "projectName": "demo-spring_nuxt_sample",
+            "args": "--spring.profiles.active=dev-client",
             "envFile": "${workspaceFolder}/.env"
         }
     ]
