@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.library.security;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -8,16 +8,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**
  * コンポーネント取得関連のユーティリティクラス。
- *
- * @author hashimoto
- * @since 2.1.2
  */
-public final class SsoBeanUtil {
+public final class SecurityBeanUtil {
 
     /**
      * コンストラクタ。
      */
-    private SsoBeanUtil() {
+    private SecurityBeanUtil() {
     }
 
     /**

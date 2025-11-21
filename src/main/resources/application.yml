@@ -5,7 +5,9 @@ debug: true
 
 logging:
   pattern:
-    correlation: "[%32X{traceId}]" # correlationの出力パターンのカスタマイズ（traceId-spanIdから変更）
+    # correlationの出力パターンのカスタマイズ（traceId-spanIdから変更）
+    # https://docs.spring.io/spring-boot/reference/actuator/tracing.html#actuator.micrometer-tracing.logging
+    correlation: "[%32X{traceId}]"
   # ログレベルの設定
   level:
     root: INFO # 基本となるログレベルの設定
@@ -24,8 +26,6 @@ management:
   endpoints.web.exposure.include: health, shutdown
 
 spring:
-  application:
-    name: demo
   mvc:
     log-request-details: true # DispatcherServletが出力するリクエストログの情報量を増やす
 
@@ -36,7 +36,7 @@ spring:
 
   security:
     # テスト用ユーザとしてUserDetailsServiceのビルドイン実装であるInMemoryUserDetailsManagerを使用します。
-    # UserDetailsServiceを実装した場合は下記の記述は削除てください。
+    # UserDetailsServiceを実装した場合は下記の記述は削除してください。
     user:
       name: user
       password: "{noop}password"
