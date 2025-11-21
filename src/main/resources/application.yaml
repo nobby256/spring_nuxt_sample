@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    # 外部のapplication.yamlの読み込み
+    # 同じキーを指定した場合は、このファイルのキーが必ず優先されます。
+    # また、importに複数指定した場合は、後の方が優先度が高いです。
+    # 同じ名前のファイルが複数見つかった場合は最初に発見された１つだけしか有効になりません。そして、どれが有効になるかは制御できません。
+    import:
+    - classpath:application.default.yaml
+
+  security:
+    # テスト用ユーザとしてUserDetailsServiceのビルドイン実装であるInMemoryUserDetailsManagerを使用します。
+    # UserDetailsServiceを実装した場合は下記の記述は削除してください。
+    user:
+      name: user
+      password: "{noop}password"
+      roles:
+        - Developer

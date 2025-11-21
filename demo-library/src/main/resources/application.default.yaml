@@ -1,3 +1,7 @@
+# デフォルトのapplication.yaml
+# アプリケーションで指定したapplication.yamlとマージされます。
+# 同名のキーをアプリケーションで指定した場合は、アプリケーションのキーで上書きされます。
+
 # SpringBootとしてのログレベルを開発用に設定します
 # 詳細：https://docs.spring.io/spring-boot/reference/features/logging.html
 # 開発モードを有効にする
@@ -14,7 +18,6 @@ logging:
     org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger: INFO # debug=trueで出力されるAutoConfigurationレポートは流石に量が多すぎるため抑制する
 
 server:
-  port: 8080
   servlet:
     session:
       tracking-modes:
@@ -28,17 +31,3 @@ management:
 spring:
   mvc:
     log-request-details: true # DispatcherServletが出力するリクエストログの情報量を増やす
-
-  web:
-    resources:
-      chain:
-        cache: false # 開発中はfalse, 本番ではtrue
-
-  security:
-    # テスト用ユーザとしてUserDetailsServiceのビルドイン実装であるInMemoryUserDetailsManagerを使用します。
-    # UserDetailsServiceを実装した場合は下記の記述は削除してください。
-    user:
-      name: user
-      password: "{noop}password"
-      roles:
-        - Developer
