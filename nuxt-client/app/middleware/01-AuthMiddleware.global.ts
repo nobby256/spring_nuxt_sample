@@ -4,11 +4,11 @@ import type { RouteLocationNormalized } from 'vue-router'
  * 権限チェックを行うミドルウェア。
  */
 export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: RouteLocationNormalized | undefined) => {
-  const appDataStore = useAppDataStore()
+  const authStore = useAuthenticationStore()
 
-  // AppDataStoreが読み込まれていない場合（初回ロード時）は、'/'以外なら'/'にリダイレクト。
+  // authStoreが読み込まれていない場合（初回ロード時）は、'/'以外なら'/'にリダイレクト。
   // '/'の場合は何もせずリターン（無限リダイレクト防止）。
-  if (!appDataStore.loaded) {
+  if (!authStore.loaded) {
     if (to.path === '/loading') {
       return
     }
@@ -25,7 +25,7 @@ export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: Ro
   //
   // そもそも正常利用を想定したチェックではない為、エラーを検出した場合は例外をスローしエラー画面に遷移させます。
 
-  const { authorities } = appDataStore
+  const { authorities } = authStore
 
   // 以下のコードはコーディングの例であり、サンプルプロジェクトでは機能しません
 

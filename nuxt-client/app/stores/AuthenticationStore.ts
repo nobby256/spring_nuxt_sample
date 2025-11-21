@@ -7,7 +7,7 @@ type InitialData = {
   authorities: string[]
 }
 
-export const useAppDataStore = defineStore('$/app/dataStore', {
+export const useAuthenticationStore = defineStore('$/global/Authentication', {
   state: () => ({
     loaded: false,
     username: '' as string,

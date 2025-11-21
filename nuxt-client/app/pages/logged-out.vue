@@ -9,8 +9,8 @@ onMounted(async () => {
   // ログアウトを呼び出す必要性があります。
   // なお、imageタグのsrcは非同期のダウンロードとなるため、onMountedではダウンロード完了を保証できません。
   // そのため、imageタグが利用している画像は認証不要のフォルダ（例：/images/**）に格納してください。
-  const appDataStore = useAppDataStore()
-  await appDataStore.logout()
+  const authStore = useAuthenticationStore()
+  await authStore.logout()
 })
 </script>
 

@@ -4,7 +4,7 @@ import type { NuxtError } from '#app'
 const props = defineProps<{ error: NuxtError }>()
 
 // UNAUTHORIZED(401)かつ、データがロード済み、はセッションタイムアウト
-const isSessionTimeout = props.error.statusCode === 401 && useAppDataStore().loaded
+const isSessionTimeout = props.error.statusCode === 401 && useAuthenticationStore().loaded
 </script>
 
 <template>

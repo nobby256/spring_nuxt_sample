@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useAppDataStore } from '~/stores/AppDataStore'
-
-const appDataStore = useAppDataStore()
+const authStore = useAuthenticationStore()
 
 async function onLogout() {
   await navigateTo('/logged-out', { replace: true })
@@ -10,7 +8,7 @@ async function onLogout() {
 
 <template>
   <div>
-    ログインユーザー:{{ appDataStore.username }}
+    ログインユーザー:{{ authStore.username }}
   </div>
   <div>
     <ul>

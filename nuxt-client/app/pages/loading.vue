@@ -3,12 +3,12 @@ definePageMeta({
   layout: false,
 })
 
-const appDataStore = useAppDataStore()
+const authStore = useAuthenticationStore()
 
 onBeforeMount(async () => {
-  await appDataStore.load()
+  await authStore.load()
 })
-watch(() => appDataStore.loaded, async () => {
+watch(() => authStore.loaded, async () => {
   // load完了後に画面遷移
   await navigateTo('/', { replace: true })
 })

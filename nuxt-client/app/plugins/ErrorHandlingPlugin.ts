@@ -43,8 +43,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     // エラー発生時には自動的にログアウトを行います
     // ただし、ログアウト呼び出しがエラーになっても無視します
     if (error.statusCode !== 401) {
-      const appDataStore = useAppDataStore()
-      await appDataStore.logout().catch((error) => {
+      const authStore = useAuthenticationStore()
+      await authStore.logout().catch((error) => {
         console.log(error)
       })
     }
