@@ -19,6 +19,16 @@
             "projectName": "demo-spring_nuxt_sample",
             "args": "--spring.profiles.active=dev-client",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-DemoApplication<spring_nuxt_sample>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.demo.DemoApplication",
+            "projectName": "spring_nuxt_sample",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

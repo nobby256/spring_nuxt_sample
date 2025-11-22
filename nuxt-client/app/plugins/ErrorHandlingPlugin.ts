@@ -2,6 +2,8 @@
  * エラーハンドラプラグイン。
  */
 import type { NuxtError } from '#app'
+import { showError } from '#app'
+import { normalizeError } from '~/utils/Errors'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // グローバルエラーハンドラ
@@ -12,19 +14,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   // 非同期処理やwatchの中で発生した未キャッチ例外はvue.js/nuxt共にエラーハンドラで補足できません。
   // このようなケースでは明示的にエラーハンドラを呼び出す必要があります。
   // nuxtApp.callHook('vue:error', error)
-  nuxtApp.hook('vue:error', (error: unknown) => {
-    // 業務エラーであるか否かを確認
-    if (isBusinessError(error)) {
-      const messages = ['【業務エラー】']
-      for (const msg of error.data ?? []) {
-        messages.push(`code: ${msg.code}\n${msg.message}`)
-      }
-      // サンプルなのでシンプルにalertで表示
-      alert(messages.join('\n'))
-      return
+  nuxtApp.hook('vue:error', async (error: unknown) => {
+    const nuxtError = normalizeError(error)
+    if (nuxtError.fatal) {
+      showError(error instanceof Error ? error : new Error(String(error)))
     }
-    // 業務例外以外はerror.vueに切り替える
-    showError(error instanceof Error ? error : new Error(String(error)))
+    else {
+      await useNuxtApp().callHook('app:resolve-data-error', nuxtError)
+    }
   })
 
   /**
