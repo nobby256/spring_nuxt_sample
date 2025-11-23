@@ -1,5 +1,4 @@
-import type { $Fetch, NitroFetchOptions, NitroFetchRequest } from 'nitropack'
-import { normalizeError } from './Errors'
+import type { ApiFetch } from '~/types/api-fetch'
 
 /**
  * カスタマイズした$fetch関数。
@@ -16,24 +15,8 @@ import { normalizeError } from './Errors'
  * ・ブラウザのクッキーを有効にする
  * ・例外をNuxtErrorとしてスローする
  */
-export async function apiFetch<T>(
-  url: string,
-  options?: NitroFetchOptions<NitroFetchRequest>,
-): Promise<T> {
+export const apiFetch: ApiFetch = async (request, options) => {
   // サーバーのベースURLをruntimeConfigから取得する
   const baseURL = useRuntimeConfig().public?.serverOrigin || ''
-  try {
-    return await useNuxtApp().$apiFetch(url, { baseURL, ...options })
-  }
-  catch (error) {
-    // 発生したエラーをNuxtErrorに正規化し、401/403エラーの場合にfatalエラーとする
-    const nuxtError = normalizeError(error)
-    if (nuxtError.statusCode === 401 || nuxtError.statusCode === 403) {
-      nuxtError.fatal = true
-    }
-    // フックを呼び出すことでErrorをカスタマイズ可能にする
-    // 例：fatalエラーにするルールを変更する等
-    await useNuxtApp().callHook('customize:api-error', nuxtError)
-    throw nuxtError
-  }
+  return await useNuxtApp().$apiFetch(request, { baseURL, ...options })
 }
