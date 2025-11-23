@@ -1,22 +1,20 @@
-import type { ApiFetch } from '~/types/api-fetch'
+// import type { ApiFetch } from '~/types/api-fetch'
+import type { NuxtApp } from '#app'
+
+type apiFetchCallable = NuxtApp['$apiFetch']
 
 /**
- * カスタマイズした$fetch関数。
+ * useNuxtApp().$apiFetch()のラッパー関数。
  *
- * シグネチャは$fetchと同じなので使い方も同じです。
+ * シグネチャは$apiFetchと同じなので使い方も同じです。
  * 例：
- * apiFetch('/api/foo')
- * apiFetch('/api/bar', { method: 'POST', body: value })
+ * const item = await apiFetch<Item>('/api/foo')
+ * const item = await apiFetch<Item>('/api/bar', { method: 'POST', body: value })
  *
- * $fetchをカスタマイズされている点
- * ・ベースURLを設定する
- * ・CSRFトークンクッキーをリクエストヘッダーに追加する
- * ・Acceptにapplication/jsonを追加する
- * ・ブラウザのクッキーを有効にする
- * ・例外をNuxtErrorとしてスローする
+ * $apiFetchをカスタマイズしている点
+ * ・APIサーバーのベースURLをoptions.baseURLに設定する
  */
-export const apiFetch: ApiFetch = async (request, options) => {
-  // サーバーのベースURLをruntimeConfigから取得する
-  const baseURL = useRuntimeConfig().public?.serverOrigin || ''
+export const apiFetch: apiFetchCallable = async (request, options) => {
+  const baseURL = useRuntimeConfig().public?.apiFetchBaseURL || ''
   return await useNuxtApp().$apiFetch(request, { baseURL, ...options })
 }

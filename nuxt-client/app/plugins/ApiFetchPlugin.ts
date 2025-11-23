@@ -1,16 +1,20 @@
 import { normalizeError } from '~/utils/Errors'
 import type { NitroFetchRequest, NitroFetchOptions } from 'nitropack'
 
-export type ApiFetch = <T = unknown>(
+type ApiFetch = <T = unknown>(
   request: NitroFetchRequest,
   options?: NitroFetchOptions<NitroFetchRequest>,
 ) => Promise<T>
 
 /**
- * $fetchカスタマイズした$apiFetchをNuxtAppにprovideするプラグイン。
+ * カスタマ意義した$fetchをNuxtAppにprovideするプラグイン。
  *
- * 登録した$appFetchは~/utils/ApiFetch経由で使う事を想定しているため、
- * $apiFetchはグローバルで型定義を行っていません。
+ * useNuxtApp().$apiFetchとして利用できます。
+ * $fetchをカスタマイズされている点
+ * ・CSRFトークンクッキーをリクエストヘッダーに追加する
+ * ・Acceptにapplication/jsonを追加する
+ * ・ブラウザのクッキーを有効にする
+ * ・例外をNuxtErrorとしてスローする（ステータスコードが401/403の場合はfatal=trueにする）
  */
 export default defineNuxtPlugin((nuxtApp) => {
   const delegateFetch = $fetch.create({
@@ -37,10 +41,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // delegateFetchの例外を変更する為にラップする
   const apiFetch: ApiFetch = async (request, options) => {
-    // サーバーのベースURLをruntimeConfigから取得する
-    const baseURL = useRuntimeConfig().public?.serverOrigin || ''
     try {
-      return await delegateFetch(request, { baseURL, ...options })
+      return await delegateFetch(request, options)
     }
     catch (error) {
       // 発生したエラーをNuxtErrorに正規化し、401/403エラーの場合にfatalエラーとする

@@ -24,7 +24,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // サーバーのオリジン
-      serverOrigin: isDev ? 'http://localhost:8080' : undefined,
+      apiFetchBaseURL: isDev ? 'http://localhost:8080' : undefined,
     },
   },
 
