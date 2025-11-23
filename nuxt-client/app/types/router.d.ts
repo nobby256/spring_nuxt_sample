@@ -1,8 +1,8 @@
-import 'vue-router';
-import type { RouteLocationNormalized } from 'vue-router';
+import 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
 
 declare module 'vue-router' {
   interface RouteMeta {
-    resolveData?: (to: RouteLocationNormalized, from: RouteLocationNormalized) => Promise<void>;
+    resolveData?: (to: RouteLocationNormalized, from: RouteLocationNormalized) => Promise<void>
   }
 }

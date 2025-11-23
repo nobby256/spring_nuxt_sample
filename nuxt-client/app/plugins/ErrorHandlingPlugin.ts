@@ -17,7 +17,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook('vue:error', async (error: unknown) => {
     const nuxtError = normalizeError(error)
     if (nuxtError.fatal) {
-      showError(error instanceof Error ? error : new Error(String(error)))
+      showError(nuxtError)
     }
     else {
       await useNuxtApp().callHook('app:resolve-data-error', nuxtError)

@@ -1,7 +1,6 @@
-// import type { ApiFetch } from '~/types/api-fetch'
 import type { NuxtApp } from '#app'
 
-type apiFetchCallable = NuxtApp['$apiFetch']
+type apiFetchFunction = NuxtApp['$apiFetch']
 
 /**
  * useNuxtApp().$apiFetch()のラッパー関数。
@@ -14,7 +13,7 @@ type apiFetchCallable = NuxtApp['$apiFetch']
  * $apiFetchをカスタマイズしている点
  * ・APIサーバーのベースURLをoptions.baseURLに設定する
  */
-export const apiFetch: apiFetchCallable = async (request, options) => {
+export const apiFetch: apiFetchFunction = async (request, options) => {
   const baseURL = useRuntimeConfig().public?.apiFetchBaseURL || ''
   return await useNuxtApp().$apiFetch(request, { baseURL, ...options })
 }

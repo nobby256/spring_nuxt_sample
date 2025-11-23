@@ -1,7 +1,7 @@
 import type { NuxtError } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hook('app:resolve-data-error', (error: NuxtError) => {
+  const notifyError = (error: NuxtError) => {
     let messages = [] as string[]
     if (isBusinessError(error)) {
       messages = ['【業務エラー】']
@@ -15,5 +15,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
     // サンプルなのでシンプルにalertで表示
     alert(messages.join('\n'))
+  }
+
+  nuxtApp.hook('app:resolve-data-error', (error: NuxtError) => {
+    notifyError(error)
   })
 })
