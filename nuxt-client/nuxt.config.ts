@@ -15,10 +15,6 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      ofetch: {
-      // サーバーのオリジン
-        baseURL: isDev ? 'http://localhost:8080' : undefined,
-      },
     },
   },
 
@@ -26,6 +22,12 @@ export default defineNuxtConfig({
 
   typescript: {
     typeCheck: true,
+  },
+
+  core: {
+    fetch: {
+      baseURL: isDev ? 'http://localhost:8080' : '',
+    },
   },
 
   eslint: {

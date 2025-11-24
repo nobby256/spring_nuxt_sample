@@ -1,4 +1,5 @@
 import { ofetch } from 'ofetch'
+import { useFetchInterceptors } from './use-fetch-interceptors'
 
 /**
  * カスタム化したofetchをprovideするプラグイン。
@@ -9,14 +10,17 @@ import { ofetch } from 'ofetch'
  * ・CSRFトークンクッキーをリクエストヘッダーに追加する
  */
 export default defineNuxtPlugin((_nuxtApp) => {
+  const config = useRuntimeConfig().public.core.fetch
   const interceptors = useFetchInterceptors()
   return {
     provide: {
+      // useNuxtApp().$ofetch
       ofetch: ofetch.create({
         onRequest: [
-          interceptors.csrfTokenRequestInterceptor(),
+          interceptors.baseUrlRequestInterceptor({ baseURL: config.baseURL }),
+          interceptors.csrfTokenRequestInterceptor({ cookieName: config.csrfCookieName, headerName: config.csrfHeaderName }),
         ],
-      }), // useNuxtApp().$ofetch
+      }),
     },
   }
 })

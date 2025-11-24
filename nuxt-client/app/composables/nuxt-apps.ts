@@ -1,8 +1,9 @@
 /*
- * NuxtAppがprivdeするコンポーネントを簡略化するための関数群。
+ * NuxtAppがprivdeするコンポーネント利用を簡略化するための関数群。
  */
 import type { NuxtError } from '#app'
 import type { ResponseType, FetchRequest, FetchOptions, MappedResponseType } from 'ofetch'
+
 /**
  * useNuxtApp().$ofetchのラッパー関数。
  *
@@ -10,16 +11,13 @@ import type { ResponseType, FetchRequest, FetchOptions, MappedResponseType } fro
  * 例：
  * const item = await ofetch<Item>('/api/foo')
  * const item = await ofetch<Item>('/api/bar', { method: 'POST', body: value })
- *
- * 以下がカスタマイズされている点です。
- * ・APIサーバーのベースURLをoptions.baseURLに設定する
  */
 export const ofetch = async <T = unknown, R extends ResponseType = 'json'>(request: FetchRequest, options?: FetchOptions<R>): Promise<MappedResponseType<R, T>> => {
-  const baseURL = useRuntimeConfig().public?.ofetch?.baseURL ?? ''
-  return await useNuxtApp().$ofetch(request, { baseURL, ...options })
+  return await useNuxtApp().$ofetch(request, options)
 }
 
 /**
+ * useNuxtApp().$errorNormalizer.normalizeのラッパー関数。
  * 例外を正規化する関数。
  *
  * @param error 例外
