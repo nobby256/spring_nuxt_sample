@@ -3,12 +3,14 @@ import type { NuxtError } from '#app'
 /**
  * 業務エラー。
  */
-export type BusinessError = NuxtError<ErrorMessage[]>
+export interface BusinessError extends NuxtError {
+  data: ErrorMessage[]
+}
 
 /**
  * エラーメッセージ。
  */
-export type ErrorMessage = {
+export interface ErrorMessage {
   code: string
   message: string
 }
@@ -16,11 +18,6 @@ export type ErrorMessage = {
 /**
  * 業務エラーである事を確認する型ガード。
  */
-export const isBusinessError = (error: unknown): error is BusinessError => {
-  if (isNuxtError(error)) {
-    if (error.statusCode === 422) {
-      return true
-    }
-  }
-  return false
+export const isBusinessError = (error: NuxtError): error is BusinessError => {
+  return error.statusCode === 422
 }
