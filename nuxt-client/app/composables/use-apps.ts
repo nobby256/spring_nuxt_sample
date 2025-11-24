@@ -1,3 +1,6 @@
+/*
+ * NuxtAppがprivdeするコンポーネントを簡略化するための関数群。
+ */
 import type { NuxtApp, NuxtError } from '#app'
 
 /**
@@ -16,6 +19,12 @@ export const apiFetch: NuxtApp['$ofetch'] = async (request, opts?) => {
   return await useNuxtApp().$ofetch(request, { baseURL, ...opts })
 }
 
+/**
+ * 例外を正規化する関数。
+ *
+ * @param error 例外
+ * @returns NuxtErrorに正規化された例外
+ */
 export const normalizeError = (error: unknown): NuxtError => {
   return useNuxtApp().$errorNormalizer.normalize(error)
 }
