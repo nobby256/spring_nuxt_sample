@@ -1,7 +1,7 @@
 import type { NuxtError } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hook('app:resolve-data-error', (error: NuxtError) => {
+  nuxtApp.hook('app:error:recoverable', (error: NuxtError) => {
     notifyError(error)
   })
 })

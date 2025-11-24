@@ -1,10 +1,10 @@
 declare module '#app' {
   interface RuntimeNuxtHooks {
     /**
-     * データ取得ミドルウェアで継続可能なエラーが発生した際に呼び出されるフック。
-     * @param error 発生したエラーオブジェクト。
+     * 継続可能なエラーが発生した事を伝えるフック。
+     * @param error 継続可能なエラー。
      */
-    'app:resolve-data-error': (error: NuxtError) => void | Promise<void>
+    'app:error:recoverable': (error: NuxtError) => void | Promise<void>
   }
 }
 

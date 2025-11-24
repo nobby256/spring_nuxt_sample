@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       showError(nuxtError)
     }
     else {
-      await useNuxtApp().callHook('app:resolve-data-error', nuxtError)
+      await useNuxtApp().callHook('app:error:recoverable', nuxtError)
     }
     return abortNavigation()
   }
