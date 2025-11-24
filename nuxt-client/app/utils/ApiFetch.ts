@@ -1,19 +1,17 @@
 import type { NuxtApp } from '#app'
 
-type apiFetchFunction = NuxtApp['$apiFetch']
-
 /**
- * useNuxtApp().$apiFetch()のラッパー関数。
+ * useNuxtApp().$ofetchのラッパー関数。
  *
- * シグネチャは$apiFetchと同じなので使い方も同じです。
+ * シグネチャはofetchと同じです。
  * 例：
  * const item = await apiFetch<Item>('/api/foo')
  * const item = await apiFetch<Item>('/api/bar', { method: 'POST', body: value })
  *
- * $apiFetchをカスタマイズしている点
+ * 以下がカスタマイズされている点です。
  * ・APIサーバーのベースURLをoptions.baseURLに設定する
  */
-export const apiFetch: apiFetchFunction = async (request, options) => {
+export const apiFetch: NuxtApp['$ofetch'] = async (request, opts?) => {
   const baseURL = useRuntimeConfig().public?.apiFetchBaseURL || ''
-  return await useNuxtApp().$apiFetch(request, { baseURL, ...options })
+  return await useNuxtApp().$ofetch(request, { baseURL, ...opts })
 }

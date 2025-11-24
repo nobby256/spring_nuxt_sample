@@ -36,14 +36,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   // このフックが呼ばれている時点でerror.vueの表示は確定しています。
   // エラーページ表示を妨げる処理や、再度エラーページに遷移させる処理（showError()）は避けてください。
    */
-  nuxtApp.hook('app:error', async (error: NuxtError) => {
-    // エラー発生時には自動的にログアウトを行います
-    // ただし、ログアウト呼び出しがエラーになっても無視します
-    if (error.statusCode !== 401) {
-      const authStore = useAuthenticationStore()
-      await authStore.logout().catch((error) => {
-        console.log(error)
-      })
-    }
+  nuxtApp.hook('app:error', async (_error: NuxtError) => {
   })
 })

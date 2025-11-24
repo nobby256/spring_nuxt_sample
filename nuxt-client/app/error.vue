@@ -5,6 +5,16 @@ const props = defineProps<{ error: NuxtError }>()
 
 // UNAUTHORIZED(401)かつ、データがロード済み、はセッションタイムアウト
 const isSessionTimeout = props.error.statusCode === 401 && useAuthenticationStore().loaded
+
+onBeforeMount(async () => {
+  if (!isSessionTimeout) {
+    const authStore = useAuthenticationStore()
+    // ログアウトを実装するが、エラーは無視する
+    await authStore.logout().catch((error) => {
+      console.log(error)
+    })
+  }
+})
 </script>
 
 <template>
