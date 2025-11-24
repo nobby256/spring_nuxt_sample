@@ -11,15 +11,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
 
-  // SpringBootと連携する為に必要
   ssr: false,
-
-  router: {
-    options: {
-      // SpringBootと連携する為に必要（ssr=falseの時のみ有効な設定）
-      hashMode: true,
-    },
-  },
 
   runtimeConfig: {
     public: {
