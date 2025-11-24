@@ -8,14 +8,14 @@ import type { ResponseType, FetchRequest, FetchOptions, MappedResponseType } fro
  *
  * シグネチャはofetchと同じです。
  * 例：
- * const item = await apiFetch<Item>('/api/foo')
- * const item = await apiFetch<Item>('/api/bar', { method: 'POST', body: value })
+ * const item = await ofetch<Item>('/api/foo')
+ * const item = await ofetch<Item>('/api/bar', { method: 'POST', body: value })
  *
  * 以下がカスタマイズされている点です。
  * ・APIサーバーのベースURLをoptions.baseURLに設定する
  */
-export const apiFetch = async <T = unknown, R extends ResponseType = 'json'>(request: FetchRequest, options?: FetchOptions<R>): Promise<MappedResponseType<R, T>> => {
-  const baseURL = useRuntimeConfig().public?.apiFetchBaseURL || ''
+export const ofetch = async <T = unknown, R extends ResponseType = 'json'>(request: FetchRequest, options?: FetchOptions<R>): Promise<MappedResponseType<R, T>> => {
+  const baseURL = useRuntimeConfig().public?.ofetch?.baseURL ?? ''
   return await useNuxtApp().$ofetch(request, { baseURL, ...options })
 }
 

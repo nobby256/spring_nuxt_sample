@@ -16,7 +16,7 @@ export const useAuthenticationStore = defineStore('$/global/Authentication', {
   actions: {
     // アプリケーションの初期情報を取得する
     async load(): Promise<void> {
-      const initialData = await apiFetch<InitialData>('/api/initial-data', { method: 'GET' })
+      const initialData = await ofetch<InitialData>('/api/initial-data', { method: 'GET' })
       this.username = initialData.username
       this.authorities = initialData.authorities
       // ロード完了
@@ -25,7 +25,7 @@ export const useAuthenticationStore = defineStore('$/global/Authentication', {
 
     // ログアウト
     async logout(): Promise<void> {
-      await apiFetch('/api/logout', { method: 'POST' })
+      await ofetch('/api/logout', { method: 'POST' })
     },
   },
 })
