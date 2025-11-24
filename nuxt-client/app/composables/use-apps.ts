@@ -1,4 +1,4 @@
-import type { NuxtApp } from '#app'
+import type { NuxtApp, NuxtError } from '#app'
 
 /**
  * useNuxtApp().$ofetchのラッパー関数。
@@ -14,4 +14,8 @@ import type { NuxtApp } from '#app'
 export const apiFetch: NuxtApp['$ofetch'] = async (request, opts?) => {
   const baseURL = useRuntimeConfig().public?.apiFetchBaseURL || ''
   return await useNuxtApp().$ofetch(request, { baseURL, ...opts })
+}
+
+export const normalizeError = (error: unknown): NuxtError => {
+  return useNuxtApp().$errorNormalizer.normalize(error)
 }

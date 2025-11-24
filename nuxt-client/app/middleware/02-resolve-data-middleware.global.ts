@@ -1,7 +1,4 @@
-import type { RouteLocationNormalized } from 'vue-router'
-import { normalizeError } from '~/utils/Errors'
-
-export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   try {
     // to.matched 配列に含まれる全てのルートレコードを順番に処理する
     // これにより、親ルートの fetchData -> 子ルートの fetchData の順に実行される

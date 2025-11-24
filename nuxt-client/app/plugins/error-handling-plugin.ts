@@ -3,7 +3,6 @@
  */
 import type { NuxtError } from '#app'
 import { showError } from '#app'
-import { normalizeError } from '~/utils/Errors'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // グローバルエラーハンドラ
