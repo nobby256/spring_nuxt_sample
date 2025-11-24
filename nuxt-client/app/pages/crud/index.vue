@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDataStore } from './DataStore'
+import { useDataStore } from './data-store'
 
 // メニューによって別機能に移動する前の後処理
 onUnmounted(() => {

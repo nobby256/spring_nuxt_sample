@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as yup from 'yup'
-import { useDataStore } from '../DataStore'
+import { useDataStore } from '../data-store'
 
 // ==============================================================
 // 変数

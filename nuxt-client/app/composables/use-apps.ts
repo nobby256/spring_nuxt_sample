@@ -1,8 +1,8 @@
 /*
  * NuxtAppがprivdeするコンポーネントを簡略化するための関数群。
  */
-import type { NuxtApp, NuxtError } from '#app'
-
+import type { NuxtError } from '#app'
+import type { ResponseType, FetchRequest, FetchOptions, MappedResponseType } from 'ofetch'
 /**
  * useNuxtApp().$ofetchのラッパー関数。
  *
@@ -14,9 +14,9 @@ import type { NuxtApp, NuxtError } from '#app'
  * 以下がカスタマイズされている点です。
  * ・APIサーバーのベースURLをoptions.baseURLに設定する
  */
-export const apiFetch: NuxtApp['$ofetch'] = async (request, opts?) => {
+export const apiFetch = async <T = unknown, R extends ResponseType = 'json'>(request: FetchRequest, options?: FetchOptions<R>): Promise<MappedResponseType<R, T>> => {
   const baseURL = useRuntimeConfig().public?.apiFetchBaseURL || ''
-  return await useNuxtApp().$ofetch(request, { baseURL, ...opts })
+  return await useNuxtApp().$ofetch(request, { baseURL, ...options })
 }
 
 /**

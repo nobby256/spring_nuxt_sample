@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import * as yup from 'yup'
-import { usePager } from '../usePager'
-import { useDataStore } from '../DataStore'
-import { useFormState } from '../FormState'
+import { usePager } from '../use-pager'
+import { useDataStore } from '../data-store'
+import { useFormState } from '../form-state'
 import WizStep1 from './WizStep1.vue'
 import WizStep2 from './WizStep2.vue'
 import WizStep3 from './WizStep3.vue'

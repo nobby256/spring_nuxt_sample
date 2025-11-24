@@ -1,8 +1,4 @@
-import type { ResponseType, FetchRequest, FetchOptions, MappedResponseType } from 'ofetch'
 import { ofetch } from 'ofetch'
-
-// ofetchの関数シグネチャをコピー（Omitが使えないため、コピーするしかない）
-type OFetchFunction = <T = unknown, R extends ResponseType = 'json'>(request: FetchRequest, options?: FetchOptions<R>) => Promise<MappedResponseType<R, T>>
 
 /**
  * カスタム化したofetchをprovideするプラグイン。
@@ -20,7 +16,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
         onRequest: [
           interceptors.csrfTokenRequestInterceptor(),
         ],
-      }) as OFetchFunction, // useNuxtApp().$ofetch
+      }), // useNuxtApp().$ofetch
     },
   }
 })

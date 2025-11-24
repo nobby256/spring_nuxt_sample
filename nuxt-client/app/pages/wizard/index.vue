@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDataStore } from './DataStore'
+import { useDataStore } from './data-store'
 
 // ==============================================================
 // 機能で利用するリードオンリーデータの読み込み
