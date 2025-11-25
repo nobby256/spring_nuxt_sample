@@ -22,8 +22,8 @@ export interface ModuleRuntimeConfig {
 // モジュール定義
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'core',
-    configKey: 'core',
+    name: 'foundation',
+    configKey: 'foundation',
     compatibility: {
       nuxt: '^4.0.0',
     },
@@ -49,7 +49,7 @@ export default defineNuxtModule<ModuleOptions>({
       },
     }
     nuxt.options.runtimeConfig.public = nuxt.options.runtimeConfig.public ?? {}
-    nuxt.options.runtimeConfig.public.core = config
+    nuxt.options.runtimeConfig.public.foundation = config
 
     // =================================
     // ミドルウェアの登録
@@ -76,7 +76,7 @@ export default defineNuxtModule<ModuleOptions>({
 function addMiddlewares(resolver: Resolver) {
   addRouteMiddleware({
     name: '10-resolve-data-middleware',
-    path: resolver.resolve('./runtime/middlewares/10-resolve-data-middleware.global'),
+    path: resolver.resolve('./runtime/middleware/10-resolve-data-middleware.global'),
     global: true,
   })
 }

@@ -10,7 +10,7 @@ import { useFetchInterceptors } from './use-fetch-interceptors'
  * ・CSRFトークンクッキーをリクエストヘッダーに追加する
  */
 export default defineNuxtPlugin((_nuxtApp) => {
-  const config = useRuntimeConfig().public.core.fetch
+  const config = useRuntimeConfig().public.foundation.fetch
   const interceptors = useFetchInterceptors()
   return {
     provide: {

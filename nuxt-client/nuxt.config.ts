@@ -24,15 +24,15 @@ export default defineNuxtConfig({
     typeCheck: true,
   },
 
-  core: {
-    fetch: {
-      baseURL: isDev ? 'http://localhost:8080' : '',
-    },
-  },
-
   eslint: {
     config: {
       stylistic: true,
+    },
+  },
+
+  foundation: {
+    fetch: {
+      baseURL: isDev ? 'http://localhost:8080' : '',
     },
   },
 })
