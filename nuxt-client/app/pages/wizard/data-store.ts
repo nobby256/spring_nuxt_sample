@@ -1,4 +1,4 @@
-export type WizForm = {
+export interface WizForm {
   input1: string
   input2: string
   input3: string

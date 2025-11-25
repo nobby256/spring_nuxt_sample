@@ -6,3 +6,5 @@ declare module 'vue-router' {
     resolveData?: (to: RouteLocationNormalized, from: RouteLocationNormalized) => Promise<void>
   }
 }
+
+export {}

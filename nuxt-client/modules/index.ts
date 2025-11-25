@@ -1,8 +1,7 @@
-import { readdirSync } from 'fs'
-import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, addImportsDir, type Resolver } from '@nuxt/kit'
+import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, type Resolver } from '@nuxt/kit'
 
 // モジュールオプションの型定義
-export interface ModuleOptions {
+interface ModuleOptions {
   fetch?: {
     baseURL?: string
     csrfHeaderName?: string
@@ -11,7 +10,7 @@ export interface ModuleOptions {
 }
 
 // ランタイムコンフィグの型定義
-export interface ModuleRuntimeConfig {
+interface ModuleRuntimeConfig {
   fetch: {
     baseURL: string
     csrfHeaderName: string
@@ -51,25 +50,8 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public = nuxt.options.runtimeConfig.public ?? {}
     nuxt.options.runtimeConfig.public.foundation = config
 
-    // =================================
-    // ミドルウェアの登録
-    // =================================
     addMiddlewares(resolver)
-
-    // =================================
-    // プラグインの登録
-    // =================================
     addPlugins(resolver)
-
-    // =================================
-    // コンポーザブルの登録
-    // =================================
-    // addComposables(resolver)
-
-    // =================================
-    // ユーティリティを自動インポートとして登録
-    // =================================
-    // addUtils(resolver)
   },
 })
 
@@ -81,43 +63,8 @@ function addMiddlewares(resolver: Resolver) {
   })
 }
 
-function getJsModuleNames(targetDir: string): string[] {
-  const jsModuleNames = readdirSync(targetDir)
-    .filter((file: string) => file.endsWith('.ts') && !file.endsWith('.d.ts'))
-    .map((file: string) => file.replace('.ts', ''))
-  return jsModuleNames
-}
-
 function addPlugins(resolver: Resolver) {
-  // プラグインディレクトリ内のすべての.tsファイルを自動で登録
-  // const jsModuleNames = getJsModuleNames(resolver.resolve('./runtime/plugins'))
-  // jsModuleNames.forEach((pluginName: string) => {
-  //   addPlugin(resolver.resolve(`./runtime/plugins/${pluginName}`))
-  // })
-
-  // モジュールオプションを利用する等して個別に追加する場合
   addPlugin(resolver.resolve('./runtime/plugins/error-handling/error-handling-plugin'))
   addPlugin(resolver.resolve('./runtime/plugins/error-normalizer/error-normalizer-plugin'))
   addPlugin(resolver.resolve('./runtime/plugins/ofetch/ofetch-plugin'))
-}
-
-function addComposables(resolver: Resolver) {
-  addImportsDir(resolver.resolve('./runtime/composables'))
-}
-
-function addUtils(resolver: Resolver) {
-  // utilsフォルダのtsと、そのexportをすべて.nuxt/imports.d.tsに追加
-  addImportsDir(resolver.resolve('./runtime/utils'))
-
-  // 個別で指定する場合は下記の通り
-  // addImportsSources({
-  //   from: resolver.resolve('./runtime/utils/BffFetch'),
-  //   imports: [
-  //     { name: 'bffFetch' },
-  //     { name: 'NitroFetchOptions', type: true },
-  //     { name: 'NitroFetchRequest', type: true },
-  //     { name: 'TypedInternalResponse', type: true },
-  //     { name: 'ExtractedRouteMethod', type: true },
-  //   ],
-  // })
 }

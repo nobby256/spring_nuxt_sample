@@ -1,10 +1,10 @@
 // 検索条件
-export type SearchCriteria = {
+export interface SearchCriteria {
   name?: string
 }
 
 // アイテム
-export type Item = {
+export interface Item {
   id: string
   name?: string
   price?: number

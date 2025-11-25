@@ -2,7 +2,7 @@
  * アプリケーション全体で使用する共通データストア。
  */
 
-type InitialData = {
+interface InitialData {
   username: string
   authorities: string[]
 }
