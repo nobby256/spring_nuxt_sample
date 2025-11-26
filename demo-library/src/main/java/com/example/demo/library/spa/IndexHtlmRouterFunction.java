@@ -28,14 +28,6 @@ public class IndexHtlmRouterFunction {
     }
 
     static RequestPredicate match() {
-        return request -> {
-            String path = request.path();
-            if (!"/".equals(path)) {
-                if (path.matches(PATTERN_WITH_EXT)) {
-                    return false;
-                }
-            }
-            return true;
-        };
+        return request -> !request.path().matches(PATTERN_WITH_EXT);
     }
 }
