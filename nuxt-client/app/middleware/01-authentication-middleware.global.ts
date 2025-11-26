@@ -6,15 +6,6 @@ import type { RouteLocationNormalized } from 'vue-router'
 export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: RouteLocationNormalized | undefined) => {
   const authStore = useAuthenticationStore()
 
-  // authStoreが読み込まれていない場合（初回ロード時）は、'/'以外なら'/'にリダイレクト。
-  // '/'の場合は何もせずリターン（無限リダイレクト防止）。
-  if (!authStore.loaded) {
-    if (to.path === '/loading') {
-      return
-    }
-    return navigateTo('/loading', { replace: true })
-  }
-
   // 画面を利用する為に権限が必要なアプリの場合は権限チェックをここで実装します。
   //
   // 【セキュリティの多層防御】

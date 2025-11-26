@@ -1,73 +1,78 @@
 package com.example.demo.library.autoconfigure;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
+import com.example.demo.library.spa.AuthenticationRouterFunction;
+import com.example.demo.library.spa.IndexHtlmRouterFunction;
+import com.example.demo.library.spa.IndexHtmlResourceFinder;
 import com.example.demo.library.spa.SpaConfigurationProperties;
-import com.example.demo.library.spa.SpaIndexHtlmRouterFunctionMapping;
 
 @AutoConfiguration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(SpaConfigurationProperties.class)
 public class SpaAutoConfiguration {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private WebProperties webProperties;
+    // AdditionalHealthEndpointPathsWebMvcHandlerMapping:-100
+    // WebMvcEndpointHandlerMapping:-100
+    // ControllerEndpointHandlerMapping:-100
+    // RouterFunctionMapping:-1
+    // RequestMappingHandlerMapping:0
+    // <ここに追加>:1
+    // WelcomePageHandlerMapping:2
+    // BeanNameUrlHandlerMapping:2
+    // WelcomePageNotAcceptableHandlerMapping:LOWEST_PRECEDENCE - 10
+    // SimpleUrlHandlerMapping(静的リソース用）:Ordered.LOWEST_PRECEDENCE - 1
+    private static final int ROUTER_MAP_ORDER = 1;
 
     @Autowired
     private SpaConfigurationProperties spaProperties;
 
+    /**
+     * 
+     * 
+     * @param messageConverters
+     * @return
+     * @see {@link WebMvcConfigurationSupport#routerFunctionMapping(org.springframework.format.support.FormattingConversionService, org.springframework.web.servlet.resource.ResourceUrlProvider)}
+     */
     @Bean
-    RouterFunctionMapping spaIndexRouterFunctionMapping() {
-        Resource indexResource = getIndexHtmlResource();
-        return new SpaIndexHtlmRouterFunctionMapping(indexResource);
+    RouterFunctionMapping spaRouterFunctionMapping(
+            IndexHtmlResourceFinder indexHtmlResourceFinder,
+            HttpMessageConverters messageConverters) {
+
+        RouterFunctions.Builder builder = RouterFunctions.route();
+        AuthenticationRouterFunction.create(spaProperties).ifPresent(function -> builder.add(function));
+        IndexHtlmRouterFunction.create(indexHtmlResourceFinder).ifPresent(function -> builder.add(function));
+
+        RouterFunctionMapping mapping = new RouterFunctionMapping();
+        mapping.setMessageConverters(messageConverters.getConverters());
+        mapping.setRouterFunction(builder.build());
+        mapping.setOrder(ROUTER_MAP_ORDER);
+
+        return mapping;
     }
 
-    @Nullable
-    private Resource getIndexHtmlResource() {
-        Resources resourceProperties = webProperties.getResources();
-        for (String location : resourceProperties.getStaticLocations()) {
-            Resource indexHtml = getIndexHtmlResource(resourceLoader.getResource(location));
-            if (indexHtml != null) {
-                return indexHtml;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private Resource getIndexHtmlResource(Resource location) {
-        try {
-            Resource resource = location.createRelative("/index.html");
-            if (resource.exists() && resource.getURL() != null) {
-                return resource;
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        return null;
+    @Bean
+    IndexHtmlResourceFinder indexHtmlResourceFinder(
+            ResourceLoader resourceLoader,
+            WebProperties webProperties) {
+        return new IndexHtmlResourceFinder(resourceLoader, webProperties.getResources());
     }
 
     @Configuration
@@ -86,6 +91,7 @@ public class SpaAutoConfiguration {
          * 戻り値の型（UrlBasedCorsConfigurationSource）と名前（corsConfigurationSource）が重要。<br/>
          * この通りでないとSpringSecurityのCORS設定に自動登録されない。
          * </p>
+         * 
          * @return {@link UrlBasedCorsConfigurationSource}
          */
         @Bean("corsConfigurationSource")

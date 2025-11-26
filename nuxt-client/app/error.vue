@@ -3,18 +3,13 @@ import type { NuxtError } from '#app'
 
 const props = defineProps<{ error: NuxtError }>()
 
+const authStore = useAuthenticationStore()
 // UNAUTHORIZED(401)かつ、データがロード済み、はセッションタイムアウト
-const isSessionTimeout = props.error.statusCode === 401 && useAuthenticationStore().loaded
-
-onBeforeMount(async () => {
-  if (!isSessionTimeout) {
-    const authStore = useAuthenticationStore()
-    // ログアウトを実装するが、エラーは無視する
-    await authStore.logout().catch((error) => {
-      console.log(error)
-    })
-  }
-})
+const isSessionTimeout = props.error.statusCode === 401 && authStore.loaded
+if (!isSessionTimeout) {
+  // error.vueは初期チャンクに含まれるため、画面表示が完全に完了する前にログアウトを行っても401は発生しません。
+  await authStore.logout()
+}
 </script>
 
 <template>

@@ -16,16 +16,30 @@ export const useAuthenticationStore = defineStore('$/global/Authentication', {
   actions: {
     // アプリケーションの初期情報を取得する
     async load(): Promise<void> {
-      const initialData = await ofetch<InitialData>('/api/initial-data', { method: 'GET' })
-      this.username = initialData.username
-      this.authorities = initialData.authorities
-      // ロード完了
-      this.loaded = true
+      try {
+        const initialData = await ofetch<InitialData>('/api/initial-data', { method: 'GET' })
+        this.username = initialData.username
+        this.authorities = initialData.authorities
+        // ロード完了
+        this.loaded = true
+      }
+      catch (error) {
+        const normalizedError = normalizeError(error)
+        // アプリケーションの初期情報の取得に失敗した場合は致命的エラーとして扱う
+        normalizedError.fatal = true
+        throw normalizedError
+      }
     },
 
     // ログアウト
     async logout(): Promise<void> {
-      await ofetch('/api/logout', { method: 'POST' })
+      try {
+        await ofetch('/api/logout', { method: 'POST' })
+      }
+      catch (error) {
+      // ログアウトでのエラーは無視する
+        console.log(error)
+      }
     },
   },
 })
