@@ -1,15 +1,12 @@
 <script setup lang="ts">
-const authStore = useAuthenticationStore()
-
-onBeforeMount(async () => {
-  if (!authStore.loaded) {
-    await authStore.load()
-  }
-})
+const { loaded, load } = useAppStore()
+if (!loaded) {
+  await load()
+}
 </script>
 
 <template>
-  <div v-if="!authStore.loaded">
+  <div v-if="!loaded">
     <span>Loading...</span>
   </div>
   <div v-else>

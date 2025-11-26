@@ -3,7 +3,7 @@ import type { NuxtError } from '#app'
 // 正規化ルールの型定義
 type NormalizationRule = (error: NuxtError) => NuxtError | undefined
 
-export const useErrorMormalizer = () => {
+export const createNormalizeError = () => {
   const rules: NormalizationRule[] = [
     // デフォルトルールは、インスタンスのプライベートな状態
     (error) => {
@@ -14,7 +14,7 @@ export const useErrorMormalizer = () => {
     },
   ]
 
-  const addNormalizationRule = (rule: NormalizationRule) => {
+  const addRule = (rule: NormalizationRule) => {
     rules.push(rule)
   }
 
@@ -44,6 +44,6 @@ export const useErrorMormalizer = () => {
 
   return {
     normalize,
-    addNormalizationRule,
+    addRule,
   }
 }

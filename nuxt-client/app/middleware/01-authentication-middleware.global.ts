@@ -4,8 +4,6 @@ import type { RouteLocationNormalized } from 'vue-router'
  * 権限チェックを行うミドルウェア。
  */
 export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: RouteLocationNormalized | undefined) => {
-  const authStore = useAuthenticationStore()
-
   // 画面を利用する為に権限が必要なアプリの場合は権限チェックをここで実装します。
   //
   // 【セキュリティの多層防御】
@@ -16,23 +14,10 @@ export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: Ro
   //
   // そもそも正常利用を想定したチェックではない為、エラーを検出した場合は例外をスローしエラー画面に遷移させます。
 
-  const { authorities } = authStore
-
   // 以下のコードはコーディングの例であり、サンプルプロジェクトでは機能しません
-
-  // サンプル：特定のパスに対する権限チェック
-  if (to.path.startsWith('/admin/') && !authorities.includes('ADMIN')) {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'Insufficient privileges for admin area',
-    })
-  }
-
-  // サンプル：権限が全くない場合のチェック
-  if (authorities.length === 0) {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'No authorities assigned',
-    })
+  const { authorities } = useAuthSessionStore()
+  const authority = to.meta.authority
+  if (authority && !authorities.includes(authority)) {
+    throw createError({ statusCode: 403, statusMessage: '権限がありません。' })
   }
 })

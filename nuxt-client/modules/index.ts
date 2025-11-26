@@ -1,4 +1,4 @@
-import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, type Resolver } from '@nuxt/kit'
+import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, addImportsDir, type Resolver } from '@nuxt/kit'
 
 // モジュールオプションの型定義
 interface ModuleOptions {
@@ -34,6 +34,10 @@ export default defineNuxtModule<ModuleOptions>({
       csrfCookieName: 'XSRF-TOKEN',
     },
   },
+  moduleDependencies: {
+    '@pinia/nuxt': {
+    },
+  },
   setup(moduleOptions, nuxt) {
     const resolver = createResolver(import.meta.url)
 
@@ -51,7 +55,9 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.foundation = config
 
     addMiddlewares(resolver)
+    addComposables(resolver)
     addPlugins(resolver)
+    addStores(resolver)
   },
 })
 
@@ -63,8 +69,17 @@ function addMiddlewares(resolver: Resolver) {
   })
 }
 
+function addComposables(resolver: Resolver) {
+  addImportsDir(resolver.resolve('./runtime/composables'))
+}
+
 function addPlugins(resolver: Resolver) {
   addPlugin(resolver.resolve('./runtime/plugins/error-handling/error-handling-plugin'))
-  addPlugin(resolver.resolve('./runtime/plugins/error-normalizer/error-normalizer-plugin'))
+  addPlugin(resolver.resolve('./runtime/plugins/normalize-error/normalize-error-plugin'))
   addPlugin(resolver.resolve('./runtime/plugins/ofetch/ofetch-plugin'))
+  addPlugin(resolver.resolve('./runtime/plugins/apifetch/apifetch-plugin'))
+}
+
+function addStores(resolver: Resolver) {
+  addImportsDir(resolver.resolve('./runtime/stores'))
 }

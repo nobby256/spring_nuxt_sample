@@ -13,9 +13,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
@@ -111,28 +109,6 @@ public class SpaAutoConfiguration {
             UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
             source.registerCorsConfiguration("/**", corsConfiguration);
             return source;
-        }
-
-        /**
-         * `/`へのアクセスをクライアントのサーバーにリダイレクトするViewControllerを登録する。
-         * <p>
-         * SpringBootは`/`要求を`forward:/index.html`に変換する機能をビルドインで提供します（{@code WelcomePageHandlerMapping}）。<br/>
-         * 運用時はこの機能によって、`/resources/public/index.html`が`/`で公開されます。<br/>
-         * しかし、クライアントのサーバーと連携するには`/`要求に対して`http://localhost:3000`へのリダイレクトを返す必要があります。<br/>
-         * {@code WelcomePageHandlerMapping}よりも解決の優先度が高い{@code ViewController}を登録することで開発サーバとの連携を行います。
-         * </p>
-         * 
-         * @return {@link WebMvcConfigurer}
-         */
-        @Bean
-        WebMvcConfigurer redirectWebMvcConfigurer() {
-            String origin = getDevClientOrigin();
-            return new WebMvcConfigurer() {
-                @Override
-                public void addViewControllers(ViewControllerRegistry registry) {
-                    registry.addRedirectViewController("/", origin + "/");
-                }
-            };
         }
     }
 }

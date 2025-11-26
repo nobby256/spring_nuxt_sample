@@ -10,7 +10,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/eslint',
   ],
-
   ssr: false,
 
   runtimeConfig: {
