@@ -71,9 +71,10 @@ public class HttpSecurityCustomizer {
 
             // 【未認証】
             // REST向けのAuthenticationEntryPointを追加。
-            // ポイントはauthenticationEntryPointは使用しない点。
-            // つまりnullを維持。この値がnot nullだとDefaultLoginPageGeneratingFilterが登録されなくなる。
-            // ただし、ユーザーによってauthenticationEntryPointにハンドラが設定されるのは止めない（止めようがない）
+            // ポイントはauthenticationEntryPoint()はデフォルトに任せるという点。
+            // authenticationEntryPoint()を設定しないと、HTML向けのログイン画面にリダイレクトするAuthenticationEntryPointが設定される。
+            // その上で、REST向けのAuthenticationEntryPointを登録する。
+            // 利用するメソッドがdefaultAuthenticationEntryPoint**For**()である点に注意。
             customizer.defaultAuthenticationEntryPointFor(new AuthenticationEntryPointForRest(), getRestMatcher(http));
         }).csrf(customizer -> {
             // Actuatorは対象外
@@ -201,19 +202,30 @@ public class HttpSecurityCustomizer {
                 logger.trace("Did not write to response since already committed");
                 return;
             }
+            // このクラス（AuthenticationEntryPoint）が呼び出される時点で未認証（anonymous）である事は大前提。
+            // 以下の判定はシチュエーションの分類にすぎず、振る舞いとしては全て401という判定となる。
             String requestedSessionId = request.getRequestedSessionId();
-            boolean isRequestedSessionIdValid = request.isRequestedSessionIdValid();
-            if (requestedSessionId != null && !isRequestedSessionIdValid) {
-                // PrincipalがAnonymousと判定された前提で、下記の条件が成り立つときはセッションタイムアウトと判定
-                // ・セッションIDが送られてきて、かつ、そのIDが無効の場合
+            if (requestedSessionId == null) {
+                // セッションIDが送られてこなかった場合
+                // 純粋に初めてのアクセス。HTMLではないのでリダイレクトはしない。
                 logger.debug("Responding with 401 status code");
                 response.sendError(HttpStatus.UNAUTHORIZED.value());
             } else {
-                // PrincipalがAnonymousと判定された前提で、下記の条件が成り立つときは認可エラー
-                // ・セッションIDが送られてきて、かつ、そのIDが有効の場合
-                // ・セッションIDが送られてこなかった場合
-                logger.debug("Responding with 403 status code");
-                response.sendError(HttpStatus.FORBIDDEN.value());
+                // セッションIDが送られてきた場合
+                boolean isRequestedSessionIdValid = request.isRequestedSessionIdValid();
+                if (!isRequestedSessionIdValid) {
+                    // セッションIDが送られてきて、かつ、そのIDが無効だった場合は**セッションタイムアウト**と判定
+                    logger.debug("Responding with 401 status code");
+                    response.sendError(HttpStatus.UNAUTHORIZED.value());
+                } else {
+                    // セッションIDが送られてきて、かつ、そのIDが有効、その状態で`anonymous`と判定されている点が重要。
+                    // 未認証でも許されるAPIを利用している場合はセッションが既に存在しているため、この状態になる。
+                    // 初回アクセスでセッション無しだろうが、既にアクセスしていてセッションありだろうが、
+                    // 未認証（anonymous）である事には変わりがないので、挙動は401。
+                    // （認証済みであれば403になる）
+                    logger.debug("Responding with 401 status code");
+                    response.sendError(HttpStatus.UNAUTHORIZED.value());
+                }
             }
             request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, authException);
         }
