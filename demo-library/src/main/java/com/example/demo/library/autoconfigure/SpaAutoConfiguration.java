@@ -20,7 +20,7 @@ import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
 import com.example.demo.library.spa.AuthenticationRouterFunction;
-import com.example.demo.library.spa.IndexHtlmRouterFunction;
+import com.example.demo.library.spa.HistoryModeRouterFunction;
 import com.example.demo.library.spa.IndexHtmlResourceFinder;
 import com.example.demo.library.spa.SpaConfigurationProperties;
 
@@ -57,8 +57,12 @@ public class SpaAutoConfiguration {
             HttpMessageConverters messageConverters) {
 
         RouterFunctions.Builder builder = RouterFunctions.route();
+
         AuthenticationRouterFunction.create(spaProperties).ifPresent(function -> builder.add(function));
-        IndexHtlmRouterFunction.create(indexHtmlResourceFinder).ifPresent(function -> builder.add(function));
+
+        String serverOrigin = spaProperties.getDevClient().getOrigin();
+        HistoryModeRouterFunction.create(indexHtmlResourceFinder, serverOrigin)
+                .ifPresent(function -> builder.add(function));
 
         RouterFunctionMapping mapping = new RouterFunctionMapping();
         mapping.setMessageConverters(messageConverters.getConverters());
