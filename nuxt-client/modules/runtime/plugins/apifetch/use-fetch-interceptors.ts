@@ -13,28 +13,33 @@ export const useFetchInterceptors = () => {
 }
 
 interface CsrfTokenRequestInterceptorOptions {
-  cookieName: string
-  headerName: string
+  cookieName?: string
+  headerName?: string
 }
-const csrfTokenRequestInterceptor = (options: CsrfTokenRequestInterceptorOptions): FetchHook => {
+const csrfTokenRequestInterceptor = (options?: CsrfTokenRequestInterceptorOptions): FetchHook => {
+  const cookieName = options?.cookieName ?? 'XSRF-TOKEN'
+  const headerName = options?.headerName ?? 'X-XSRF-TOKEN'
+
   return (context) => {
     // `headers`オブジェクトが常に存在することを保証する
     const headers = context.options.headers instanceof Headers ? context.options.headers : new Headers(context.options.headers)
     context.options.headers = headers
 
-    const token = useCookie(options.cookieName).value
+    const token = useCookie(cookieName).value
     if (token) {
-      context.options.headers.set(options.headerName, token)
+      context.options.headers.set(headerName, token)
     }
     context.options.credentials = 'include'
   }
 }
 
 interface BaseUrlRequestInterceptorOptions {
-  baseURL: string
+  baseURL?: string
 }
-const baseUrlRequestInterceptor = (options: BaseUrlRequestInterceptorOptions): FetchHook => {
+const baseUrlRequestInterceptor = (options?: BaseUrlRequestInterceptorOptions): FetchHook => {
+  const headerName = options?.baseURL
+
   return (context) => {
-    context.options.baseURL = options.baseURL
+    context.options.baseURL = headerName
   }
 }

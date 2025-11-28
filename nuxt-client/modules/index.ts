@@ -1,7 +1,6 @@
 import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, addImportsDir, type Resolver } from '@nuxt/kit'
 
-// モジュールオプションの型定義
-interface ModuleOptions {
+export interface ModuleOptions {
   fetch?: {
     baseURL?: string
     csrfHeaderName?: string
@@ -9,17 +8,8 @@ interface ModuleOptions {
   }
 }
 
-// ランタイムコンフィグの型定義
-interface ModuleRuntimeConfig {
-  fetch: {
-    baseURL: string
-    csrfHeaderName: string
-    csrfCookieName: string
-  }
-}
-
-// モジュール定義
-export default defineNuxtModule<ModuleOptions>({
+export default defineNuxtModule<ModuleOptions>
+({
   meta: {
     name: 'foundation',
     configKey: 'foundation',
@@ -28,31 +18,13 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   defaults: {
-    fetch: {
-      baseURL: '',
-      csrfHeaderName: 'X-XSRF-TOKEN',
-      csrfCookieName: 'XSRF-TOKEN',
-    },
   },
   moduleDependencies: {
     '@pinia/nuxt': {
     },
   },
-  setup(moduleOptions, nuxt) {
+  setup(_moduleOptions, _nuxt) {
     const resolver = createResolver(import.meta.url)
-
-    // =================================
-    // ランタイムコンフィグの設定
-    // =================================
-    const config: ModuleRuntimeConfig = {
-      fetch: {
-        baseURL: moduleOptions.fetch!.baseURL!,
-        csrfHeaderName: moduleOptions.fetch!.csrfHeaderName!,
-        csrfCookieName: moduleOptions.fetch!.csrfCookieName!,
-      },
-    }
-    nuxt.options.runtimeConfig.public = nuxt.options.runtimeConfig.public ?? {}
-    nuxt.options.runtimeConfig.public.foundation = config
 
     addMiddlewares(resolver)
     addComposables(resolver)

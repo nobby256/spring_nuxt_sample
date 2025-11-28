@@ -1,5 +1,5 @@
 import { useFetchInterceptors } from './use-fetch-interceptors'
-
+import type { ModuleOptions } from '~~/modules'
 /**
  * カスタム化したofetchをprovideするプラグイン。
  *
@@ -9,12 +9,16 @@ import { useFetchInterceptors } from './use-fetch-interceptors'
  * ・CSRFトークンクッキーをリクエストヘッダーに追加する
  */
 export default defineNuxtPlugin((_nuxtApp) => {
-  const config = useRuntimeConfig().public.foundation.fetch
+  const runtimeConfig = useRuntimeConfig().public.foundation as ModuleOptions
+  const baseURL = runtimeConfig.fetch?.baseURL
+  const headerName = runtimeConfig.fetch?.csrfHeaderName
+  const cookieName = runtimeConfig.fetch?.csrfCookieName
+
   const interceptors = useFetchInterceptors()
   const apifetch = $fetch.create({
     onRequest: [
-      interceptors.baseUrlRequestInterceptor({ baseURL: config.baseURL }),
-      interceptors.csrfTokenRequestInterceptor({ cookieName: config.csrfCookieName, headerName: config.csrfHeaderName }),
+      interceptors.baseUrlRequestInterceptor({ baseURL }),
+      interceptors.csrfTokenRequestInterceptor({ cookieName, headerName }),
     ],
   })
   return {

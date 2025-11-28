@@ -12,10 +12,13 @@ export default defineNuxtConfig({
   ],
   ssr: false,
 
-  runtimeConfig: {
-    public: {
-    },
-  },
+  // runtimeConfig: {
+  //   public: {
+  //     fetch: {
+  //       baseURL: isDev ? 'http://localhost:8080' : '',
+  //     },
+  //   },
+  // },
 
   compatibilityDate: '2025-07-15',
 

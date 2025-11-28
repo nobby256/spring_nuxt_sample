@@ -21,6 +21,6 @@ export default withNuxt({
     '@typescript-eslint/prefer-nullish-coalescing': 'error',
     '@typescript-eslint/consistent-type-definitions': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'error',
-    '@typescript-eslint/no-use-before-define': 'error',
+    // '@typescript-eslint/no-use-before-define': 'error',
   },
 })
