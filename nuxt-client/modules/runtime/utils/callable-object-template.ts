@@ -1,4 +1,5 @@
 import { defu } from 'defu'
+import { createCallableObjectProxy } from './callable-object-proxy'
 
 // ========================================================================
 // 型定義 (Type Definitions)
@@ -44,6 +45,13 @@ const defaultOptions: MyFuncOptions = {
   value2: 'world',
 }
 
+/**
+ * アプリケーション全体で共有されるシングルトンインスタンス。
+ * 初期状態ではデフォルト設定で初期化される。
+ * プラグインによって、あとから上書きされる可能性がある。
+ */
+let singletonInstance: MyFunc = createInstance(defaultOptions)
+
 // ========================================================================
 // 内部関数 (Internal Functions)
 // ========================================================================
@@ -67,8 +75,8 @@ function mergeOptions(
 }
 
 /**
- * オプションを受け取り、新しいヘルパーインスタンスを生成するファクトリ関数。
- * @param instanceOptions このインスタンスのデフォルト設定
+ * 新しいインスタンスを生成する。
+ * @param instanceOptions オプション
  */
 function createInstance(instanceOptions: MyFuncOptions): MyFunc {
   // このインスタンスの本体となる、呼び出し可能な関数を定義
@@ -98,6 +106,17 @@ function createInstance(instanceOptions: MyFuncOptions): MyFunc {
 // ========================================================================
 
 /**
- * デフォルト設定で生成された、すぐに使えるシングルトン・インスタンス。
+ * 実際に外部に公開されるシングルトン。
+ * これは単なるプロキシであり、実体は`singletonInstance`を参照する。
  */
-export const $myFunc = createInstance(defaultOptions)
+export const $myFunc: MyFunc = createCallableObjectProxy(() => singletonInstance)
+
+/**
+ * シングルトンインスタンスを外部から差し替えるための関数。
+ * 主にプラグインやテストコードでの使用を想定。
+ * アンダースコアは「内部的な操作」であることを示唆する。
+ * @param newInstance 新しいMyFuncインスタンス
+ */
+export function _replace$myFunc(newInstance: MyFunc): void {
+  singletonInstance = newInstance
+}
