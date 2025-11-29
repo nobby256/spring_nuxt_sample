@@ -2,6 +2,8 @@ import { showError } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // クライアントで発生したエラーを補足するフック
+  // plugin中にエラーが発生するとvue:errorではなくapp:errorが呼ばれるので、
+  // このプラグインの優先度は特別高くしなくても良い
   nuxtApp.hook('vue:error', async (error: unknown) => {
     const nuxtError = normalizeError(error)
     if (nuxtError.fatal) {
