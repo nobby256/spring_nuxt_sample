@@ -1,3 +1,5 @@
+import type { NuxtError } from '#app'
+
 /**
  * アプリケーション全体で使用する共通データストア。
  */
@@ -10,16 +12,18 @@ interface InitialData {
 export const useAppStore = defineStore('$/global/application', {
   state: () => ({
     loaded: false,
-    user: undefined as string | undefined,
-    username: undefined as string | undefined,
+    profile: {
+      user: undefined as string | undefined,
+      username: undefined as string | undefined,
+    },
   }),
   actions: {
     // アプリケーションの初期情報を取得する
     async load(): Promise<void> {
       try {
         const data = await apiFetch<InitialData>('/api/initial-data', { method: 'GET' })
-        this.user = data.usr
-        this.username = data.username
+        this.profile.user = data.usr
+        this.profile.username = data.username
         // ロード完了
         this.loaded = true
       }
@@ -27,6 +31,28 @@ export const useAppStore = defineStore('$/global/application', {
         // アプリケーションの初期情報の取得に失敗した場合は継続不能エラーとして扱う
         throw normalizeError(error, true)
       }
+    },
+    notifyMessage(message: string) {
+      let messages = [] as string[]
+      messages = ['【メッセージ】']
+      messages.push(message)
+      // サンプルなのでシンプルにalertで表示
+      alert(messages.join('\n'))
+    },
+    notifyError(error: NuxtError) {
+      let messages = [] as string[]
+      if (isBusinessError(error)) {
+        messages = ['【業務エラー】']
+        for (const msg of error.data ?? []) {
+          messages.push(`code: ${msg.code}\n${msg.message}`)
+        }
+      }
+      else {
+        messages = ['【その他のエラー】']
+        messages.push(`status: ${error.statusCode}`)
+      }
+      // サンプルなのでシンプルにalertで表示
+      alert(messages.join('\n'))
     },
   },
 })

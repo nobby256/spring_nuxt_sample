@@ -35,8 +35,13 @@ export default defineNuxtModule<ModuleOptions>
 
 function addMiddlewares(resolver: Resolver) {
   addRouteMiddleware({
-    name: '10-resolve-data-middleware',
-    path: resolver.resolve('./runtime/middleware/10-resolve-data-middleware.global'),
+    name: '10-authentication-middleware',
+    path: resolver.resolve('./runtime/middleware/10-authentication-middleware.global'),
+    global: true,
+  })
+  addRouteMiddleware({
+    name: '20-resolve-data-middleware',
+    path: resolver.resolve('./runtime/middleware/20-resolve-data-middleware.global'),
     global: true,
   })
 }
