@@ -23,7 +23,7 @@ export const useDataStore = defineStore('$/crud/dataStore', {
   actions: {
     // アイテム検索
     async search(searchCriteria: SearchCriteria): Promise<void> {
-      this.items = await ofetch<Item[]>('/api/crud', {
+      this.items = await apiFetch<Item[]>('/api/crud', {
         method: 'GET',
         query: {
           name: searchCriteria.name,
@@ -33,13 +33,13 @@ export const useDataStore = defineStore('$/crud/dataStore', {
     },
     // アイテム取得
     async get(id: string): Promise<Item> {
-      return await ofetch(`/api/crud/${id}`, {
+      return await apiFetch(`/api/crud/${id}`, {
         method: 'GET',
       })
     },
     // アイテム更新
     async update(item: Item): Promise<void> {
-      await ofetch(`/api/crud/${item.id}`, {
+      await apiFetch(`/api/crud/${item.id}`, {
         method: 'PUT',
         body: item,
       })

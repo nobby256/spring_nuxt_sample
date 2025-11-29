@@ -3,7 +3,7 @@ import { showError } from '#app'
 export default defineNuxtPlugin((nuxtApp) => {
   // クライアントで発生したエラーを補足するフック
   nuxtApp.hook('vue:error', async (error: unknown) => {
-    const nuxtError = $normalizeError(error)
+    const nuxtError = normalizeError(error)
     if (nuxtError.fatal) {
       // 継続不能なエラーが発生した場合はエラーページに切り替える
       showError(nuxtError)
@@ -15,7 +15,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
       catch (hookError) {
         // フックの中で発生したエラーはエラーページに切り替える
-        showError($normalizeError(hookError, {faital:true})
+        showError(normalizeError(hookError, true))
       }
     }
   })

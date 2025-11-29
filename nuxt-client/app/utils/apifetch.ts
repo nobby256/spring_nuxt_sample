@@ -1,6 +1,8 @@
 import type { NitroFetchRequest, NitroFetchOptions } from 'nitropack'
 
-export function apifetch<
+export const apiFetch: ApiFetch = _apifetch
+
+function _apifetch<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
   O extends NitroFetchOptions<R> = NitroFetchOptions<R>,
@@ -8,5 +10,5 @@ export function apifetch<
   request: R,
   opts?: O,
 ): Promise<T> {
-  return useNuxtApp().$apifetch(request, opts) as Promise<T>
+  return $apifetch(request, opts)
 }

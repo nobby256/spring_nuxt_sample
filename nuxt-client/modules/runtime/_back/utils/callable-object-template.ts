@@ -8,7 +8,7 @@ import { createCallableObjectProxy } from './callable-object-proxy'
 // --- Public Types ---
 
 /**
- * このヘルパーの設定オプション。
+ * オプション。
  */
 export interface MyFuncOptions {
   value1?: string
@@ -16,15 +16,14 @@ export interface MyFuncOptions {
 }
 
 /**
- * このヘルパーの呼び出し可能な部分のシグネチャ。
+ * 関数呼び出し形式のシグネチャ。
  */
 export interface MyFuncCallable {
   (arg: string, options?: MyFuncOptions): string
 }
 
 /**
- * 外部に公開される、完全なヘルパーの型。
- * 呼び出し可能であり、`.create()`メソッドを持つ。
+ * 外部に公開される型。
  */
 export interface MyFunc extends MyFuncCallable {
   create(options: MyFuncOptions): MyFunc
@@ -106,8 +105,7 @@ function createInstance(instanceOptions: MyFuncOptions): MyFunc {
 // ========================================================================
 
 /**
- * 実際に外部に公開されるシングルトン。
- * これは単なるプロキシであり、実体は`singletonInstance`を参照する。
+ * MyFuncのシングルトン。
  */
 export const $myFunc: MyFunc = createCallableObjectProxy(() => singletonInstance)
 
@@ -115,8 +113,8 @@ export const $myFunc: MyFunc = createCallableObjectProxy(() => singletonInstance
  * シングルトンインスタンスを外部から差し替えるための関数。
  * 主にプラグインやテストコードでの使用を想定。
  * アンダースコアは「内部的な操作」であることを示唆する。
- * @param newInstance 新しいMyFuncインスタンス
+ * @param instance 差し替えるインスタンス
  */
-export function _replace$myFunc(newInstance: MyFunc): void {
-  singletonInstance = newInstance
+export function _replace$normalizeError(instance: MyFunc): void {
+  singletonInstance = instance
 }

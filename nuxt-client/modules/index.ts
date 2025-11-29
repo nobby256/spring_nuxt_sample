@@ -27,7 +27,6 @@ export default defineNuxtModule<ModuleOptions>
     const resolver = createResolver(import.meta.url)
 
     addMiddlewares(resolver)
-    addComposables(resolver)
     addPlugins(resolver)
     addUtils(resolver)
     addStores(resolver)
@@ -42,19 +41,13 @@ function addMiddlewares(resolver: Resolver) {
   })
 }
 
-function addComposables(resolver: Resolver) {
-  addImportsDir(resolver.resolve('./runtime/composables'))
-}
-
 function addPlugins(resolver: Resolver) {
-  addPlugin(resolver.resolve('./runtime/plugins/error-handling/error-handling-plugin'))
-  addPlugin(resolver.resolve('./runtime/plugins/normalize-error/normalize-error-plugin'))
-  addPlugin(resolver.resolve('./runtime/plugins/ofetch/ofetch-plugin'))
-  addPlugin(resolver.resolve('./runtime/plugins/apifetch/apifetch-plugin'))
+  addPlugin(resolver.resolve('./runtime/plugins/auth-session-plugin'))
+  addPlugin(resolver.resolve('./runtime/plugins/error-handling-plugin'))
 
-  addPlugin(resolver.resolve('./runtime/plugins/fetch/10-apifetch-plugin'))
+  addPlugin(resolver.resolve('./runtime/plugins/10-apifetch-plugin'))
   addImportsSources({
-    from: resolver.resolve('./runtime/plugins/fetch/10-apifetch-plugin'),
+    from: resolver.resolve('./runtime/plugins/10-apifetch-plugin'),
     imports: [
       { name: '$apifetch' },
       { name: 'ApiFetch', type: true },

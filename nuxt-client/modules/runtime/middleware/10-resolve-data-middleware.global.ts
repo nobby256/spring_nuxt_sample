@@ -1,5 +1,3 @@
-import { useNormalizeError } from '../composables/use-normalize-error'
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
   try {
     // to.matched 配列に含まれる全てのルートレコードを順番に処理する
@@ -11,7 +9,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
   }
   catch (error: unknown) {
-    const nuxtError = useNormalizeError().normalize(error)
+    const nuxtError = normalizeError(error)
     // middlewareで発生した例外は強制的に継続不能扱いになってしまうため、!fatalの場合はabortNavigationする
     if (!nuxtError.fatal) {
       await useNuxtApp().callHook('app:error:recoverable', nuxtError)

@@ -14,12 +14,7 @@ export function $apifetch<
   request: R,
   opts?: O,
 ): Promise<T> {
-  try {
-    return useNuxtApp().$apifetch(request, opts) as Promise<T>
-  }
-  catch (error) {
-    throw useNormalizeError().normalize(error)
-  }
+  return useNuxtApp().$apifetch(request, opts) as Promise<T>
 }
 
 export default defineNuxtPlugin(async () => {
@@ -43,6 +38,8 @@ export default defineNuxtPlugin(async () => {
       },
     ] as FetchHook[],
   }
+
+  await useNuxtApp().callHook('customize:fetch-options', options)
 
   return {
     provide: {

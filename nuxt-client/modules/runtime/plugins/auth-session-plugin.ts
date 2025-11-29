@@ -1,9 +1,8 @@
-import { useAuthSessionStore } from '../../stores/auth-session-store'
+import { useAuthSessionStore } from '../stores/auth-session-store'
 
 interface AuthSession {
   user: string
   authorities: string[]
-  isAuthenticated: boolean
 }
 
 export default defineNuxtPlugin(async () => {
@@ -12,5 +11,4 @@ export default defineNuxtPlugin(async () => {
   const store = useAuthSessionStore()
   store.user = data.user
   store.authorities = data.authorities
-  store.isAuthenticated = data.isAuthenticated
 })

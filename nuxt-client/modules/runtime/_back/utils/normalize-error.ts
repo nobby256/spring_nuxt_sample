@@ -1,7 +1,7 @@
 import type { NuxtError } from '#app'
 import { isNuxtError, createError } from '#app'
 
-export const normalizeError = (error: unknown, fatal?: boolean): NuxtError => {
+export const normalizeError = (error: unknown, fatal: boolean | undefined): NuxtError => {
   let nuxtError: NuxtError
 
   if (isNuxtError(error)) {
