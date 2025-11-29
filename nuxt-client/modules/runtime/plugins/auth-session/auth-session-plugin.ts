@@ -7,7 +7,7 @@ interface AuthSession {
 }
 
 export default defineNuxtPlugin(async () => {
-  const data = await useNuxtApp().$ofetch<AuthSession>('/api/auth-session')
+  const data = await $apifetch<AuthSession>('/api/auth-session')
 
   const store = useAuthSessionStore()
   store.user = data.user

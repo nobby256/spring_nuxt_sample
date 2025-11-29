@@ -1,4 +1,4 @@
-import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, addImportsDir, type Resolver } from '@nuxt/kit'
+import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, addImportsDir, addImportsSources, type Resolver } from '@nuxt/kit'
 
 export interface ModuleOptions {
   fetch?: {
@@ -29,6 +29,7 @@ export default defineNuxtModule<ModuleOptions>
     addMiddlewares(resolver)
     addComposables(resolver)
     addPlugins(resolver)
+    addUtils(resolver)
     addStores(resolver)
   },
 })
@@ -50,6 +51,19 @@ function addPlugins(resolver: Resolver) {
   addPlugin(resolver.resolve('./runtime/plugins/normalize-error/normalize-error-plugin'))
   addPlugin(resolver.resolve('./runtime/plugins/ofetch/ofetch-plugin'))
   addPlugin(resolver.resolve('./runtime/plugins/apifetch/apifetch-plugin'))
+
+  addPlugin(resolver.resolve('./runtime/plugins/fetch/10-apifetch-plugin'))
+  addImportsSources({
+    from: resolver.resolve('./runtime/plugins/fetch/10-apifetch-plugin'),
+    imports: [
+      { name: '$apifetch' },
+      { name: 'ApiFetch', type: true },
+    ],
+  })
+}
+
+function addUtils(resolver: Resolver) {
+  addImportsDir(resolver.resolve('./runtime/utils'))
 }
 
 function addStores(resolver: Resolver) {

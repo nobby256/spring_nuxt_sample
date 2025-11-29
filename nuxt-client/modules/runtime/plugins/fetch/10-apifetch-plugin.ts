@@ -2,6 +2,26 @@ import type { NitroFetchRequest, NitroFetchOptions } from 'nitropack'
 import type { FetchOptions, FetchHook } from 'ofetch'
 import type { ModuleOptions } from '~~/modules'
 
+export interface ApiFetch {
+  <T = unknown, R extends NitroFetchRequest = NitroFetchRequest, O extends NitroFetchOptions<R> = NitroFetchOptions<R>>(request: R, opts?: O,): Promise<T>
+}
+
+export function $apifetch<
+  T = unknown,
+  R extends NitroFetchRequest = NitroFetchRequest,
+  O extends NitroFetchOptions<R> = NitroFetchOptions<R>,
+>(
+  request: R,
+  opts?: O,
+): Promise<T> {
+  try {
+    return useNuxtApp().$apifetch(request, opts) as Promise<T>
+  }
+  catch (error) {
+    throw useNormalizeError().normalize(error)
+  }
+}
+
 export default defineNuxtPlugin(async () => {
   const runtimeOptions = useRuntimeConfig().public.foundation as ModuleOptions
   const baseURL = runtimeOptions.fetch?.baseURL
@@ -30,19 +50,3 @@ export default defineNuxtPlugin(async () => {
     },
   }
 })
-
-export function apifetch<
-  T = unknown,
-  R extends NitroFetchRequest = NitroFetchRequest,
-  O extends NitroFetchOptions<R> = NitroFetchOptions<R>,
->(
-  request: R,
-  opts?: O,
-): Promise<T> {
-  try {
-    return useNuxtApp().$apifetch(request, opts) as Promise<T>
-  }
-  catch (error) {
-    throw useNormalizeError().normalize(error)
-  }
-}
