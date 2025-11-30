@@ -1,12 +1,19 @@
 <script setup lang="ts">
-const { loaded, load } = useAppStore()
-if (!loaded) {
-  await load()
-}
+const { load, $id } = useAppStore()
+
+const { pending, error } = await useAsyncData(
+  $id,
+  () => load(),
+)
+watchEffect(() => {
+  if (error.value) {
+    throw error.value
+  }
+})
 </script>
 
 <template>
-  <div v-if="!loaded">
+  <div v-if="pending">
     <span>Loading...</span>
   </div>
   <div v-else>

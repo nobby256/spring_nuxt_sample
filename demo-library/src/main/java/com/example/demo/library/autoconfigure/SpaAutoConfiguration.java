@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
-import com.example.demo.library.spa.AuthenticationRouterFunction;
+import com.example.demo.library.spa.AuthSessionRouterFunction;
 import com.example.demo.library.spa.HistoryModeRouterFunction;
 import com.example.demo.library.spa.IndexHtmlResourceFinder;
 import com.example.demo.library.spa.SpaConfigurationProperties;
@@ -56,7 +56,7 @@ public class SpaAutoConfiguration {
 
         RouterFunctions.Builder builder = RouterFunctions.route();
 
-        AuthenticationRouterFunction.create(spaProperties).ifPresent(function -> builder.add(function));
+        AuthSessionRouterFunction.create(spaProperties).ifPresent(function -> builder.add(function));
 
         String serverOrigin = spaProperties.getDevClient().getOrigin();
         HistoryModeRouterFunction.create(indexHtmlResourceFinder, serverOrigin)

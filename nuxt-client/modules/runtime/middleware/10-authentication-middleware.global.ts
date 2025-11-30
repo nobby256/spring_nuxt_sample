@@ -4,6 +4,10 @@ import type { RouteLocationNormalized } from 'vue-router'
  * 権限チェックを行うミドルウェア。
  */
 export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: RouteLocationNormalized | undefined) => {
+  if (to.path === '/error') {
+    return
+  }
+
   // 画面を利用する為に権限が必要なアプリの場合は権限チェックをここで実装します。
   //
   // 【セキュリティの多層防御】
@@ -13,8 +17,6 @@ export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: Ro
   // そのような行為をガードする為にここでチェックする必要があります。
   //
   // そもそも正常利用を想定したチェックではない為、エラーを検出した場合は例外をスローしエラー画面に遷移させます。
-
-  // 以下のコードはコーディングの例であり、サンプルプロジェクトでは機能しません
   const { authorities } = useAuthSessionStore()
   const authority = to.meta.authority
   if (authority && !authorities.includes(authority)) {

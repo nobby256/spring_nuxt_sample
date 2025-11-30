@@ -23,11 +23,11 @@ import org.springframework.web.servlet.function.ServerResponse;
 
 import jakarta.servlet.http.HttpSession;
 
-public class AuthenticationRouterFunction {
+public class AuthSessionRouterFunction {
 
     public static Optional<RouterFunction<ServerResponse>> create(SpaConfigurationProperties spaProperties) {
-        RequestPredicate predicate = GET("/api/session-context").and(accept(MediaType.APPLICATION_JSON));
-        RouterFunction<ServerResponse> function = route(predicate, new AuthenticationRouterFunction()::handle);
+        RequestPredicate predicate = GET("/api/auth-session");//.and(accept(MediaType.APPLICATION_JSON));
+        RouterFunction<ServerResponse> function = route(predicate, new AuthSessionRouterFunction()::handle);
         return Optional.of(function);
     }
 
@@ -41,10 +41,11 @@ public class AuthenticationRouterFunction {
         String token = csrfToken != null ? csrfToken.getToken() : null;
 
         Map<String, Object> body = new HashMap<>();
-        body.put("name", name);
+        body.put("user", name);
         body.put("authorities", authorities);
         body.put("isAuthenticated", isAuthenticated);
-        body.put("csrf", token);
+        body.put("csrfParameterToken", token);
+        body.put("csrfParameterName", csrfToken.getParameterName());
 
         return ServerResponse
                 .ok()

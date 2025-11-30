@@ -1,4 +1,5 @@
-import { addImportsDir, addImportsSources, addPlugin, addRouteMiddleware, createResolver, defineNuxtModule, useRuntimeConfig, type Resolver } from '@nuxt/kit'
+import type { Nuxt, NuxtApp } from '@nuxt/schema'
+import { addImportsDir, addImportsSources, addPlugin, addRouteMiddleware, createResolver, defineNuxtModule, type Resolver } from '@nuxt/kit'
 import { defu } from 'defu'
 
 export interface ModuleOptions {
@@ -34,24 +35,24 @@ export default defineNuxtModule<ModuleOptions>
       },
     )
 
-    addMiddlewares(resolver)
+    addMiddlewares(nuxt, resolver)
     addPlugins(resolver)
     addUtils(resolver)
     addStores(resolver)
   },
 })
 
-function addMiddlewares(resolver: Resolver) {
+function addMiddlewares(nuxt: Nuxt, resolver: Resolver) {
   addRouteMiddleware({
     name: '10-authentication-middleware',
     path: resolver.resolve('./runtime/middleware/10-authentication-middleware.global'),
     global: true,
   })
-  addRouteMiddleware({
-    name: '20-resolve-data-middleware',
-    path: resolver.resolve('./runtime/middleware/20-resolve-data-middleware.global'),
-    global: true,
-  })
+  // addRouteMiddleware({
+  //   name: 'resolve-data-middleware',
+  //   path: resolver.resolve('./runtime/middleware/resolve-data-middleware'),
+  //   global: false,
+  // })
 }
 
 function addPlugins(resolver: Resolver) {
