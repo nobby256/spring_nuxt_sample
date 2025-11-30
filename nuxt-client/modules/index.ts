@@ -1,4 +1,5 @@
-import { defineNuxtModule, addRouteMiddleware, addPlugin, createResolver, addImportsDir, addImportsSources, type Resolver } from '@nuxt/kit'
+import { addImportsDir, addImportsSources, addPlugin, addRouteMiddleware, createResolver, defineNuxtModule, useRuntimeConfig, type Resolver } from '@nuxt/kit'
+import { defu } from 'defu'
 
 export interface ModuleOptions {
   fetch?: {
@@ -23,8 +24,15 @@ export default defineNuxtModule<ModuleOptions>
     '@pinia/nuxt': {
     },
   },
-  setup(_moduleOptions, _nuxt) {
+  setup(moduleOptions, nuxt) {
     const resolver = createResolver(import.meta.url)
+
+    nuxt.options.runtimeConfig.public.foundation = defu(
+      nuxt.options.runtimeConfig.public.foundation ?? {},
+      {
+        ...moduleOptions,
+      },
+    )
 
     addMiddlewares(resolver)
     addPlugins(resolver)
