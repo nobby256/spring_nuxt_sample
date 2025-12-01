@@ -7,11 +7,11 @@ let reason: 'unauthenticated' | 'session-timeout' | 'other' = 'other'
 
 const authStore = useAuthSessionStore()
 if (props.error.statusCode === 401) {
-  if (!authStore.isAuthenticated) {
-    reason = 'unauthenticated'
+  if (authStore.user) {
+    reason = 'session-timeout'
   }
   else {
-    reason = 'session-timeout'
+    reason = 'unauthenticated'
   }
 }
 else {

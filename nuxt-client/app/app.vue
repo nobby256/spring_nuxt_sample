@@ -5,9 +5,9 @@ const { pending, error } = await useAsyncData(
   $id,
   () => load(),
 )
-watchEffect(() => {
-  if (error.value) {
-    throw error.value
+watch(error, (errorValue) => {
+  if (errorValue) {
+    throw errorValue
   }
 })
 </script>
