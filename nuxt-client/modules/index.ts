@@ -2,7 +2,7 @@ import { addImportsDir, addImportsSources, addPlugin, addRouteMiddleware, create
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { glob } from 'tinyglobby'
-import { dirname, relative } from 'pathe'
+import { relative } from 'pathe'
 
 export interface ModuleOptions {
   fetch?: {
