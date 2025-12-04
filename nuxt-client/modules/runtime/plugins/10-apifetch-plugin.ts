@@ -30,9 +30,9 @@ export default defineNuxtPlugin(async () => {
         // `headers`オブジェクトが常に存在することを保証する
         const headers = context.options.headers instanceof Headers ? context.options.headers : new Headers(context.options.headers)
         context.options.headers = headers
-        const token = useCookie(headerName).value
+        const token = useCookie(cookieName).value
         if (token) {
-          context.options.headers.set(cookieName, token)
+          context.options.headers.set(headerName, token)
         }
         context.options.credentials = 'include'
       },

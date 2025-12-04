@@ -3,8 +3,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // to.matched 配列に含まれる全てのルートレコードを順番に処理する
     // これにより、親ルートの fetchData -> 子ルートの fetchData の順に実行される
     for (const routeRecord of to.matched) {
-      if (routeRecord.meta.resolveData) {
-        await routeRecord.meta.resolveData(to, from)
+      const func = routeRecord.meta.resolveData
+      if (func) {
+        await func(to, from)
       }
     }
   }

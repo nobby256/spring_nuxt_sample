@@ -1,7 +1,6 @@
 package com.example.demo.library.spa;
 
 import static org.springframework.web.servlet.function.RequestPredicates.GET;
-import static org.springframework.web.servlet.function.RequestPredicates.accept;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 import java.time.Duration;

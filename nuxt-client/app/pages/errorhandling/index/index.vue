@@ -29,12 +29,22 @@ async function onClick() {
             type="text"
           >
         </label>
-        <button
-          type="submit"
-          @click="onClick"
-        >
-          送信
-        </button>
+        <div>
+          <button
+            type="submit"
+            @click="onClick"
+          >
+            送信
+          </button>
+        </div>
+        <div>
+          <nuxt-link
+            :to="{ path: './next', query: { input: inputValue } }"
+            :replace="true"
+          >
+            移動
+          </nuxt-link>
+        </div>
       </div>
     </fieldset>
 

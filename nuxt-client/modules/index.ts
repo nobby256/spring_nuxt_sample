@@ -48,11 +48,11 @@ function addMiddlewares(nuxt: Nuxt, resolver: Resolver) {
     path: resolver.resolve('./runtime/middleware/10-authentication-middleware.global'),
     global: true,
   })
-  // addRouteMiddleware({
-  //   name: 'resolve-data-middleware',
-  //   path: resolver.resolve('./runtime/middleware/resolve-data-middleware'),
-  //   global: false,
-  // })
+  addRouteMiddleware({
+    name: 'resolve-data-middleware',
+    path: resolver.resolve('./runtime/middleware/resolve-data-middleware.global'),
+    global: true,
+  })
 }
 
 function addPlugins(resolver: Resolver) {
