@@ -1,8 +1,8 @@
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
 import { addImportsDir, addImportsSources, addPlugin, addRouteMiddleware, createResolver, defineNuxtModule, type Resolver } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
-import { join, relative } from 'pathe'
 import { glob } from 'tinyglobby'
+import { dirname, relative } from 'pathe'
 
 export interface ModuleOptions {
   fetch?: {
@@ -80,21 +80,22 @@ function addStores(resolver: Resolver) {
 }
 
 async function addAppRouteMiddleware(nuxt: Nuxt, resolver: Resolver) {
-  const rootResolver = createResolver(nuxt.options.rootDir)
-  const appResolver = createResolver(nuxt.options.dir.app)
-  const pagesRoot = appResolver.resolve(nuxt.options.dir.pages) // /app/pagesの絶対パス
-  const appDir = '/' + relative(nuxt.options.rootDir, nuxt.options.dir.app) // /app
-  const pagesDir = `${appDir}/${nuxt.options.dir.pages}` // /app/pages
+  // カレントディレクトリの絶対パス
+  const absCurrentDir = resolver.resolve('.')
+  // /app/pagesの絶対パス
+  const absPagesDir = createResolver(nuxt.options.dir.app).resolve(nuxt.options.dir.pages)
 
   // CWD を app/pages にして glob（結果は pagesRoot からの相対パスで返す）
   const pattern: string = '**/*-middleware.ts'
   const files = await glob(pattern, {
-    cwd: pagesRoot,
-    absolute: false,
+    cwd: absPagesDir,
+    absolute: true,
     onlyFiles: true,
   })
 
-  for (const rel of files) {
+  for (const abs of files) {
+    // /app/pagesからの相対パスに変換
+    const rel = relative(absPagesDir, abs)
     // rel 例: "foo/middleware/resolve-data-middleware.ts"
     const normalized = rel.replace(/\\/g, '/')
 
@@ -106,12 +107,10 @@ async function addAppRouteMiddleware(nuxt: Nuxt, resolver: Resolver) {
       .replace(/\/middleware\//, '-') // ".../middleware/xxx" → "...-xxx"
       .replace(/\//g, '-') // 残りの / を -
 
-    // Nuxt から見えるパス（rootDir 基準）に直す
-    const resolvedPath = resolver.resolve(pagesDir, rel)
-    // このファイルの場所からの相対パス（rootDir 基準）に直す
-    const relativePath = './..' + resolvedPath
+    // カレントからの相対パスを求める
+    const resolvedPath = relative(absCurrentDir, abs)
     // 登録するパスは拡張子は不要
-    const path = relativePath.replace(/\.ts$/, '')
+    const path = resolvedPath.replace(/\.ts$/, '')
     addRouteMiddleware({
       name,
       path,
