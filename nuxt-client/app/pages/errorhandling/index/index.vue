@@ -11,9 +11,9 @@ const inputValue = ref('')
 // 関数
 // ==============================================================
 async function onClick() {
-  const result = await dataStore.send(inputValue.value)
+  await dataStore.send(inputValue.value)
   // 呼び出し成功のケース
-  alert(JSON.stringify(result))
+  alert(dataStore.value)
 }
 </script>
 
@@ -34,10 +34,8 @@ async function onClick() {
             type="submit"
             @click="onClick"
           >
-            送信
+            ポストバック
           </button>
-        </div>
-        <div>
           <nuxt-link
             :to="{ path: './next', query: { input: inputValue } }"
             :replace="true"

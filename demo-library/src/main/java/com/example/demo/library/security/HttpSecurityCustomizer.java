@@ -61,7 +61,7 @@ public class HttpSecurityCustomizer {
             customizer.requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll();
             // エラーコントローラは対象外
             customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/error/**")).permitAll();
-            customizer.anyRequest().authenticated();
+			customizer.anyRequest().authenticated();
         }).sessionManagement(customizer -> {
             // URLリライティングを有効にする
             customizer.enableSessionUrlRewriting(true);
