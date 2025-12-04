@@ -40,7 +40,7 @@ export default defineNuxtModule<ModuleOptions>
     addPlugins(resolver)
     addUtils(resolver)
     addStores(resolver)
-    await addAppRouteMiddleware(nuxt, resolver)
+    await addPreloadMiddleware(nuxt, resolver)
   },
 })
 
@@ -79,14 +79,14 @@ function addStores(resolver: Resolver) {
   addImportsDir(resolver.resolve('./runtime/stores'))
 }
 
-async function addAppRouteMiddleware(nuxt: Nuxt, resolver: Resolver) {
+async function addPreloadMiddleware(nuxt: Nuxt, resolver: Resolver) {
   // カレントディレクトリの絶対パス
   const absCurrentDir = resolver.resolve('.')
   // /app/pagesの絶対パス
   const absPagesDir = createResolver(nuxt.options.dir.app).resolve(nuxt.options.dir.pages)
 
   // CWD を app/pages にして glob（結果は pagesRoot からの相対パスで返す）
-  const pattern: string = '**/*-middleware.ts'
+  const pattern: string = '**/*.preload-middleware.ts'
   const files = await glob(pattern, {
     cwd: absPagesDir,
     absolute: true,
@@ -96,12 +96,12 @@ async function addAppRouteMiddleware(nuxt: Nuxt, resolver: Resolver) {
   for (const abs of files) {
     // /app/pagesからの相対パスに変換
     const rel = relative(absPagesDir, abs)
-    // rel 例: "foo/middleware/resolve-data-middleware.ts"
+    // rel 例: "foo/middleware/resolve.preload-middleware.ts"
     const normalized = rel.replace(/\\/g, '/')
 
     // middleware 名を決める
-    // 例: "foo/middleware/resolve-data-middleware.ts"
-    //   → "foo-resolve-data-middleware"
+    // 例: "foo/middleware/resolve.preload-middleware.ts"
+    //   → "foo-resolve.preload-middleware"
     const name = normalized
       .replace(/\.ts$/, '')
       .replace(/\/middleware\//, '-') // ".../middleware/xxx" → "...-xxx"
@@ -118,7 +118,7 @@ async function addAppRouteMiddleware(nuxt: Nuxt, resolver: Resolver) {
     })
 
     if (nuxt.options.dev) {
-      console.log(`[page-middlewares] registered: ${name} -> ${resolvedPath}`)
+      console.log(`[preload-middlewares] registered: ${name} -> ${resolvedPath}`)
     }
   }
 }

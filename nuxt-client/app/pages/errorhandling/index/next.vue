@@ -2,7 +2,7 @@
 import { useDataStore } from '../data-store'
 
 definePageMeta({
-  middleware: 'errorhandling-index-next-middleware',
+  middleware: 'errorhandling-index-next.preload-middleware',
 })
 
 const dataStore = useDataStore()
