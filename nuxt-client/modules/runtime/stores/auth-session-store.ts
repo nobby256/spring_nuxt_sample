@@ -1,3 +1,5 @@
+// Removed unused import: RouteLocationNormalized
+
 export const useAuthSessionStore = defineStore('$/global/AuthSession', {
   state: () => ({
     user: '',
@@ -5,7 +7,7 @@ export const useAuthSessionStore = defineStore('$/global/AuthSession', {
     isAuthenticated: false,
   }),
   actions: {
-    async load(): Promise<void> {
+    async fetch(): Promise<void> {
       const response = await $apifetch<{
         user: string
         authorities: string[]
@@ -18,6 +20,12 @@ export const useAuthSessionStore = defineStore('$/global/AuthSession', {
       this.user = response.user
       this.authorities = response.authorities
       this.isAuthenticated = response.isAuthenticated
+    },
+    hasAuthority(authority?: string): boolean {
+      if (!authority) {
+        return false
+      }
+      return this.authorities.includes(authority)
     },
     async logout(): Promise<void> {
       try {

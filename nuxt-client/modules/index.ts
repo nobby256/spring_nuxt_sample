@@ -36,26 +36,12 @@ export default defineNuxtModule<ModuleOptions>
     )
 
     const resolver = createResolver(import.meta.url)
-    addMiddlewares(nuxt, resolver)
     addPlugins(resolver)
     addUtils(resolver)
     addStores(resolver)
     await addPreloadMiddleware(nuxt, resolver)
   },
 })
-
-function addMiddlewares(nuxt: Nuxt, resolver: Resolver) {
-  addRouteMiddleware({
-    name: '10-authentication-middleware',
-    path: resolver.resolve('./runtime/middleware/10-authentication-middleware.global'),
-    global: true,
-  })
-  addRouteMiddleware({
-    name: 'resolve-data-middleware',
-    path: resolver.resolve('./runtime/middleware/resolve-data-middleware.global'),
-    global: true,
-  })
-}
 
 function addPlugins(resolver: Resolver) {
   addPlugin(resolver.resolve('./runtime/plugins/auth-session-plugin'))
