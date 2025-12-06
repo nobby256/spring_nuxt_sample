@@ -1,30 +1,23 @@
 package com.example.demo.library.security;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.authentication.ui.DefaultResourcesFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -33,24 +26,15 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
-import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.accept.ContentNegotiationStrategy;
-import org.springframework.web.accept.HeaderContentNegotiationStrategy;
-import org.springframework.web.util.WebUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class HttpSecurityCustomizer {
-
-    /** {@link Logger}。 */
-    private static final Logger logger = LoggerFactory.getLogger(HttpSecurityCustomizer.class);
 
     public interface StandardSettingCustomizer {
         void apply(StandardSetting customizer);
@@ -58,19 +42,21 @@ public class HttpSecurityCustomizer {
 
     public static class StandardSetting {
 
-        String authenticationEntryPointUrl = "/login";
         RequestMatcher initialAccessEntryPointMatcher;
         boolean useDefaultLoginPage = true;
 
         StandardSetting() {
         }
 
-        public void authenticationEntryPointUrl(String url) {
-            this.authenticationEntryPointUrl = url;
+        public void initialAccessEntryPointMatchers(String... patterns) {
+            List<RequestMatcher> matchers = Arrays.asList(patterns).stream()
+                    .map(pattern -> (RequestMatcher) PathPatternRequestMatcher.withDefaults().matcher(pattern))
+                    .toList();
+            this.initialAccessEntryPointMatcher = new OrRequestMatcher(matchers);
         }
 
-        public void initialAccessEntryPointPattern(String pattern) {
-            this.initialAccessEntryPointMatcher = PathPatternRequestMatcher.withDefaults().matcher(pattern);
+        public void initialAccessEntryPointMatchers(RequestMatcher... matchers) {
+            this.initialAccessEntryPointMatcher = new OrRequestMatcher(matchers);
         }
 
         RequestMatcher initialAccessEntryPointMatcher() {
@@ -90,15 +76,8 @@ public class HttpSecurityCustomizer {
         standardSettingCustomizer.apply(setting);
 
         http.logout(customizer -> {
-            // 非HTML要求用のログアウトハンドラ
-            // defaultLogoutSuccessHandlerForなのでmatcherに該当しなければlogoutSuccessUrlが使用される
-            customizer.defaultLogoutSuccessHandlerFor(
-                    new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT),
-                    new NegatedRequestMatcher(getWebAppMatcher(http)));
             // セッションクッキーの破棄
             customizer.deleteCookies(createDeleteCookies(http));
-            // エラー画面から呼び出されることも考慮してログアウトは認証不要
-            customizer.permitAll();
         });
         http.csrf(customizer -> {
             // クッキーを使用したCSRFリポジトリを使用する（httpOnly=false）
@@ -138,10 +117,8 @@ public class HttpSecurityCustomizer {
             String loginUrl = filter.getLoginPageUrl();
             // ExceptionHandlingConfigurerはconfigureで設定を始めるのでinitなら間に合う
             http.exceptionHandling(customizer -> {
-                AuthenticationEntryPoint entryPoint = authenticationEntryPoint(
-                        http,
-                        setting.initialAccessEntryPointMatcher(),
-                        loginUrl);
+                AuthenticationEntryPoint entryPoint = new LoginOrTimeoutAuthenticationEntryPoint(
+                        setting.initialAccessEntryPointMatcher(), loginUrl);
                 customizer.authenticationEntryPoint(entryPoint);
             });
         }
@@ -224,52 +201,6 @@ public class HttpSecurityCustomizer {
                         }
                     });
         }
-    }
-
-    static AuthenticationEntryPoint authenticationEntryPoint(
-            HttpSecurity http,
-            RequestMatcher initialAccessEntryMatcher,
-            String entryPointUrl) {
-        RequestMatcher webAppMatcher = getWebAppMatcher(http);
-        RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-        return (HttpServletRequest request, HttpServletResponse response,
-                AuthenticationException authException) -> {
-            if (response.isCommitted()) {
-                logger.trace("Did not write to response since already committed");
-                return;
-            }
-
-            String url = request.getRequestURI();
-            if (webAppMatcher.matches(request)) {
-                if (initialAccessEntryMatcher.matches(request)) {
-                    redirectStrategy.sendRedirect(request, response, entryPointUrl);
-                    return;
-                }
-            }
-
-            logger.debug("Responding with 401 status code");
-            response.sendError(HttpStatus.UNAUTHORIZED.value());
-            request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, authException);
-        };
-    }
-
-    /**
-     * WebApp（HTML系）呼び出しを判定する{@link RequestMatcher}を取得する。
-     * 
-     * @param http {@link HttpSecurity}
-     * @return {@link RequestMatcher}
-     */
-    static RequestMatcher getWebAppMatcher(HttpSecurity http) {
-        ContentNegotiationStrategy contentNegotiationStrategy = http.getSharedObject(ContentNegotiationStrategy.class);
-        if (contentNegotiationStrategy == null) {
-            contentNegotiationStrategy = new HeaderContentNegotiationStrategy();
-        }
-        MediaTypeRequestMatcher htmlMatcher = new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
-        htmlMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
-        NegatedRequestMatcher notAjacMatcher = new NegatedRequestMatcher(
-                new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest"));
-        // text/htmlに該当しない(*/*は許容せず) OR AJAXである
-        return new AndRequestMatcher(htmlMatcher, notAjacMatcher);
     }
 
     /**
