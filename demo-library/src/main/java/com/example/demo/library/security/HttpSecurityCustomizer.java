@@ -1,87 +1,106 @@
 package com.example.demo.library.security;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.WebAttributes;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
+import org.springframework.security.web.authentication.ui.DefaultResourcesFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.util.WebUtils;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class HttpSecurityCustomizer {
 
-    public static HttpSecurity withDefault(HttpSecurity http) throws Exception {
+    /** {@link Logger}。 */
+    private static final Logger logger = LoggerFactory.getLogger(HttpSecurityCustomizer.class);
+
+    public interface StandardSettingCustomizer {
+        void apply(StandardSetting customizer);
+    }
+
+    public static class StandardSetting {
+
+        String authenticationEntryPointUrl = "/login";
+        RequestMatcher initialAccessEntryPointMatcher;
+        boolean useDefaultLoginPage = true;
+
+        StandardSetting() {
+        }
+
+        public void authenticationEntryPointUrl(String url) {
+            this.authenticationEntryPointUrl = url;
+        }
+
+        public void initialAccessEntryPointPattern(String pattern) {
+            this.initialAccessEntryPointMatcher = PathPatternRequestMatcher.withDefaults().matcher(pattern);
+        }
+
+        RequestMatcher initialAccessEntryPointMatcher() {
+            if (initialAccessEntryPointMatcher == null) {
+                return PathPatternRequestMatcher.withDefaults().matcher("/");
+            }
+            return initialAccessEntryPointMatcher;
+        }
+    }
+
+    public static HttpSecurity withStandardSettings(
+            HttpSecurity http,
+            StandardSettingCustomizer standardSettingCustomizer)
+            throws Exception {
+
+        StandardSetting setting = new StandardSetting();
+        standardSettingCustomizer.apply(setting);
+
         http.logout(customizer -> {
-            // REST用のログアウトハンドラ
+            // 非HTML要求用のログアウトハンドラ
             // defaultLogoutSuccessHandlerForなのでmatcherに該当しなければlogoutSuccessUrlが使用される
             customizer.defaultLogoutSuccessHandlerFor(
-                    new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT), getRestMatcher(http));
+                    new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT),
+                    new NegatedRequestMatcher(getWebAppMatcher(http)));
             // セッションクッキーの破棄
             customizer.deleteCookies(createDeleteCookies(http));
-            // 必要に応じて有効化
-            // customizer.addLogoutHandler(new HeaderWriterLogoutHandler(new
-            // ClearSiteDataHeaderWriter(Directive.ALL)));
-        }).authorizeHttpRequests(customizer -> {
-            // 静的リソースを対象外(/css/**, /js/**, /images/**, /webjars/**, /favicon.*, /*/icon-*)
-            customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-            // Actuatorは対象外
-            customizer.requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll();
-            // エラーコントローラは対象外
-            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/error/**")).permitAll();
-			customizer.anyRequest().authenticated();
-        }).sessionManagement(customizer -> {
-            // URLリライティングを有効にする
-            customizer.enableSessionUrlRewriting(true);
-        }).exceptionHandling(customizer -> {
-            // 【認証済み】
-            customizer.accessDeniedHandler(new ForbiddenAccessDeniedHandler());
-
-            // 【未認証】
-            // REST向けのAuthenticationEntryPointを追加。
-            // ポイントはauthenticationEntryPoint()はデフォルトに任せるという点。
-            // authenticationEntryPoint()を設定しないと、HTML向けのログイン画面にリダイレクトするAuthenticationEntryPointが設定される。
-            // その上で、REST向けのAuthenticationEntryPointを登録する。
-            // 利用するメソッドがdefaultAuthenticationEntryPoint**For**()である点に注意。
-            customizer.defaultAuthenticationEntryPointFor(new AuthenticationEntryPointForRest(), getRestMatcher(http));
-        }).csrf(customizer -> {
-            // Actuatorは対象外
-            customizer.ignoringRequestMatchers(EndpointRequest.toAnyEndpoint());
-            // エラーコントローラは対象外
-            customizer.ignoringRequestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/error/**"));
-
+            // エラー画面から呼び出されることも考慮してログアウトは認証不要
+            customizer.permitAll();
+        });
+        http.csrf(customizer -> {
             // クッキーを使用したCSRFリポジトリを使用する（httpOnly=false）
             CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
             repository.setCookieCustomizer(cookieCustomizer -> {
@@ -93,29 +112,64 @@ public class HttpSecurityCustomizer {
             customizer.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
             // SPA/MPA共用のカスタムハンドラを登録する
-            customizer.csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler());
+            customizer.csrfTokenRequestHandler(new ExtendedCsrfTokenRequestHandler());
         });
+
+        // 静的リソースをSpringSecurityの対象外にする
+        registerWebSecurityCustomizer(http);
+
+        http.with(new StandardSettingConfigurer(setting), Customizer.withDefaults());
 
         return http;
     }
 
-    /**
-     * REST呼び出しを判定する{@link RequestMatcher}。
-     * 
-     * @param http {@link HttpSecurity}
-     * @return {@link RequestMatcher}
-     */
-    static RequestMatcher getRestMatcher(HttpSecurity http) {
-        ContentNegotiationStrategy contentNegotiationStrategy = http.getSharedObject(ContentNegotiationStrategy.class);
-        if (contentNegotiationStrategy == null) {
-            contentNegotiationStrategy = new HeaderContentNegotiationStrategy();
+    static class StandardSettingConfigurer extends AbstractHttpConfigurer<StandardSettingConfigurer, HttpSecurity> {
+
+        private StandardSetting setting;
+
+        public StandardSettingConfigurer(StandardSetting setting) {
+            this.setting = setting;
         }
-        MediaTypeRequestMatcher htmlMatcher = new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
-        htmlMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
-        NegatedRequestMatcher notHtmlMatcher = new NegatedRequestMatcher(htmlMatcher);
-        RequestMatcher ajaxMatcher = new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest");
-        // text/htmlに該当しない(*/*は許容せず) OR AJAXである
-        return new OrRequestMatcher(Arrays.asList(ajaxMatcher, notHtmlMatcher));
+
+        @Override
+        public void init(HttpSecurity http) throws Exception {
+            DefaultLoginPageGeneratingFilter filter = http.getSharedObject(DefaultLoginPageGeneratingFilter.class);
+            Assert.state(filter != null, "filter must not be null.");
+            String loginUrl = filter.getLoginPageUrl();
+            // ExceptionHandlingConfigurerはconfigureで設定を始めるのでinitなら間に合う
+            http.exceptionHandling(customizer -> {
+                AuthenticationEntryPoint entryPoint = authenticationEntryPoint(
+                        http,
+                        setting.initialAccessEntryPointMatcher(),
+                        loginUrl);
+                customizer.authenticationEntryPoint(entryPoint);
+            });
+        }
+
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            // AuthenticationEntryPointを登録するので、デフォルトページが利用したくてもAbstractAuthenticationFilterConfigurer.configurerは
+            // DefaultLoginPageGeneratingFilterを登録しない。
+            // なので、LoginConfigurerを取得してカスタムページを準備済みか確認し、準備されていないようならばDefaultLoginPageGeneratingFilterを登録する。
+            // なお、FORM認証だけを確認し、OAuth2/Saml2認証を確認していない理由は、
+            // OAuth2/Saml2認証用のConfigurerは別JARなので、クラスパスに含まれているかどうかが不明である点と、
+            // それらのIdPを利用する認証はIdP側でログイン画面を準備するのでデフォルトログイン画面は不要と判断。
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            FormLoginConfigurer formLoginConfigurer = http.getConfigurer(FormLoginConfigurer.class);
+            if (formLoginConfigurer != null) {
+                // FORM認証で
+                boolean useDefaultLoginPage = !formLoginConfigurer.isCustomLoginPage();
+                if (useDefaultLoginPage) {
+                    DefaultLoginPageGeneratingFilter filter = http
+                            .getSharedObject(DefaultLoginPageGeneratingFilter.class);
+                    Assert.state(filter != null, "filter must not be null.");
+                    http.addFilter(filter);
+                    http.addFilter(DefaultResourcesFilter.css());
+                    // デフォルトログアウト画面は多分ニーズがないと判断し、登録しない。
+                }
+            }
+        }
+
     }
 
     /**
@@ -154,81 +208,68 @@ public class HttpSecurityCustomizer {
         return cookieName;
     }
 
-    /**
-     * FORBIDDENになる{@link AccessDeniedHandler}。
-     * <p>
-     * {@link CookieCsrfTokenRepository}との併用を想定。
-     * </p>
-     */
-    public static class ForbiddenAccessDeniedHandler implements AccessDeniedHandler {
-        /** {@link Logger}。 */
-        protected static final Logger logger = LoggerFactory.getLogger(ForbiddenAccessDeniedHandler.class);
-
-        @Override
-        public void handle(HttpServletRequest request, HttpServletResponse response,
-                AccessDeniedException accessDeniedException) throws IOException, ServletException {
-            if (response.isCommitted()) {
-                logger.trace("Did not write to response since already committed");
-                return;
-            }
-            // CSRFトークンにCookieを使用する為、セッションタイムアウト検出にAccessDeniedHandlerを使用しない
-            // よって、下記の例外はすべてFORBIDDENとする。
-            // ・MissingCsrfTokenException
-            // ・InvalidCsrfTokenException
-            // ・その他AccessDeniedExceptionの派生型
-            logger.debug("Responding with 403 status code");
-            response.sendError(HttpStatus.FORBIDDEN.value());
-            request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, accessDeniedException);
-            request.setAttribute(WebAttributes.ACCESS_DENIED_403, accessDeniedException);
+    static void registerWebSecurityCustomizer(HttpSecurity http) {
+        ApplicationContext context = SecurityBeanUtil.getSharedOrBean(http, ApplicationContext.class);
+        Assert.state(context != null, "context must not be null.");
+        if (context instanceof GenericApplicationContext ctx) {
+            ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
+            beanFactory.registerSingleton("ignoreStaticResourcesAndActuatorWebSecurityCustomizer",
+                    new WebSecurityCustomizer() {
+                        @Override
+                        public void customize(WebSecurity web) {
+                            // 静的リソースを対象外(/css/**, /js/**, /images/**, /webjars/**, /favicon.*, /*/icon-*)
+                            web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                            // Actuatorは対象外
+                            web.ignoring().requestMatchers(EndpointRequest.toAnyEndpoint());
+                        }
+                    });
         }
     }
 
-    /**
-     * REST用の{@link AuthenticationEntryPoint}。
-     * <p>
-     * {@link getRestMatcher}とセットで
-     * {@link ExceptionHandlingConfigurer#defaultAuthenticationEntryPointFor(AuthenticationEntryPoint, RequestMatcher)}
-     * で使用することを想定。
-     * </p>
-     */
-    public static class AuthenticationEntryPointForRest implements AuthenticationEntryPoint {
-        /** {@link Logger}。 */
-        protected static final Logger logger = LoggerFactory.getLogger(AuthenticationEntryPointForRest.class);
-
-        @Override
-        public void commence(HttpServletRequest request, HttpServletResponse response,
-                AuthenticationException authException) throws IOException, ServletException {
+    static AuthenticationEntryPoint authenticationEntryPoint(
+            HttpSecurity http,
+            RequestMatcher initialAccessEntryMatcher,
+            String entryPointUrl) {
+        RequestMatcher webAppMatcher = getWebAppMatcher(http);
+        RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+        return (HttpServletRequest request, HttpServletResponse response,
+                AuthenticationException authException) -> {
             if (response.isCommitted()) {
                 logger.trace("Did not write to response since already committed");
                 return;
             }
-            // このクラス（AuthenticationEntryPoint）が呼び出される時点で未認証（anonymous）である事は大前提。
-            // 以下の判定はシチュエーションの分類にすぎず、振る舞いとしては全て401という判定となる。
-            String requestedSessionId = request.getRequestedSessionId();
-            if (requestedSessionId == null) {
-                // セッションIDが送られてこなかった場合
-                // 純粋に初めてのアクセス。HTMLではないのでリダイレクトはしない。
-                logger.debug("Responding with 401 status code");
-                response.sendError(HttpStatus.UNAUTHORIZED.value());
-            } else {
-                // セッションIDが送られてきた場合
-                boolean isRequestedSessionIdValid = request.isRequestedSessionIdValid();
-                if (!isRequestedSessionIdValid) {
-                    // セッションIDが送られてきて、かつ、そのIDが無効だった場合は**セッションタイムアウト**と判定
-                    logger.debug("Responding with 401 status code");
-                    response.sendError(HttpStatus.UNAUTHORIZED.value());
-                } else {
-                    // セッションIDが送られてきて、かつ、そのIDが有効、その状態で`anonymous`と判定されている点が重要。
-                    // 未認証でも許されるAPIを利用している場合はセッションが既に存在しているため、この状態になる。
-                    // 初回アクセスでセッション無しだろうが、既にアクセスしていてセッションありだろうが、
-                    // 未認証（anonymous）である事には変わりがないので、挙動は401。
-                    // （認証済みであれば403になる）
-                    logger.debug("Responding with 401 status code");
-                    response.sendError(HttpStatus.UNAUTHORIZED.value());
+
+            String url = request.getRequestURI();
+            if (webAppMatcher.matches(request)) {
+                if (initialAccessEntryMatcher.matches(request)) {
+                    redirectStrategy.sendRedirect(request, response, entryPointUrl);
+                    return;
                 }
             }
+
+            logger.debug("Responding with 401 status code");
+            response.sendError(HttpStatus.UNAUTHORIZED.value());
             request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, authException);
+        };
+    }
+
+    /**
+     * WebApp（HTML系）呼び出しを判定する{@link RequestMatcher}を取得する。
+     * 
+     * @param http {@link HttpSecurity}
+     * @return {@link RequestMatcher}
+     */
+    static RequestMatcher getWebAppMatcher(HttpSecurity http) {
+        ContentNegotiationStrategy contentNegotiationStrategy = http.getSharedObject(ContentNegotiationStrategy.class);
+        if (contentNegotiationStrategy == null) {
+            contentNegotiationStrategy = new HeaderContentNegotiationStrategy();
         }
+        MediaTypeRequestMatcher htmlMatcher = new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
+        htmlMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
+        NegatedRequestMatcher notAjacMatcher = new NegatedRequestMatcher(
+                new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest"));
+        // text/htmlに該当しない(*/*は許容せず) OR AJAXである
+        return new AndRequestMatcher(htmlMatcher, notAjacMatcher);
     }
 
     /**
@@ -238,7 +279,7 @@ public class HttpSecurityCustomizer {
      * https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#csrf-integration-javascript-spa
      * </p>
      */
-    static class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
+    static class ExtendedCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
         /** リクエストヘッダ用のハンドラ。 */
         private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
         /** リクエストパラメータ用のハンドラ。 */

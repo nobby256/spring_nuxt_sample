@@ -1,4 +1,4 @@
-package com.example.demo.library.autoconfigure;
+package com.example.demo.library.spa.autoconfigure;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

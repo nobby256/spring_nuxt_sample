@@ -1,1 +1,2 @@
-com.example.demo.library.autoconfigure.SpaAutoConfiguration
+com.example.demo.library.security.autoconfigure.SecurityAutoConfiguration
+com.example.demo.library.spa.autoconfigure.SpaAutoConfiguration

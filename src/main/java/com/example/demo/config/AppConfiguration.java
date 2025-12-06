@@ -26,11 +26,18 @@ public class AppConfiguration {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.formLogin(customizer -> {
 			customizer.defaultSuccessUrl("/");
+		}).authorizeHttpRequests(customizer -> {
+			customizer.requestMatchers("/error/**").permitAll();
+			customizer.anyRequest().authenticated();
+		}).csrf(customizer -> {
+			customizer.ignoringRequestMatchers("/error/**");
+		}).logout(customizer -> {
+			customizer.logoutUrl("/api/logout").permitAll();
 		});
-		http.logout(customizer -> {
-			customizer.logoutUrl("/api/logout");
+		HttpSecurityCustomizer.withStandardSettings(http, customizer -> {
+			customizer.authenticationEntryPointUrl("/login");
+			customizer.initialAccessEntryPointPattern("/");
 		});
-		HttpSecurityCustomizer.withDefault(http);
 		return http.build();
 	}
 
