@@ -1,20 +1,23 @@
 package com.example.demo.library.security;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.AbstractConfiguredSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**
- * コンポーネント取得関連のユーティリティクラス。
+ * HttpSecurity設定のユーティリティクラス。
  */
-public final class SecurityBeanUtil {
+public final class HttpSecurityCustomizeUtil {
 
     /**
      * コンストラクタ。
      */
-    private SecurityBeanUtil() {
+    private HttpSecurityCustomizeUtil() {
     }
 
     /**
@@ -53,6 +56,42 @@ public final class SecurityBeanUtil {
         } catch (NoSuchBeanDefinitionException ex) {
             return null;
         }
+    }
+
+    /**
+     * ログアウト時に削除するクッキー名の配列にセッションIDのクッキー名を追加する。
+     *
+     * @param http    {@link HttpSecurity}
+     * @param cookies クッキー名
+     * @return クッキーの配列
+     */
+    public static String[] createDeleteCookies(HttpSecurity http, String... cookies) {
+        String sessionCookie = sessionCookieName(http);
+        String[] combineCookies;
+        if (cookies != null) {
+            combineCookies = new String[cookies.length + 1];
+            combineCookies[0] = sessionCookie;
+            System.arraycopy(cookies, 0, combineCookies, 1, cookies.length);
+        } else {
+            combineCookies = new String[] { sessionCookie };
+        }
+        return combineCookies;
+    }
+
+    /**
+     * セッションIDのクッキー名を取得する。
+     *
+     * @param http {@link HttpSecurity}
+     * @return セッションIDのクッキー名
+     */
+    private static String sessionCookieName(HttpSecurity http) {
+        ServerProperties properties = getBeanOrNull(http, ServerProperties.class);
+        Objects.requireNonNull(properties);
+        String cookieName = properties.getServlet().getSession().getCookie().getName();
+        if (cookieName == null) {
+            cookieName = "JSESSIONID";
+        }
+        return cookieName;
     }
 
 }
