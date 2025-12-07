@@ -42,28 +42,28 @@ public class HttpSecurityCustomizer {
 
     public static class StandardSetting {
 
-        RequestMatcher initialAccessEntryPointMatcher;
+        RequestMatcher bookmarkAwareEntryPointMatcher;
         boolean useDefaultLoginPage = true;
 
         StandardSetting() {
         }
 
-        public void initialAccessEntryPointMatchers(String... patterns) {
+        public void bookmarkAwareEntryPointMatchers(String... patterns) {
             List<RequestMatcher> matchers = Arrays.asList(patterns).stream()
                     .map(pattern -> (RequestMatcher) PathPatternRequestMatcher.withDefaults().matcher(pattern))
                     .toList();
-            this.initialAccessEntryPointMatcher = new OrRequestMatcher(matchers);
+            this.bookmarkAwareEntryPointMatcher = new OrRequestMatcher(matchers);
         }
 
-        public void initialAccessEntryPointMatchers(RequestMatcher... matchers) {
-            this.initialAccessEntryPointMatcher = new OrRequestMatcher(matchers);
+        public void bookmarkAwareEntryPointMatchers(RequestMatcher... matchers) {
+            this.bookmarkAwareEntryPointMatcher = new OrRequestMatcher(matchers);
         }
 
-        RequestMatcher initialAccessEntryPointMatcher() {
-            if (initialAccessEntryPointMatcher == null) {
+        RequestMatcher getBookmarkAwareEntryPointMatcher() {
+            if (bookmarkAwareEntryPointMatcher == null) {
                 return PathPatternRequestMatcher.withDefaults().matcher("/");
             }
-            return initialAccessEntryPointMatcher;
+            return bookmarkAwareEntryPointMatcher;
         }
     }
 

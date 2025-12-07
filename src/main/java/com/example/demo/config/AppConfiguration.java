@@ -26,19 +26,29 @@ public class AppConfiguration {
 	 */
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		// ログイン
 		http.formLogin(customizer -> {
 			customizer.defaultSuccessUrl("/");
-		}).authorizeHttpRequests(customizer -> {
-			customizer.requestMatchers("/error/**").permitAll();
-			customizer.anyRequest().authenticated();
-		}).csrf(customizer -> {
-			customizer.ignoringRequestMatchers("/error/**");
-		}).logout(customizer -> {
+		});
+		// ログアウト
+		http.logout(customizer -> {
 			customizer.logoutUrl("/api/logout").permitAll();
 			customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
 		});
+		// 認証
+		http.authorizeHttpRequests(customizer -> {
+			customizer.requestMatchers("/error/**").permitAll();
+			customizer.anyRequest().authenticated();
+		});
+		// CSRF
+		http.csrf(customizer -> {
+			customizer.ignoringRequestMatchers("/error/**");
+		});
+		//上記以外は標準設定に従う
 		HttpSecurityCustomizer.withStandardSettings(http, customizer -> {
-			customizer.initialAccessEntryPointMatchers("/");
+			// ブックマークされている事を想定するURLパターン（初手アクセスURL）
+			// セッションが失われていた場合、セッションタイムアウトよりもログイン画面への誘導を優先します
+			customizer.bookmarkAwareEntryPointMatchers("/");
 		});
 		return http.build();
 	}
