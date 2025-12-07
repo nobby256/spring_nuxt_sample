@@ -26,7 +26,7 @@ public class SecurityConfiguration {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-		HttpSecuritySettings.apply(http, Customizer.withDefaults());
+		HttpSecuritySettings.applyStandard(http, Customizer.withDefaults());
 
 		http.formLogin(customizer -> {
 			customizer.defaultSuccessUrl("/");
