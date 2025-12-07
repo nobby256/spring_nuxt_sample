@@ -5,20 +5,22 @@ import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import com.example.demo.library.security.HttpSecuritySettings;
+
 /**
- * SpringSecurityのConfigurationクラス。
+ * アプリケーションの設定クラス。
  */
 @Configuration
 public class SecurityConfiguration {
 
 	/**
-	 * {@link SecurityFilterChain}を作成する。
+	 * SpringSecurityを設定する。
 	 *
 	 * @param http {@link HttpSecurity}
 	 * @return {@link SecurityFilterChain}
@@ -26,37 +28,21 @@ public class SecurityConfiguration {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) {
 
+		HttpSecuritySettings.applyStandard(http, Customizer.withDefaults());
+
 		http.formLogin(customizer -> {
 			customizer.defaultSuccessUrl("/");
 		}).authorizeHttpRequests(customizer -> {
 			customizer.requestMatchers("/error/**").permitAll();
 			customizer.anyRequest().authenticated();
 		}).csrf(customizer -> {
-			customizer.spa();
 			customizer.ignoringRequestMatchers("/error/**");
-		}).exceptionHandling(customizer -> {
-			authenticationEntryPointFor(customizer);
 		}).logout(customizer -> {
 			customizer.logoutUrl("/api/logout").permitAll();
 			customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
 		});
 
 		return http.build();
-	}
-
-	/**
-	 * 条件付き{@link AuthenticationEntryPoint}の登録。
-	 * 
-	 * @param customizer {@code ExceptionHandlingConfigurer<HttpSecurity>}
-	 */
-	void authenticationEntryPointFor(ExceptionHandlingConfigurer<HttpSecurity> customizer) {
-		// 下記の条件に合致するリクエスト用のAuthenticationEntryPointを登録する。
-		// ・GET以外
-		// ・LoginConfigurerがdefaultAuthenticationEntryPointForで登録したmatcherに合致しない
-		// (text/html かつ 非AJAX)
-		customizer.defaultAuthenticationEntryPointFor((request, response, exception) -> {
-			response.sendError(HttpStatus.UNAUTHORIZED.value());
-		}, request -> !request.getMethod().toUpperCase().equals("GET"));
 	}
 
 	/**

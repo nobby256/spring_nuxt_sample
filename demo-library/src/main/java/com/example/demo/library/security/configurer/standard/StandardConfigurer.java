@@ -18,9 +18,9 @@ import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
 public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigurer, HttpSecurity> {
 
     private RequestMatcher bookmarkAwareEntryPointMatcher;
-    private boolean errorPagePermitAll = true;
-    private boolean ignoreStaticResources = true;
-    private boolean ignoreActuators = true;
+    private boolean errorPagePermitAll;
+    private boolean ignoreStaticResources;
+    private boolean ignoreActuators;
 
     /**
      * タブ閉じ → セッションタイムアウト → 再アクセス を行ったとき、
@@ -86,9 +86,11 @@ public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigure
             });
         }
 
-        // 静的リソースとアクチュエーターをSpringSecurityの対象外にする
-        IgnoreStaticResourcesAndActuatorWebSecurityCustomizer
-                .registerSingleton(http, ignoreStaticResources, ignoreActuators);
+        if (ignoreStaticResources || ignoreActuators) {
+            // 静的リソースとアクチュエーターをSpringSecurityの対象外にする
+            IgnoreStaticResourcesAndActuatorWebSecurityCustomizer
+                    .registerSingleton(http, ignoreStaticResources, ignoreActuators);
+        }
     }
 
     @Override
