@@ -26,11 +26,11 @@ public class LoginOrTimeoutAuthenticationEntryPoint extends LoginUrlAuthenticati
     /** {@link Logger}。 */
     private static final Logger logger = LoggerFactory.getLogger(LoginOrTimeoutAuthenticationEntryPoint.class);
 
-    /** システムの初手アクセスとして許可されたページへのリクエストであることを判定する{@link RequestMatcher}。 */
-    private RequestMatcher initialAccessEntryPointMatcher = PathPatternRequestMatcher.withDefaults().matcher("/");
+    /** 初手アクセスとして想定したページへのリクエストであることを判定するMatcher。 */
+    private final RequestMatcher initialAccessEntryPointMatcher;
 
-    /** HTML要求（AJAXを除く）か否かを判定するパターン。 */
-    private RequestMatcher htmlRequestMatcher;
+    /** HTML要求（AJAXを除く）か否かを判定するMatcher。 */
+    private final RequestMatcher htmlRequestMatcher;
 
     /**
      * コンストラクタ。
@@ -43,7 +43,7 @@ public class LoginOrTimeoutAuthenticationEntryPoint extends LoginUrlAuthenticati
             String loginFormUrl) {
         super(loginFormUrl);
         this.initialAccessEntryPointMatcher = initialAccessEntryPointMatcher;
-        this.htmlRequestMatcher = htmlRequestMatcher();
+        this.htmlRequestMatcher = browserGetRequestMatcher();
     }
 
     @Override
@@ -52,13 +52,16 @@ public class LoginOrTimeoutAuthenticationEntryPoint extends LoginUrlAuthenticati
         // HTML要求（AJAXを除く）か？
         if (htmlRequestMatcher.matches(request)) {
             if (request.getRequestedSessionId() == null) {
-                // セッションクッキーが送信されなければ初回アクセスと判断し、ログイン画面にリダイレクトする
+                // セッションIDを受信しなければ初回アクセスと判断し、ログイン画面にリダイレクトする
                 super.commence(request, response, authException);
                 return;
             } else if (!request.isRequestedSessionIdValid()) {
-                // セッションIDが送信されてきたが、IDが無効だった場合はURLのパターンによって判断する
+                // セッションIDを受信したが、IDが無効だった場合はURLのパターンによって判断する
                 if (initialAccessEntryPointMatcher.matches(request)) {
-                    // リダイレクトする
+                    // 初手想定URLの場合は利用開始と判断し、ログイン画面にリダイレクトする
+                    // タブ閉じ→（タイムアウト）→再アクセスの対策
+                    // 初手想定のURLに限り、タイムアウトではなくログイン誘導を優先する
+                    // トレードオフとして利用中のタイムアウトは検出できなくなる
                     super.commence(request, response, authException);
                     return;
                 }
@@ -72,13 +75,18 @@ public class LoginOrTimeoutAuthenticationEntryPoint extends LoginUrlAuthenticati
         request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, authException);
     }
 
-    private RequestMatcher htmlRequestMatcher() {
+    /**
+     * ブラウザからのGET要求を表すMatcher。
+     * 
+     * @return text/htmlに該当する AND AJAXではない AND GET要求
+     */
+    private RequestMatcher browserGetRequestMatcher() {
         MediaTypeRequestMatcher htmlMatcher = new MediaTypeRequestMatcher(MediaType.TEXT_HTML);
-        htmlMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
+        htmlMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL)); // */* は許容しない
         NegatedRequestMatcher notAjacMatcher = new NegatedRequestMatcher(
                 new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest"));
-        // text/htmlに該当する(*/*は許容せず) AND AJAXではない
-        return new AndRequestMatcher(htmlMatcher, notAjacMatcher);
+        RequestMatcher getMatcher = (HttpServletRequest request) -> request.getMethod().toUpperCase().equals("GET");
+        return new AndRequestMatcher(htmlMatcher, notAjacMatcher, getMatcher);
     }
 
 }
