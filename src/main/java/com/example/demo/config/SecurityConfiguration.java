@@ -28,11 +28,9 @@ public class SecurityConfiguration {
 
 		HttpSecuritySettings.apply(http, Customizer.withDefaults());
 
-		// ログイン
 		http.formLogin(customizer -> {
 			customizer.defaultSuccessUrl("/");
 		});
-		// ログアウト
 		http.logout(customizer -> {
 			customizer.logoutUrl("/api/logout").permitAll();
 			customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
