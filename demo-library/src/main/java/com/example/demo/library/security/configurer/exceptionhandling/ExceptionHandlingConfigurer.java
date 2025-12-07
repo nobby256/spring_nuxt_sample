@@ -13,6 +13,9 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 
+import com.example.demo.library.security.configurer.standard.CsrfAwareAccessDeniedHandler;
+import com.example.demo.library.security.configurer.standard.LoginOrTimeoutAuthenticationEntryPoint;
+
 public class ExceptionHandlingConfigurer extends AbstractHttpConfigurer<ExceptionHandlingConfigurer, HttpSecurity> {
 
     private RequestMatcher bookmarkAwareEntryPointMatcher;

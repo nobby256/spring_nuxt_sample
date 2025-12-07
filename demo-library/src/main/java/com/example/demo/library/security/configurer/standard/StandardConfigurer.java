@@ -18,6 +18,9 @@ import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
 public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigurer, HttpSecurity> {
 
     private RequestMatcher bookmarkAwareEntryPointMatcher;
+    private boolean errorPagePermitAll = true;
+    private boolean ignoreStaticResources = true;
+    private boolean ignoreActuators = true;
 
     /**
      * タブ閉じ → セッションタイムアウト → 再アクセス を行ったとき、
@@ -32,6 +35,18 @@ public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigure
                 .map(pattern -> (RequestMatcher) PathPatternRequestMatcher.withDefaults().matcher(pattern))
                 .toList();
         this.bookmarkAwareEntryPointMatcher = new OrRequestMatcher(matchers);
+    }
+
+    public void errorPagePermitAll(boolean errorPagePermitAll) {
+        this.errorPagePermitAll = errorPagePermitAll;
+    }
+
+    public void ignoreStaticResources(boolean ignoreStaticResources) {
+        this.ignoreStaticResources = ignoreStaticResources;
+    }
+
+    public void ignoreActuators(boolean ignoreActuators) {
+        this.ignoreActuators = ignoreActuators;
     }
 
     RequestMatcher getBookmarkAwareEntryPointMatcher() {
@@ -49,13 +64,6 @@ public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigure
         });
         http.csrf(customizer -> {
             customizer.spa();
-            // SpringSecurity6
-            // // クッキーを使用したCSRFリポジトリを使用する
-            // CookieCsrfTokenRepository repository =
-            // CookieCsrfTokenRepository.withHttpOnlyFalse();
-            // // SPA/MPA共用のカスタムハンドラを登録する
-            // customizer.csrfTokenRequestHandler(new
-            // SpaCompatibleCsrfTokenRequestHandler());
         });
         http.exceptionHandling(customizer -> {
             DefaultLoginPageGeneratingFilter filter = http.getSharedObject(DefaultLoginPageGeneratingFilter.class);
@@ -66,9 +74,21 @@ public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigure
             customizer.authenticationEntryPoint(new LoginOrTimeoutAuthenticationEntryPoint(matcher, loginUrl));
             customizer.accessDeniedHandler(new CsrfAwareAccessDeniedHandler());
         });
+        if (errorPagePermitAll) {
+            // 認証
+            http.authorizeHttpRequests(customizer -> {
+                customizer.requestMatchers("/error/**").permitAll();
+                customizer.anyRequest().authenticated();
+            });
+            // CSRF
+            http.csrf(customizer -> {
+                customizer.ignoringRequestMatchers("/error/**");
+            });
+        }
 
         // 静的リソースとアクチュエーターをSpringSecurityの対象外にする
-        IgnoreStaticResourcesAndActuatorWebSecurityCustomizer.registerSingleton(http);
+        IgnoreStaticResourcesAndActuatorWebSecurityCustomizer
+                .registerSingleton(http, ignoreStaticResources, ignoreActuators);
     }
 
     @Override

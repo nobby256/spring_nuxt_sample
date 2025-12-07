@@ -3,6 +3,8 @@ package com.example.demo.library.security.configurer.ignoreurl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
+import com.example.demo.library.security.configurer.standard.IgnoreStaticResourcesAndActuatorWebSecurityCustomizer;
+
 public class IgnoreUrlConfigurer extends AbstractHttpConfigurer<IgnoreUrlConfigurer, HttpSecurity> {
 
     private boolean ignoreStaticResource = true;
@@ -23,7 +25,8 @@ public class IgnoreUrlConfigurer extends AbstractHttpConfigurer<IgnoreUrlConfigu
     @Override
     public void configure(HttpSecurity http) {
         // 静的リソースとアクチュエーターをSpringSecurityの対象外にする
-        IgnoreStaticResourcesAndActuatorWebSecurityCustomizer.registerSingleton(http);
+        IgnoreStaticResourcesAndActuatorWebSecurityCustomizer
+                .registerSingleton(http, ignoreStaticResource, ignoreActuator);
     }
 
 }
