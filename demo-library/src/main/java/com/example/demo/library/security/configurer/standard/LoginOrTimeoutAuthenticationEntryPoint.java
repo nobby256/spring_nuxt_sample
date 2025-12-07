@@ -1,4 +1,4 @@
-package com.example.demo.library.security;
+package com.example.demo.library.security.configurer.standard;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,25 +28,25 @@ import jakarta.servlet.http.HttpServletResponse;
  * 本クラスは、リクエスト内容とセッション状態から次の 2 パターンを判別します。
  * </p>
  * <ul>
- *   <li><b>ログイン画面へリダイレクトすべきケース</b>
- *     <ul>
- *       <li>ブラウザからの通常の HTML GET リクエストであり（Accept: text/html, 非AJAX）</li>
- *       <li>かつ次のいずれかを満たす場合
- *         <ul>
- *           <li>セッション ID が送信されていない（ブラウザ起動直後の初回アクセスとみなす）</li>
- *           <li>セッション ID が送信されているが無効であり、かつリクエスト URL が
- *               ブックマークを許容した入口パス（bookmarkAwareEntryPointMatcher）にマッチする
- *               （タブ閉じ → セッションタイムアウト → ブックマークから再開、など）</li>
- *         </ul>
- *       </li>
- *     </ul>
- *   </li>
- *   <li><b>セッションタイムアウト／未認証として 401 を返すケース</b>
- *     <ul>
- *       <li>上記以外のすべてのリクエスト
- *         （入口パス以外の URL、HTML 以外、AJAX、POST など）</li>
- *     </ul>
- *   </li>
+ * <li><b>ログイン画面へリダイレクトすべきケース</b>
+ * <ul>
+ * <li>ブラウザからの通常の HTML GET リクエストであり（Accept: text/html, 非AJAX）</li>
+ * <li>かつ次のいずれかを満たす場合
+ * <ul>
+ * <li>セッション ID が送信されていない（ブラウザ起動直後の初回アクセスとみなす）</li>
+ * <li>セッション ID が送信されているが無効であり、かつリクエスト URL が
+ * ブックマークを許容した入口パス（bookmarkAwareEntryPointMatcher）にマッチする
+ * （タブ閉じ → セッションタイムアウト → ブックマークから再開、など）</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * </li>
+ * <li><b>セッションタイムアウト／未認証として 401 を返すケース</b>
+ * <ul>
+ * <li>上記以外のすべてのリクエスト
+ * （入口パス以外の URL、HTML 以外、AJAX、POST など）</li>
+ * </ul>
+ * </li>
  * </ul>
  * <p>
  * ログイン画面へのリダイレクトには {@link LoginUrlAuthenticationEntryPoint} の既定挙動

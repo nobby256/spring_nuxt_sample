@@ -7,13 +7,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
-import com.example.demo.library.security.HttpSecurityCustomizer;
+import com.example.demo.library.security.HttpSecuritySettings;
 
 /**
  * アプリケーションの設定クラス。
  */
 @Configuration
-public class AppConfiguration {
+public class SecurityConfiguration {
 
 	/**
 	 * SpringSecurityを設定する。
@@ -42,12 +42,10 @@ public class AppConfiguration {
 		http.csrf(customizer -> {
 			customizer.ignoringRequestMatchers("/error/**");
 		});
+
 		// 上記以外は標準設定に従う
-		HttpSecurityCustomizer.withStandardSettings(http, customizer -> {
-			// ブックマークされている事を想定するURLパターン（初手アクセスURL）
-			// セッションが失われていた場合、セッションタイムアウトよりもログイン画面への誘導を優先します
-			customizer.bookmarkAwareEntryPointMatchers("/");
-		});
+		HttpSecuritySettings.applyDefaults(http);
+
 		return http.build();
 	}
 

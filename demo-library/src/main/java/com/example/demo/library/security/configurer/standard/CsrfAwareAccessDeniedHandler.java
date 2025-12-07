@@ -1,4 +1,4 @@
-package com.example.demo.library.security;
+package com.example.demo.library.security.configurer.standard;
 
 import java.io.IOException;
 

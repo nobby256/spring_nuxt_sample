@@ -3,8 +3,6 @@ package com.example.demo.library.spa;
 import static org.springframework.web.servlet.function.RequestPredicates.GET;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +18,10 @@ import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 
-import jakarta.servlet.http.HttpSession;
-
 public class AuthSessionRouterFunction {
 
     public static Optional<RouterFunction<ServerResponse>> create(SpaConfigurationProperties spaProperties) {
-        RequestPredicate predicate = GET("/api/auth-session");//.and(accept(MediaType.APPLICATION_JSON));
+        RequestPredicate predicate = GET("/api/auth-session");// .and(accept(MediaType.APPLICATION_JSON));
         RouterFunction<ServerResponse> function = route(predicate, new AuthSessionRouterFunction()::handle);
         return Optional.of(function);
     }
@@ -50,23 +46,6 @@ public class AuthSessionRouterFunction {
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(body);
-    }
-
-    private String getSessionExpiresAt(ServerRequest request, Duration sessionTimeout) {
-        HttpSession session = request.session();
-        // 1. セッションの最終アクセス時刻を取得 (Instant型)
-        Instant lastAccessedTime = Instant.ofEpochMilli(session.getLastAccessedTime());
-
-        // 2. セッションのタイムアウト時間を取得 (Duration型)
-        // application.properties の server.reactive.session.timeout で設定された値
-        java.time.Duration timeout = sessionTimeout;
-
-        // 3. 有効期限を計算 (最終アクセス時刻 + タイムアウト時間)
-        Instant expirationInstant = lastAccessedTime.plus(timeout);
-
-        // 4. JavaScriptで解釈可能なISO 8601形式の文字列に変換
-        // Instant.toString() はデフォルトで "2024-05-21T10:30:00.123Z" のような形式を返す
-        return expirationInstant.toString();
     }
 
 }

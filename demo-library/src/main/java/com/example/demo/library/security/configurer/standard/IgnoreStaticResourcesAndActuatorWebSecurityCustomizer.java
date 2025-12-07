@@ -1,4 +1,4 @@
-package com.example.demo.library.security;
+package com.example.demo.library.security.configurer.standard;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.util.Assert;
+
+import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
 
 public class IgnoreStaticResourcesAndActuatorWebSecurityCustomizer implements WebSecurityCustomizer {
 
