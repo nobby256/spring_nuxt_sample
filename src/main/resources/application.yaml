@@ -18,3 +18,7 @@ spring:
       password: "{noop}password"
       roles:
         - Developer
+
+  jackson:
+    default-property-inclusion: non-absent
+

@@ -8,8 +8,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
 import com.example.demo.library.security.HttpSecurityCustomizer;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * アプリケーションの設定クラス。
@@ -44,28 +42,13 @@ public class AppConfiguration {
 		http.csrf(customizer -> {
 			customizer.ignoringRequestMatchers("/error/**");
 		});
-		//上記以外は標準設定に従う
+		// 上記以外は標準設定に従う
 		HttpSecurityCustomizer.withStandardSettings(http, customizer -> {
 			// ブックマークされている事を想定するURLパターン（初手アクセスURL）
 			// セッションが失われていた場合、セッションタイムアウトよりもログイン画面への誘導を優先します
 			customizer.bookmarkAwareEntryPointMatchers("/");
 		});
 		return http.build();
-	}
-
-	/**
-	 * デフォルトの{@link ObjectMapper}を設定する。
-	 * 
-	 * @return {@link ObjectMapper}
-	 */
-	@Bean
-	ObjectMapper objectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		// NON_ABSENTの挙動は下記の通り
-		// null、Optionalはシリアライズしない（undefined）。
-		// ただし長さゼロの文字列、Emptyな配列はシリアライズする。
-		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-		return objectMapper;
 	}
 
 }

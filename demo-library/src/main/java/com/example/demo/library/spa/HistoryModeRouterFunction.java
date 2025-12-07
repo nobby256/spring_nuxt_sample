@@ -6,9 +6,9 @@ import static org.springframework.web.servlet.function.RequestPredicates.accept;
 import java.net.URI;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.function.RequestPredicate;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.RouterFunctions;

@@ -49,17 +49,17 @@ public class BusinessExceptionControllerAdvice {
         // メッセージに対して様々な情報を持たせる構造に変更してください。
         ErrorMessage ErrorMessage = new ErrorMessage(exception.getCode(), message);
 
-        // 業務例外のステータスコードはUNPROCESSABLE_ENTITY(422)を使用します。
+        // 業務例外のステータスコードはUNPROCESSABLE_CONTENT(422)を使用します。
         return ResponseEntity
-                        .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(List.of(ErrorMessage));
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(List.of(ErrorMessage));
     }
 
     /**
      * 業務エラーメッセージ。
      * 
-     * @param code エラーコード
+     * @param code    エラーコード
      * @param message エラーメッセージ
      */
     record ErrorMessage(String code, String message) {

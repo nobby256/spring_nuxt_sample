@@ -1,6 +1,6 @@
 package com.example.demo.library.security;
 
-import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -62,7 +62,7 @@ public class HttpSecurityCustomizer {
         }
 
         @Override
-        public void init(HttpSecurity http) throws Exception {
+        public void init(HttpSecurity http) {
             DefaultLoginPageGeneratingFilter filter = http.getSharedObject(DefaultLoginPageGeneratingFilter.class);
             Assert.state(filter != null, "filter must not be null.");
             String loginUrl = filter.getLoginPageUrl();
@@ -75,7 +75,7 @@ public class HttpSecurityCustomizer {
         }
 
         @Override
-        public void configure(HttpSecurity http) throws Exception {
+        public void configure(HttpSecurity http) {
             // AuthenticationEntryPointを登録するので、デフォルトページが利用したくてもAbstractAuthenticationFilterConfigurer.configurerは
             // DefaultLoginPageGeneratingFilterを登録しない。
             // なので、LoginConfigurerを取得してカスタムページを準備済みか確認し、準備されていないようならばDefaultLoginPageGeneratingFilterを登録する。

@@ -1,8 +1,8 @@
 package com.example.demo.api;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.lang.Nullable;
 
 /**
  * 業務例外クラス。
@@ -26,11 +26,11 @@ public class BusinessException extends RuntimeException implements MessageSource
      * コンストラクタ。
      *
      * @param resolvableMessage {@link MessageSourceResolvable}
-     * @param cause 原因となった例外クラス
+     * @param cause             原因となった例外クラス
      */
     public BusinessException(MessageSourceResolvable resolvableMessage, @Nullable Throwable cause) {
         super(resolvableMessage.getDefaultMessage() != null ? resolvableMessage.getDefaultMessage()
-                        : resolvableMessage.toString(), cause);
+                : resolvableMessage.toString(), cause);
         this.resolvableMessage = resolvableMessage;
     }
 
@@ -56,7 +56,7 @@ public class BusinessException extends RuntimeException implements MessageSource
      * コンストラクタ。
      *
      * @param message メッセージ。
-     * @param cause 原因となった例外
+     * @param cause   原因となった例外
      */
     // @SuppressFBWarnings("NP")
     public BusinessException(@Nullable String message, @Nullable Throwable cause) {
