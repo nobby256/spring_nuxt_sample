@@ -55,9 +55,7 @@ public class SpaAutoConfiguration {
      * @see {@link WebMvcConfigurationSupport#routerFunctionMapping(org.springframework.format.support.FormattingConversionService, org.springframework.web.servlet.resource.ResourceUrlProvider)}
      */
     @Bean
-    RouterFunctionMapping spaRouterFunctionMapping(
-            IndexHtmlResourceFinder indexHtmlResourceFinder,
-            HttpMessageConverters messageConverters) {
+    RouterFunctionMapping spaRouterFunctionMapping(IndexHtmlResourceFinder indexHtmlResourceFinder) {
 
         RouterFunctions.Builder builder = RouterFunctions.route();
 
@@ -67,9 +65,11 @@ public class SpaAutoConfiguration {
         HistoryModeRouterFunction.create(indexHtmlResourceFinder, serverOrigin)
                 .ifPresent(function -> builder.add(function));
 
-        RouterFunctionMapping mapping = new RouterFunctionMapping();
+        HttpMessageConverters messageConverters = HttpMessageConverters.forServer().registerDefaults().build();
         List<HttpMessageConverter<?>> converters = StreamSupport.stream(messageConverters.spliterator(), false)
                 .collect(Collectors.toList());
+
+        RouterFunctionMapping mapping = new RouterFunctionMapping();
         mapping.setMessageConverters(converters);
         mapping.setRouterFunction(builder.build());
         mapping.setOrder(ROUTER_MAP_ORDER);

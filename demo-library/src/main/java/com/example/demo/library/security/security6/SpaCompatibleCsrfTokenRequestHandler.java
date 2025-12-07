@@ -1,4 +1,4 @@
-package com.example.demo.library.security;
+package com.example.demo.library.security.security6;
 
 import java.util.function.Supplier;
 

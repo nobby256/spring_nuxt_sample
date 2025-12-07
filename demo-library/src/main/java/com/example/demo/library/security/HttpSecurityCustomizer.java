@@ -1,13 +1,11 @@
 package com.example.demo.library.security;
 
-import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.authentication.ui.DefaultResourcesFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 
@@ -30,19 +28,12 @@ public class HttpSecurityCustomizer {
             customizer.deleteCookies(HttpSecurityCustomizeUtil.createDeleteCookies(http));
         });
         http.csrf(customizer -> {
-            // クッキーを使用したCSRFリポジトリを使用する（httpOnly=false）
-            CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-            repository.setCookieCustomizer(cookieCustomizer -> {
-                // server.servlet.session.cookie.secureと設定を連動させる（https時にはsecure=trueを推奨）
-                ServerProperties serverProperties = HttpSecurityCustomizeUtil.getBeanOrNull(http,
-                        ServerProperties.class);
-                Boolean secure = serverProperties.getServlet().getSession().getCookie().getSecure();
-                cookieCustomizer.secure(secure == null ? false : secure);
-            });
-            customizer.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-
-            // SPA/MPA共用のカスタムハンドラを登録する
-            customizer.csrfTokenRequestHandler(new SpaCompatibleCsrfTokenRequestHandler());
+            customizer.spa();
+            // SpringSecurity6
+            // // クッキーを使用したCSRFリポジトリを使用する
+            // CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+            // // SPA/MPA共用のカスタムハンドラを登録する
+            // customizer.csrfTokenRequestHandler(new SpaCompatibleCsrfTokenRequestHandler());
         });
 
         // 静的リソースとアクチュエーターをSpringSecurityの対象外にする
