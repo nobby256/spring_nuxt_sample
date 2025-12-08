@@ -16,8 +16,8 @@ import com.example.demo.library.security.HttpSecuritySettings;
 /**
  * アプリケーションの設定クラス。
  */
-@Configuration
-public class SecurityConfiguration {
+//@Configuration
+public class SecurityConfiguration2 {
 
 	/**
 	 * SpringSecurityを設定する。
