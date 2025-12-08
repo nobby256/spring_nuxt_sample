@@ -1,26 +1,31 @@
 package com.example.demo.library.security.configurer.standard;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
+import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
+import org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
-import org.springframework.security.web.authentication.ui.DefaultResourcesFilter;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer.AuthorizationManagerRequestMatcherRegistry;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
 
 import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
 
 public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigurer, HttpSecurity> {
 
-    private RequestMatcher bookmarkAwareEntryPointMatcher;
-    private boolean errorPagePermitAll;
-    private boolean ignoreStaticResources;
-    private boolean ignoreActuators;
+    private @Nullable RequestMatcher bookmarkAwareEntryPointMatcher;
+    private boolean errorPagePermitAll = true;
+    private boolean staticResourcesPermitAll = true;
+    private boolean actuatorsPermitAll = true;
 
     /**
      * タブ閉じ → セッションタイムアウト → 再アクセス を行ったとき、
@@ -37,82 +42,91 @@ public class StandardConfigurer extends AbstractHttpConfigurer<StandardConfigure
         this.bookmarkAwareEntryPointMatcher = new OrRequestMatcher(matchers);
     }
 
-    public void errorPagePermitAll(boolean errorPagePermitAll) {
-        this.errorPagePermitAll = errorPagePermitAll;
+    public void errorPagePermitAll(boolean permitAll) {
+        this.errorPagePermitAll = permitAll;
     }
 
-    public void ignoreStaticResources(boolean ignoreStaticResources) {
-        this.ignoreStaticResources = ignoreStaticResources;
+    /**
+     * 静的リソースを認証不要にする。
+     * 
+     * @param permitAll true:認証不要にする
+     * @see {@link StaticResourceLocation)
+     */
+    public void staticResourcesPermitAll(boolean permitAll) {
+        this.staticResourcesPermitAll = permitAll;
     }
 
-    public void ignoreActuators(boolean ignoreActuators) {
-        this.ignoreActuators = ignoreActuators;
-    }
-
-    RequestMatcher getBookmarkAwareEntryPointMatcher() {
-        if (bookmarkAwareEntryPointMatcher == null) {
-            return PathPatternRequestMatcher.withDefaults().matcher("/**");
-        }
-        return bookmarkAwareEntryPointMatcher;
+    /**
+     * アクチュエーター（/actuator）を認証不要にする。
+     * 
+     * @param permitAll true:認証不要にする
+     */
+    public void actuatorsPermitAll(boolean permitAll) {
+        this.actuatorsPermitAll = permitAll;
     }
 
     @Override
-    public void init(HttpSecurity http) {
+    public void setBuilder(HttpSecurity http) {
+        super.setBuilder(http);
+
         http.logout(customizer -> {
-            // セッションクッキーの破棄
             customizer.deleteCookies(HttpSecurityCustomizeUtil.createDeleteCookies(http));
         });
         http.csrf(customizer -> {
             customizer.spa();
         });
         http.exceptionHandling(customizer -> {
-            DefaultLoginPageGeneratingFilter filter = http.getSharedObject(DefaultLoginPageGeneratingFilter.class);
-            Assert.state(filter != null, "filter must not be null.");
-            String loginUrl = filter.getLoginPageUrl();
-            RequestMatcher matcher = getBookmarkAwareEntryPointMatcher();
-
-            customizer.authenticationEntryPoint(new LoginOrTimeoutAuthenticationEntryPoint(matcher, loginUrl));
+            UnauthenticatedAuthenticationEntryPoint entryPoint = new UnauthenticatedAuthenticationEntryPoint();
+            RequestMatcher matcher = new UnauthenticatedRequestMatcher(bookmarkAwareEntryPointMatcher);
+            customizer.defaultAuthenticationEntryPointFor(entryPoint, matcher);
             customizer.accessDeniedHandler(new CsrfAwareAccessDeniedHandler());
         });
+
         if (errorPagePermitAll) {
-            // 認証
+            WebProperties properties = HttpSecurityCustomizeUtil.getBeanOrNull(http, WebProperties.class);
+            String path = properties.getError().getPath();
+            String pattern = path + "/**";
             http.authorizeHttpRequests(customizer -> {
-                customizer.requestMatchers("/error/**").permitAll();
-                customizer.anyRequest().authenticated();
+                customizer.requestMatchers(pattern).permitAll();
             });
-            // CSRF
             http.csrf(customizer -> {
-                customizer.ignoringRequestMatchers("/error/**");
+                customizer.ignoringRequestMatchers(pattern);
             });
         }
 
-        if (ignoreStaticResources || ignoreActuators) {
-            // 静的リソースとアクチュエーターをSpringSecurityの対象外にする
-            IgnoreStaticResourcesAndActuatorWebSecurityCustomizer
-                    .registerSingleton(http, ignoreStaticResources, ignoreActuators);
-        }
+        http.authorizeHttpRequests(customizer -> {
+            if (staticResourcesPermitAll) {
+                // /css/**, /js/**, /images/**, /webjars/**, /favicon.*, /*/icon-*, /fonts/**
+                customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
+            }
+            if (actuatorsPermitAll) {
+                customizer.requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll();
+            }
+        });
+    }
+
+    @Override
+    public void init(HttpSecurity http) {
+        http.authorizeHttpRequests(customizer -> {
+            if (!getAnyRequests(customizer)) {
+                customizer.anyRequest().permitAll();
+            }
+        });
     }
 
     @Override
     public void configure(HttpSecurity http) {
-        // AuthenticationEntryPointを登録するので、デフォルトページが利用したくてもAbstractAuthenticationFilterConfigurer.configurerは
-        // DefaultLoginPageGeneratingFilterを登録しない。
-        // なので、LoginConfigurerを取得してカスタムページを準備済みか確認し、準備されていないようならばDefaultLoginPageGeneratingFilterを登録する。
-        // なお、FORM認証だけを確認し、OAuth2/Saml2認証を確認していない理由は、
-        // OAuth2/Saml2認証用のConfigurerは別JARなので、クラスパスに含まれているかどうかが不明である点と、
-        // それらのIdPを利用する認証はIdP側でログイン画面を準備するのでデフォルトログイン画面は不要と判断。
-        // なお、デフォルトログアウト画面は多分ニーズがないと判断し、登録しない。
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        FormLoginConfigurer formLoginConfigurer = http.getConfigurer(FormLoginConfigurer.class);
-        if (formLoginConfigurer != null) {
-            if (!formLoginConfigurer.isCustomLoginPage()) {
-                DefaultLoginPageGeneratingFilter filter = http
-                        .getSharedObject(DefaultLoginPageGeneratingFilter.class);
-                Assert.state(filter != null, "filter must not be null.");
-                http.addFilter(filter);
-                http.addFilter(DefaultResourcesFilter.css());
-            }
+    }
+
+    boolean getAnyRequests(@SuppressWarnings("rawtypes") AuthorizationManagerRequestMatcherRegistry registry) {
+        Field field;
+        try {
+            field = ReflectionUtils.findField(AbstractRequestMatcherRegistry.class, "anyRequestConfigured");
+        } catch (Exception ex) {
+            throw new UndeclaredThrowableException(ex);
         }
+        ReflectionUtils.makeAccessible(field);
+        return (boolean) ReflectionUtils.getField(field, registry);
     }
 
 }

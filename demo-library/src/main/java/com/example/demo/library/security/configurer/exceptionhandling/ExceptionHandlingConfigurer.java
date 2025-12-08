@@ -46,13 +46,6 @@ public class ExceptionHandlingConfigurer extends AbstractHttpConfigurer<Exceptio
     public void init(HttpSecurity http) {
         http.csrf(customizer -> {
             customizer.spa();
-            // SpringSecurity6
-            // // クッキーを使用したCSRFリポジトリを使用する
-            // CookieCsrfTokenRepository repository =
-            // CookieCsrfTokenRepository.withHttpOnlyFalse();
-            // // SPA/MPA共用のカスタムハンドラを登録する
-            // customizer.csrfTokenRequestHandler(new
-            // SpaCompatibleCsrfTokenRequestHandler());
         });
         http.exceptionHandling(customizer -> {
             DefaultLoginPageGeneratingFilter filter = http.getSharedObject(DefaultLoginPageGeneratingFilter.class);

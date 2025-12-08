@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 /**
  * SpringSecurityのConfigurationクラス。
  */
-@Configuration
+//@Configuration
 public class SecurityConfiguration {
 
 	/**
