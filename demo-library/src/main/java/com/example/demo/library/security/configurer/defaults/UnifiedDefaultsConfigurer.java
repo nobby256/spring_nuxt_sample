@@ -1,17 +1,18 @@
-package com.example.demo.library.security.configurer.basic;
+package com.example.demo.library.security.configurer.defaults;
 
-import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
-import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
 
-public class BasicConfigurer {
+public class UnifiedDefaultsConfigurer extends AbstractHttpConfigurer<UnifiedDefaultsConfigurer, HttpSecurity> {
 
-    public void applyDefaults(HttpSecurity http) {
+    public UnifiedDefaultsConfigurer() {
+    }
+
+    @Override
+    public void init(HttpSecurity http) {
         http.logout(customizer -> {
             customizer.deleteCookies(HttpSecurityCustomizeUtil.createDeleteCookies(http));
         });
@@ -26,11 +27,9 @@ public class BasicConfigurer {
         });
     }
 
-    public RequestMatcher defaultPublicEndpoints() {
-        return new OrRequestMatcher(
-                PathPatternRequestMatcher.withDefaults().matcher("/**"),
-                PathRequest.toStaticResources().atCommonLocations(),
-                EndpointRequest.toAnyEndpoint());
+    @Override
+    public void configure(HttpSecurity http) {
+
     }
 
 }

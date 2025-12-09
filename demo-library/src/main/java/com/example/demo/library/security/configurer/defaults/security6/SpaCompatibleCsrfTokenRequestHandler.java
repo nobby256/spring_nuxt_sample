@@ -1,4 +1,4 @@
-package com.example.demo.library.security.configurer.basic.security6;
+package com.example.demo.library.security.configurer.defaults.security6;
 
 import java.util.function.Supplier;
 

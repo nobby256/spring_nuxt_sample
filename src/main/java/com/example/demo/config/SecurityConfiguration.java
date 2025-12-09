@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
-import com.example.demo.library.security.HttpSecurityDefaults;
+import com.example.demo.library.security.UnifiedWebSecurity;
 
 /**
  * SpringSecurityのConfigurationクラス。
@@ -18,20 +18,20 @@ public class SecurityConfiguration {
 	/**
 	 * {@link SecurityFilterChain}を作成する。
 	 *
-	 * @param http     {@link HttpSecurity}
-	 * @param defaults {@link HttpSecurityDefaults)
+	 * @param http    {@link HttpSecurity}
+	 * @param unified {@link UnifiedWebSecurity)
 	 * @return {@link SecurityFilterChain}
 	 */
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, HttpSecurityDefaults defaults) {
+	SecurityFilterChain securityFilterChain(HttpSecurity http, UnifiedWebSecurity unified) {
 
-		defaults.login(http, customizer -> {
+		unified.login(http, customizer -> {
 			customizer.defaultSuccessUrl("/");
 		});
-		defaults.apply(http);
+		unified.applyDefaults(http);
 
 		http.authorizeHttpRequests(customizer -> {
-			customizer.requestMatchers(defaults.publicEndpoints()).permitAll();
+			customizer.requestMatchers(unified.publicEndpoints()).permitAll();
 			customizer.anyRequest().authenticated();
 		});
 		http.logout(customizer -> {

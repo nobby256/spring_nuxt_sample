@@ -4,15 +4,18 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.example.demo.library.security.HttpSecurityDefaults;
+import com.example.demo.library.security.UnifiedWebSecurity;
+import com.example.demo.library.security.configurer.login.UnifiedFormLoginConfigurer;
+import com.example.demo.library.security.configurer.login.UnifiedLoginConfigurer;
 
 @AutoConfiguration
 @ConditionalOnWebApplication
 public class SecurityAutoConfiguration {
 
     @Bean
-    HttpSecurityDefaults httpSecurityDefaults() {
-        return new HttpSecurityDefaults();
+    UnifiedWebSecurity unifiedWebSecurity() {
+        UnifiedLoginConfigurer loginConfigurer = new UnifiedFormLoginConfigurer();
+        return new UnifiedWebSecurity(loginConfigurer);
     }
 
 }
