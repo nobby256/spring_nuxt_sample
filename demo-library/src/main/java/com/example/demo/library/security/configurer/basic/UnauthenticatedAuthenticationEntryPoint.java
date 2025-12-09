@@ -1,4 +1,4 @@
-package com.example.demo.library.security.configurer.standard;
+package com.example.demo.library.security.configurer.basic;
 
 import java.io.IOException;
 
@@ -16,14 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UnauthenticatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     /** {@link Logger}。 */
-    private static final Logger logger = LoggerFactory.getLogger(LoginOrTimeoutAuthenticationEntryPoint.class);
-
-    /**
-     * コンストラクタ。
-     * 
-     */
-    public UnauthenticatedAuthenticationEntryPoint() {
-    }
+    private static final Logger logger = LoggerFactory.getLogger(UnauthenticatedAuthenticationEntryPoint.class);
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
