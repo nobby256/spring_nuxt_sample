@@ -1,17 +1,21 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: false,
+})
+
 const { load, $id } = useAppStore()
 
-const { pending, error } = await useAsyncData(
+const { pending, error } = useAsyncData(
   $id,
   () => load(),
 )
 
 // 読み込み完了を待機
 watch(pending, async (newValue) => {
-  if (newValue) {
+  if (newValue === false) {
     await navigateTo('/', { replace: true })
   }
-})
+}, { immediate: true })
 // エラー発生を待機
 watch(error, (newValue) => {
   if (newValue) {
@@ -20,7 +24,7 @@ watch(error, (newValue) => {
     nuxtError.fatal = true
     throw nuxtError
   }
-})
+}, { immediate: true })
 </script>
 
 <template>

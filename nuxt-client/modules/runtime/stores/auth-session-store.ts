@@ -23,7 +23,7 @@ export const useAuthSessionStore = defineStore('$/global/AuthSession', {
     },
     hasAuthority(authority?: string): boolean {
       if (!authority) {
-        return false
+        return true
       }
       return this.authorities.includes(authority)
     },

@@ -11,7 +11,6 @@ export default defineNuxtRouteMiddleware((to) => {
   if (to.name === 'error') {
     return
   }
-
   const { hasAuthority } = useAuthSessionStore()
   if (!hasAuthority(to.meta.authority)) {
     throw createError({ statusCode: 403, statusMessage: 'UNAUTHORIZED' })

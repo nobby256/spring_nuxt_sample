@@ -1,7 +1,10 @@
 /**
  * スプラッシュスクリーンに遷移させるミドルウェア。
  */
-export default defineNuxtRouteMiddleware(() => {
+export default defineNuxtRouteMiddleware((to) => {
+  if (to.path === '/splash') {
+    return
+  }
   const appStore = useAppStore()
   if (!appStore.loaded) {
     return navigateTo('/splash', { replace: true })
