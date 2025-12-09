@@ -39,7 +39,7 @@ export default defineNuxtModule<ModuleOptions>
     addPlugins(resolver)
     addUtils(resolver)
     addStores(resolver)
-    await addPreloadMiddleware(nuxt, resolver)
+    await addPagesMiddleware(nuxt, resolver)
   },
 })
 
@@ -65,15 +65,16 @@ function addStores(resolver: Resolver) {
   addImportsDir(resolver.resolve('./runtime/stores'))
 }
 
-async function addPreloadMiddleware(nuxt: Nuxt, resolver: Resolver) {
+async function addPagesMiddleware(nuxt: Nuxt, resolver: Resolver) {
   // カレントディレクトリの絶対パス
   const absCurrentDir = resolver.resolve('.')
   // /app/pagesの絶対パス
   const absPagesDir = createResolver(nuxt.options.dir.app).resolve(nuxt.options.dir.pages)
 
   // CWD を app/pages にして glob（結果は pagesRoot からの相対パスで返す）
-  const pattern: string = '**/*.preload-middleware.ts'
-  const files = await glob(pattern, {
+  // preload-middleware または entry-middleware のいずれかのパターンを探す
+  const patterns: string[] = ['**/*.preload-middleware.ts', '**/*.entry-middleware.ts']
+  const files = await glob(patterns, {
     cwd: absPagesDir,
     absolute: true,
     onlyFiles: true,
@@ -104,7 +105,7 @@ async function addPreloadMiddleware(nuxt: Nuxt, resolver: Resolver) {
     })
 
     if (nuxt.options.dev) {
-      console.log(`[preload-middlewares] registered: ${name} -> ${resolvedPath}`)
+      console.log(`[preload|entry-middlewares] registered: ${name} -> ${resolvedPath}`)
     }
   }
 }

@@ -3,8 +3,10 @@ definePageMeta({
   layout: false,
 })
 
-const { load, $id } = useAppStore()
+const route = useRoute()
+const redirect = route.query.redirect as string ?? '/'
 
+const { load, $id } = useAppStore()
 const { pending, error } = useAsyncData(
   $id,
   () => load(),
@@ -13,7 +15,7 @@ const { pending, error } = useAsyncData(
 // 読み込み完了を待機
 watch(pending, async (newValue) => {
   if (newValue === false) {
-    await navigateTo('/', { replace: true })
+    await navigateTo(redirect, { replace: true })
   }
 }, { immediate: true })
 // エラー発生を待機

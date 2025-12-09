@@ -7,6 +7,12 @@ export default defineNuxtRouteMiddleware((to) => {
   }
   const appStore = useAppStore()
   if (!appStore.loaded) {
-    return navigateTo('/splash', { replace: true })
+    return navigateTo({
+      path: '/splash',
+      query: {
+        redirect: to.fullPath,
+      },
+    },
+    { replace: true })
   }
 })
