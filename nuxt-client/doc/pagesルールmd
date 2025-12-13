@@ -1,0 +1,230 @@
+申し訳ないですが、現在この環境では外部情報へのアクセス手段が使えないため、ここまでの対話内容のみを前提にした整理になります。
+
+***
+
+# 機能単位のフォルダ構造・ミドルウェア・ストア標準ルール
+
+本ドキュメントは、Nuxt 3 + Pinia を用いた SPA における「機能単位の画面構成・データロード・状態管理」の標準ルールを定義するものです。  
+目的は、**堅牢でエラーに強く、構造がシンプルで読みやすいアーキテクチャ**を全機能で一貫して適用できるようにすることです。
+
+***
+
+## 基本コンセプト
+
+- **必須データは画面遷移前にロードする**  
+  - ルートミドルウェアで「必須データが揃うこと」を前提条件とし、揃わなければ画面を表示しない（`abortNavigation` あるいは専用エラーページに遷移）。  
+- **機能単位で状態とライフサイクルをまとめる**  
+  - 各機能フォルダごとに Pinia ストアと親ページ（機能コンテナ）を用意し、入場・滞在・離脱のライフサイクルをそこで完結させる。  
+- **ルールをパターン化してミスを減らす**  
+  - フォルダ構造・ファイル名・責務分担をテンプレート化し、実装者が迷わないようにする。
+
+***
+
+## フォルダ構造とファイル命名
+
+### 機能フォルダの構造
+
+例として `/pages/foo` 機能を考えます。
+
+```text
+/pages
+  foo.vue                        # 機能コンテナ（親ページ）
+  foo/
+    index.vue                    # 画面1（ステップ1 など）
+    step1.vue                    # 画面2
+    step2.vue                    # 画面3 ...
+    data-store.ts                # foo 機能専用 Pinia ストア
+    index.preload-middleware.ts  # index.vue 用 preload ミドルウェア
+    step1.preload-middleware.ts  # step1.vue 用 preload ミドルウェア
+    step2.preload-middleware.ts  # step2.vue 用 preload ミドルウェア
+    foo.entry-middleware.ts      # 機能共通 entry ミドルウェア
+```
+
+### 各ファイルの役割概要
+
+- `foo.vue`  
+  - 機能コンテナ（親ページ）  
+  - `<nuxt-page />` で子ページをラップ  
+  - 機能 entry ミドルウェアの付与  
+  - 機能から離脱したときのクリーンアップ（Pinia `$reset`）  
+- `foo/*.vue`（`index.vue`, `step1.vue`, …）  
+  - 個々の画面コンポーネント  
+  - レイアウト・UI・画面固有ロジック  
+- `foo/data-store.ts`  
+  - 機能全体で共有する Pinia ストア  
+  - 初期化フラグ・ステップ状態・共通マスタ・画面間共有データなどを管理  
+- `foo/*.preload-middleware.ts`  
+  - 各ページに固有の「必須データ」のロード  
+  - ページに入る前に実行される  
+- `foo/foo.entry-middleware.ts`  
+  - 機能単位で共通の前処理  
+  - 入場ガード・マルチステップの直アクセス禁止・機能共通マスタロードなど
+
+***
+
+## 機能コンテナ（親ページ）の実装ルール
+
+### ファイル: `/pages/foo.vue`
+
+#### 役割
+
+- 機能レベルのレイアウト・共通 UI を提供する。  
+- この機能に属する子ページ（`/pages/foo/*.vue`）を `<nuxt-page />` でラップする。  
+- 機能専用ストアを 1 回だけ生成し、**機能から離脱したタイミングで `$reset()` する。**  
+- 機能共通 entry ミドルウェアを `pageMeta` で登録する。
+
+#### 実装イメージ
+
+```ts
+<script setup lang="ts">
+import { useFooStore } from '~/pages/foo/data-store'
+
+definePageMeta({
+  middleware: ['foo-entry'], // 機能共通 entry ミドルウェア名
+})
+
+const fooStore = useFooStore()
+
+onUnmounted(() => {
+  // foo 機能から離脱したタイミングで state をリセット
+  fooStore.$reset()
+})
+</script>
+
+<template>
+  <!-- 必要ならここに機能専用レイアウトを置く -->
+  <nuxt-page />
+</template>
+```
+
+***
+
+## 機能ストア（Pinia）の実装ルール
+
+### ファイル: `/pages/foo/data-store.ts`
+
+#### 役割
+
+- 機能内の全画面で共有する状態の管理。  
+- 以下のような情報を保持する。
+  - `initialized: boolean` … 機能共通データの初期化済みフラグ  
+  - ステップ管理用の状態（`currentStep`, `canGoToStep2` など）  
+  - 共通マスタデータ・一時入力値・バリデーション状態 など
+
+#### 実装ポイント
+
+- `initialize()` アクションで共通マスタ等をロードし、`initialized = true` にする。  
+- 親ページの `onUnmounted` による `$reset()` で、`initialized` を含めて初期状態に戻る。
+
+***
+
+## 機能 entry ミドルウェアの実装ルール
+
+### ファイル: `/pages/foo/foo.entry-middleware.ts`
+
+#### 紐付け
+
+- `foo.vue` の `definePageMeta` に登録する（機能配下のすべての子ページに対して実行される）。
+
+#### 主な責務
+
+1. **入場ガード**
+   - 権限・設定フラグ・利用可能時間帯など、ユーザと環境に依存する前提条件のチェック。
+   - NG の場合は `navigateTo` による他画面遷移や、エラー画面への誘導などを行う。
+
+2. **マルチステップの直アクセス禁止**
+   - `to.name` / `to.path` とストアの状態を参照し  
+     - 例: `to` が `foo-step2` なのに、`store.currentStep < 2` の場合は `foo/index` へ戻す。  
+   - ステートマシン的なルールをここに集約する。
+
+3. **機能共通マスタロード**
+   - `store.initialized` が `false` の場合にのみ `store.initialize()` を実行。  
+   - 失敗した場合は `abortNavigation` またはエラー画面へ遷移する方針を統一する。
+
+#### 実装イメージ（擬似コード）
+
+```ts
+export default defineNuxtRouteMiddleware(async (to) => {
+  const store = useFooStore()
+
+  // 1. 入場ガード
+  if (!userHasPermissionForFoo()) {
+    return navigateTo('/forbidden')
+  }
+
+  // 2. マルチステップの直アクセス禁止
+  if (to.name === 'foo-step2' && !store.canEnterStep2) {
+    return navigateTo('/foo') // 例: index 相当
+  }
+
+  // 3. 機能共通マスタロード
+  if (!store.initialized) {
+    const ok = await store.initialize()
+    if (!ok) {
+      // 初期ロードエラー時の共通方針
+      return navigateTo('/error/initial-load-failed')
+    }
+  }
+})
+```
+
+***
+
+## ページ preload ミドルウェアの実装ルール
+
+### ファイル: `/pages/foo/index.preload-middleware.ts` など
+
+#### 紐付け
+
+- 各子ページ（`/pages/foo/index.vue` など）の `definePageMeta` で登録する。  
+- 役割は「**そのページ固有の必須データ**」のロードに限定する。
+
+#### 責務
+
+- 画面専用のデータ取得（例: 一覧画面の検索結果、詳細画面の対象レコードなど）。  
+- 取得エラー時の挙動（エラー画面・親画面への戻りなど）を統一的に処理。
+
+***
+
+## 画面コンポーネントの実装ルール
+
+### ファイル: `/pages/foo/index.vue`, `/pages/foo/step1.vue`, …
+
+#### 役割
+
+- 親ページとミドルウェアによって「前提条件が満たされた状態」でのみ表示される画面。  
+- UI・イベントハンドラ・バリデーションなど、純粋に画面ロジックに集中する。
+
+#### ポイント
+
+- 必須データは entry / preload ミドルウェアでロードされている前提で記述する。  
+- コンポーネント内の非同期処理は、  
+  - UX 向上用の追加データ取得  
+  - オプション情報のロード  
+  に限定し、画面が成立するための必須条件はミドルウェア側で担保する。
+
+***
+
+## 状態リセットと再入時の挙動
+
+- 機能から他機能へ遷移するとき、`/pages/foo.vue` がアンマウントされるタイミングで `store.$reset()` が呼ばれる。  
+  - → 再度 `/foo` に入るときは、`store.initialized === false` からやり直し。  
+- ブラウザリロード時は Pinia の状態が失われる前提でよい（必要になれば後から永続化プラグインを導入する）。  
+- 「リロード時に途中ステップからの再開を許可しない」方針なら、entry ミドルウェアの直アクセス禁止ルールだけで自然に対応できる。
+
+***
+
+## 命名と拡張の指針
+
+- 機能 entry ミドルウェア名は  
+  - `<機能名>.entry-middleware`（例: `foo.entry-middleware`）  
+  のように **機能名＋役割** を必ず含め、一意にする。  
+- ページ preload ミドルウェア名は  
+  - `<ページ名>.preload-middleware`（例: `index.preload-middleware`）  
+  とし、「データ preload 用」であることが一目で分かるようにする。  
+- 将来、別種のミドルウェア（例: `<機能名>.auth-middleware` など）を増やす場合も、  
+  - 「機能名＋用途サフィックス」の命名ルールを守る。
+
+***
+
+このパターンをテンプレート化し、「新しい機能フォルダを作るときの雛形」としてプロジェクトに置いておけば、実装者はパターンに従うだけで **堅牢・一貫・読みやすい構造**を自然に踏襲できるようになります。

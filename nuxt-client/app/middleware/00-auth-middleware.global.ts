@@ -8,7 +8,7 @@
  * そのような行為をガードする為にここでチェックする必要があります。
  */
 export default defineNuxtRouteMiddleware((to) => {
-  if (to.name === 'error') {
+  if (!to.meta.authority) {
     return
   }
   const { hasAuthority } = useAuthSessionStore()
