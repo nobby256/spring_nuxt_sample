@@ -1,16 +1,19 @@
 package com.example.demo.api;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.example.demo.library.errors.DomainException;
+import com.example.demo.library.errors.DomainProblem;
 
 /**
  * 業務エラーをキャッチしREST呼び出しのレスポンスに変換するControllerAdvive。
@@ -18,7 +21,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * {@link ControllerAdvice#basePackageClasses()}によって、このパッケージに含まれるControllerのみが対象となっています。
  * </p>
  */
-@RestControllerAdvice(basePackageClasses = BusinessExceptionControllerAdvice.class)
+@ControllerAdvice(basePackageClasses = BusinessExceptionControllerAdvice.class)
+@RequestMapping(produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
 public class BusinessExceptionControllerAdvice {
 
     /** {@link MessageSource}。 */
@@ -34,35 +38,21 @@ public class BusinessExceptionControllerAdvice {
     }
 
     /**
-     * 業務例外をREST呼び出しのレスポンス/に変換する。
+     * 業務例外をRFC7807準拠のレスポンスに変換する。
      * 
-     * @param exception {@link BusinessException}
-     * @return {@link ResponseEntity}
+     * @param exception {@link DomainException}
+     * @return {@link DomainProblem}
      */
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<List<ErrorMessage>> handle(BusinessException exception) {
+    @ExceptionHandler(DomainException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    public DomainProblem handle(DomainException exception) {
         Locale locale = LocaleContextHolder.getLocale();
-        String message = messageSource.getMessage(exception, locale);
-
-        // このサンプルのクライアントは業務エラーをalert()で表示するだけなのでシンブルに設計しています。
-        // クライアントがよりリッチな表現でメッセージを表示するのであれば、
-        // メッセージに対して様々な情報を持たせる構造に変更してください。
-        ErrorMessage ErrorMessage = new ErrorMessage(exception.getCode(), message);
-
-        // 業務例外のステータスコードはUNPROCESSABLE_CONTENT(422)を使用します。
-        return ResponseEntity
-                .status(HttpStatus.UNPROCESSABLE_CONTENT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(List.of(ErrorMessage));
-    }
-
-    /**
-     * 業務エラーメッセージ。
-     * 
-     * @param code    エラーコード
-     * @param message エラーメッセージ
-     */
-    record ErrorMessage(String code, String message) {
+        DomainProblem problem = exception.getProblem();
+        String message = messageSource.getMessage(problem, locale);
+        if (!StringUtils.hasText(problem.getDetail())) {
+            problem.setDetail(message);
+        }
+        return problem;
     }
 
 }

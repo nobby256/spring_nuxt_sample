@@ -12,13 +12,13 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
@@ -32,47 +32,40 @@ import com.example.demo.library.spa.SpaConfigurationProperties;
 @EnableConfigurationProperties(SpaConfigurationProperties.class)
 public class SpaAutoConfiguration {
 
-    // AdditionalHealthEndpointPathsWebMvcHandlerMapping:-100
-    // WebMvcEndpointHandlerMapping:-100
-    // ControllerEndpointHandlerMapping:-100
-    // RouterFunctionMapping:-1
-    // RequestMappingHandlerMapping:0
-    // <ここに追加>:1
-    // WelcomePageHandlerMapping:2
-    // BeanNameUrlHandlerMapping:2
-    // WelcomePageNotAcceptableHandlerMapping:LOWEST_PRECEDENCE - 10
-    // SimpleUrlHandlerMapping(静的リソース用）:Ordered.LOWEST_PRECEDENCE - 1
-    private static final int ROUTER_MAP_ORDER = 1;
-
     @Autowired
     private SpaConfigurationProperties spaProperties;
 
-    /**
-     * 
-     * 
-     * @param messageConverters
-     * @return
-     * @see {@link WebMvcConfigurationSupport#routerFunctionMapping(org.springframework.format.support.FormattingConversionService, org.springframework.web.servlet.resource.ResourceUrlProvider)}
-     */
     @Bean
-    RouterFunctionMapping spaRouterFunctionMapping(IndexHtmlResourceFinder indexHtmlResourceFinder) {
-
+    RouterFunctionMapping spaHistoryModeRouterFunctionMapping(IndexHtmlResourceFinder indexHtmlResourceFinder) {
         RouterFunctions.Builder builder = RouterFunctions.route();
 
-        AuthSessionRouterFunction.create(spaProperties).ifPresent(function -> builder.add(function));
+        // AuthSessionRouterFunction
+        builder.add(AuthSessionRouterFunction.create(spaProperties));
 
+        // HistoryModeRouterFunction
         String serverOrigin = spaProperties.getDevClient().getOrigin();
-        HistoryModeRouterFunction.create(indexHtmlResourceFinder, serverOrigin)
-                .ifPresent(function -> builder.add(function));
+        Resource resource = indexHtmlResourceFinder.findResource();
+        if (resource != null) {
+            builder.add(HistoryModeRouterFunction.create(resource, serverOrigin));
+        }
 
         HttpMessageConverters messageConverters = HttpMessageConverters.forServer().registerDefaults().build();
         List<HttpMessageConverter<?>> converters = StreamSupport.stream(messageConverters.spliterator(), false)
                 .collect(Collectors.toList());
-
         RouterFunctionMapping mapping = new RouterFunctionMapping();
         mapping.setMessageConverters(converters);
         mapping.setRouterFunction(builder.build());
-        mapping.setOrder(ROUTER_MAP_ORDER);
+        // AdditionalHealthEndpointPathsWebMvcHandlerMapping:-100
+        // WebMvcEndpointHandlerMapping:-100
+        // ControllerEndpointHandlerMapping:-100
+        // RouterFunctionMapping:-1
+        // RequestMappingHandlerMapping:0
+        // <ここに追加>:1
+        // WelcomePageHandlerMapping:2
+        // BeanNameUrlHandlerMapping:2
+        // WelcomePageNotAcceptableHandlerMapping:LOWEST_PRECEDENCE - 10
+        // SimpleUrlHandlerMapping(静的リソース用）:Ordered.LOWEST_PRECEDENCE - 1
+        mapping.setOrder(1);
 
         return mapping;
     }

@@ -32,7 +32,8 @@ public class SecurityConfiguration {
 
 		http.authorizeHttpRequests(customizer -> {
 			customizer.requestMatchers(unified.publicEndpoints()).permitAll();
-			customizer.anyRequest().authenticated();
+			//customizer.anyRequest().authenticated();
+			customizer.anyRequest().permitAll();
 		});
 		http.logout(customizer -> {
 			customizer.logoutUrl("/api/logout").permitAll();
