@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.demo.library.errors.DomainProblem;
 import com.example.demo.library.errors.DomainProblemException;
+import com.example.demo.library.errors.DomainProblemMessage;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,12 +30,19 @@ public class ExceptionHandleControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(exception = DomainProblemException.class)
-    @ApiResponse(responseCode = "422", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DomainProblem.class)))
-    public ResponseEntity<DomainProblem> handle(DomainProblemException exception) {
+    @ApiResponse(responseCode = "422", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DomainProblemMessage.class)))
+    public ResponseEntity<DomainProblemMessage> handle(DomainProblemException exception) {
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(exception.getProblem());
+                .body(getDomainProblemMessage(exception));
     }
 
+    DomainProblemMessage getDomainProblemMessage(DomainProblemException exception) {
+        DomainProblem problem = exception.getProblem();
+        if (problem instanceof DomainProblemMessage dpm) {
+            return dpm;
+        }
+        return new DomainProblemMessage(problem);
+    }
 }

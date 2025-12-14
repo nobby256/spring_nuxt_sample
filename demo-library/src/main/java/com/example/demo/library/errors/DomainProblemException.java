@@ -1,8 +1,9 @@
 package com.example.demo.library.errors;
 
+import org.apache.commons.lang3.exception.ContextedRuntimeException;
 import org.springframework.util.Assert;
 
-public class DomainProblemException extends RuntimeException {
+public class DomainProblemException extends ContextedRuntimeException {
 
     private final DomainProblem problem;
 

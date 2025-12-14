@@ -90,7 +90,7 @@ async function onClick() {
           </tr>
           <tr>
             <td>文字列長が２</td>
-            <td>INTERNAL SERVER ERROR(500)</td>
+            <td>業務例外（メッセージ持ち）<br>content-typeがapplication/problem+json。<br>ステータスコード/レスポンスボディは不問。</td>
             <td>ab</td>
             <td>
               <button
@@ -103,7 +103,7 @@ async function onClick() {
           </tr>
           <tr>
             <td>文字列長が３</td>
-            <td>UNAUTHORIZED(401)<br>未認証かセッションタイムアウト</td>
+            <td>INTERNAL SERVER ERROR(500)</td>
             <td>abc</td>
             <td>
               <button
@@ -116,7 +116,7 @@ async function onClick() {
           </tr>
           <tr>
             <td>文字列長が４</td>
-            <td>FORBIDDEN(403)<br>認証済みだが権限がない</td>
+            <td>UNAUTHORIZED(401)<br>未認証かセッションタイムアウト</td>
             <td>abcd</td>
             <td>
               <button
@@ -129,7 +129,7 @@ async function onClick() {
           </tr>
           <tr>
             <td>文字列長が５</td>
-            <td>NOT FOUND(404)<br>URL間違い。不具合。</td>
+            <td>FORBIDDEN(403)<br>認証済みだが権限がない</td>
             <td>abcde</td>
             <td>
               <button
@@ -142,12 +142,25 @@ async function onClick() {
           </tr>
           <tr>
             <td>文字列長が６</td>
+            <td>NOT FOUND(404)<br>URL間違い。不具合。</td>
+            <td>abcdef</td>
+            <td>
+              <button
+                type="button"
+                @click="inputValue = 'abcdef'"
+              >
+                設定
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>文字列長が７</td>
             <td>OK（200）</td>
             <td>abcdefg</td>
             <td>
               <button
                 type="button"
-                @click="inputValue = 'abcdef'"
+                @click="inputValue = 'abcdefg'"
               >
                 設定
               </button>

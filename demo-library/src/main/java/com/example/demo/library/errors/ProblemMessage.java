@@ -3,36 +3,33 @@ package com.example.demo.library.errors;
 import java.io.Serializable;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class DomainProblem implements Serializable {
+public class ProblemMessage implements Serializable {
 
     @JsonIgnore
     private final DefaultMessageSourceResolvable resolvable;
 
-    public DomainProblem(DefaultMessageSourceResolvable resolvable) {
+    public ProblemMessage(String text) {
+        this(new DefaultMessageSourceResolvable(null, text));
+    }
+
+    public ProblemMessage(DefaultMessageSourceResolvable resolvable) {
         this.resolvable = resolvable;
     }
 
-    public DomainProblem(String detail) {
-        this.resolvable = new DefaultMessageSourceResolvable(null, detail);
-    }
-
-    public @Nullable String getType() {
+    public @Nullable String getCode() {
         return resolvable.getCode();
     }
 
     @Schema(type = "string")
-    public DefaultMessageSourceResolvable getDetail() {
+    public MessageSourceResolvable getText() {
         return resolvable;
     }
 
-    @Override
-    public String toString() {
-        return resolvable.toString();
-    }
 }
