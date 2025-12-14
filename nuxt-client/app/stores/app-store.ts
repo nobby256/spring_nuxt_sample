@@ -43,9 +43,7 @@ export const useAppStore = defineStore('$/global/application', {
       let messages = [] as string[]
       if (isBusinessError(error)) {
         messages = ['【業務エラー】']
-        for (const msg of error.data ?? []) {
-          messages.push(`code: ${msg.code}\n${msg.message}`)
-        }
+        messages.push(JSON.stringify(error.data))
       }
       else {
         messages = ['【その他のエラー】']

@@ -1,85 +1,45 @@
 package com.example.demo.library.errors;
 
-import java.lang.reflect.UndeclaredThrowableException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.io.Serializable;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class DomainProblem implements MessageSourceResolvable {
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public class DomainProblem implements Serializable {
 
     @JsonIgnore
-    private final @Nullable String code;
+    private final MessageSourceResolvable resolvable;
 
-    @JsonIgnore
-    private final Object @Nullable [] arguments;
+    public DomainProblem(MessageSourceResolvable resolvable) {
+        this.resolvable = resolvable;
+    }
 
-    private final @Nullable URI type;
+    public DomainProblem(String detail) {
+        this.resolvable = new DefaultMessageSourceResolvable(null, detail);
+    }
 
-    private @Nullable String detail;
-
-    public DomainProblem(@Nullable String code, Object @Nullable... arguments) {
-        this.code = code;
-        this.arguments = arguments;
-        if (code != null) {
-            try {
-                this.type = new URI("/" + code.replace(".", "/"));
-            } catch (URISyntaxException ex) {
-                throw new UndeclaredThrowableException(ex);
-            }
-        } else {
-            type = null;
+    public @Nullable String getType() {
+        String[] codes = resolvable.getCodes();
+        if (codes == null) {
+            return null;
+        } else if (codes.length == 1) {
+            return codes[0];
         }
+        return codes[codes.length - 1];
     }
 
-    public DomainProblem() {
-        this(null);
-    }
-
-    @Override
-    public String[] getCodes() {
-        return code != null ? new String[] { code } : new String[0];
-    }
-
-    @Override
-    public Object @Nullable [] getArguments() {
-        return arguments;
-    }
-
-    public @Nullable String getCode() {
-        return code;
-    }
-
-    public @Nullable URI getType() {
-        return type;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
+    @Schema(type = "string")
+    public MessageSourceResolvable getDetail() {
+        return resolvable;
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getClass().getName() + " [");
-        builder.append(String.format("code=%s", code));
-        if (arguments != null && arguments.length > 0) {
-            builder.append(",");
-            builder.append(String.format("arguments=%s", Arrays.toString(arguments)));
-        }
-        if (detail != null && detail.length() > 0) {
-            builder.append(",");
-            builder.append(String.format("detail=%s", detail));
-        }
-        builder.append("]");
-        return builder.toString();
+        return resolvable.toString();
     }
 }

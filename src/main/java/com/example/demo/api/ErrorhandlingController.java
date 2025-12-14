@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.demo.library.errors.DomainProblem;
+import com.example.demo.library.errors.DomainProblemException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +28,7 @@ public class ErrorhandlingController {
 	/**
 	 * リクエストを受け取り、エラーを発生させる。
 	 *
-	 * @param body リクエストボディ
+	 * @param body    リクエストボディ
 	 * @param request {@link HttpServletRequest}
 	 * @return レスポンスボディ
 	 * @throws Exception 例外
@@ -35,7 +38,8 @@ public class ErrorhandlingController {
 		String value = body.getValue();
 		if (value.length() == 1) {
 			// 業務エラー
-			BusinessException exception = new BusinessException(new DefaultMessageSourceResolvable("E001"));
+			DomainProblem problem = new DomainProblem(new DefaultMessageSourceResolvable("E001"));
+			DomainProblemException exception = new DomainProblemException(problem);
 			throw exception;
 		} else if (value.length() == 2) {
 			// INTERNAL SERVER ERROR
