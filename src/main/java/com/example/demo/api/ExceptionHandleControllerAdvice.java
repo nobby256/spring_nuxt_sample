@@ -3,7 +3,6 @@ package com.example.demo.api;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,11 +16,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 /**
  * 業務エラーをキャッチしREST呼び出しのレスポンスに変換するControllerAdvive。
  * <p>
- * {@link ControllerAdvice#basePackageClasses()}によって、このパッケージに含まれるControllerのみが対象となっています。
+ * {@link RestControllerAdvice#basePackageClasses()}によって、このパッケージに含まれるControllerのみが対象となっています。
  * </p>
  */
-@RestControllerAdvice(basePackageClasses = DomainProblemExceptionControllerAdvice.class)
-public class DomainProblemExceptionControllerAdvice {
+@RestControllerAdvice(basePackageClasses = ExceptionHandleControllerAdvice.class)
+public class ExceptionHandleControllerAdvice {
 
     /**
      * 業務例外をRFC7807準拠のレスポンスに変換する。
