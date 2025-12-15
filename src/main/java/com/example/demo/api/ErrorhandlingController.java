@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.library.errors.DefaultDomainProblem;
 import com.example.demo.library.errors.DomainError;
-import com.example.demo.library.errors.DomainProblemException;
+import com.example.demo.library.errors.DomainException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class ErrorhandlingController {
 		if (value.length() == 1) {
 			// 業務エラー（エラーメッセージなし）
 			DefaultDomainProblem problem = new DefaultDomainProblem();
-			DomainProblemException exception = new DomainProblemException(problem);
+			DomainException exception = new DomainException(problem);
 			throw exception;
 		} else if (value.length() == 2) {
 			// 業務エラー（エラーメッセージあり）
@@ -48,7 +48,7 @@ public class ErrorhandlingController {
 			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E001")));
 			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E002")));
 			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E003")));
-			DomainProblemException exception = new DomainProblemException(problem);
+			DomainException exception = new DomainException(problem);
 			throw exception;
 		} else if (value.length() == 3) {
 			// INTERNAL SERVER ERROR

@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.demo.library.errors.DefaultDomainProblem;
+import com.example.demo.library.errors.DomainException;
 import com.example.demo.library.errors.DomainProblem;
-import com.example.demo.library.errors.DomainProblemException;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,17 +26,17 @@ public class ExceptionHandleControllerAdvice {
     /**
      * 業務例外をRFC7807準拠のレスポンスに変換する。
      * 
-     * @param exception {@link DomainProblemException}
+     * @param exception {@link DomainException}
      * @return {@link DomainProblem}
      */
-    @ExceptionHandler(exception = DomainProblemException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ExceptionHandler(exception = DomainException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     // returnするDomainProblemが複数種類ある場合は、すべてのクラスをoneOfに列挙する事
     // @formatter:off
     @ApiResponse(responseCode = "422", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, 
         schema = @Schema(oneOf = DefaultDomainProblem.class)))
     // @formatter:on
-    public DomainProblem<?> handleDomainProblem(DomainProblemException exception) {
+    public DomainProblem<?> handleDomainProblem(DomainException exception) {
         return exception.getProblem();
     }
 
