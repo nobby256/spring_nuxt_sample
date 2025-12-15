@@ -12,9 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 public interface DomainProblem<T> extends Serializable {
 
     @Schema(requiredMode = RequiredMode.REQUIRED)
-    default URI getType() {
-        return URI.create("/domain-problem");
-    }
+    URI getType();
 
     @Nullable
     String getDetail();
