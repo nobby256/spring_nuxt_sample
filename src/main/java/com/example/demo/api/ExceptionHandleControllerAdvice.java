@@ -2,13 +2,13 @@ package com.example.demo.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.demo.library.errors.DefaultDomainProblem;
 import com.example.demo.library.errors.DomainProblem;
 import com.example.demo.library.errors.DomainProblemException;
-import com.example.demo.library.errors.DomainProblemMessage;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,22 +27,17 @@ public class ExceptionHandleControllerAdvice {
      * 業務例外をRFC7807準拠のレスポンスに変換する。
      * 
      * @param exception {@link DomainProblemException}
-     * @return {@link ResponseEntity}
+     * @return {@link DomainProblem}
      */
-    @ExceptionHandler(exception = DomainProblemException.class)
-    @ApiResponse(responseCode = "422", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DomainProblemMessage.class)))
-    public ResponseEntity<DomainProblemMessage> handle(DomainProblemException exception) {
-        return ResponseEntity
-                .status(HttpStatus.UNPROCESSABLE_CONTENT)
-                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(getDomainProblemMessage(exception));
+    @ExceptionHandler(exception = DomainProblemException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    // returnするDomainProblemが複数種類ある場合は、すべてのクラスをoneOfに列挙する事
+    // @formatter:off
+    @ApiResponse(responseCode = "422", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, 
+        schema = @Schema(oneOf = DefaultDomainProblem.class)))
+    // @formatter:on
+    public DomainProblem<?> handleDomainProblem(DomainProblemException exception) {
+        return exception.getProblem();
     }
 
-    DomainProblemMessage getDomainProblemMessage(DomainProblemException exception) {
-        DomainProblem problem = exception.getProblem();
-        if (problem instanceof DomainProblemMessage dpm) {
-            return dpm;
-        }
-        return new DomainProblemMessage(problem);
-    }
 }

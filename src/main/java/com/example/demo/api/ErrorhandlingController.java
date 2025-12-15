@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.library.errors.DomainProblem;
+import com.example.demo.library.errors.DefaultDomainProblem;
+import com.example.demo.library.errors.DomainError;
 import com.example.demo.library.errors.DomainProblemException;
-import com.example.demo.library.errors.DomainProblemMessage;
-import com.example.demo.library.errors.DomainProblemMessageException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -39,16 +38,17 @@ public class ErrorhandlingController {
 	public ResponseData send(@RequestBody @Valid RequestData requestData, HttpServletRequest request) {
 		String value = requestData.getValue();
 		if (value.length() == 1) {
-			// 業務エラー
-			DomainProblem problem = new DomainProblem(new DefaultMessageSourceResolvable("E001"));
+			// 業務エラー（エラーメッセージなし）
+			DefaultDomainProblem problem = new DefaultDomainProblem();
 			DomainProblemException exception = new DomainProblemException(problem);
 			throw exception;
 		} else if (value.length() == 2) {
-			// 業務エラー（その２）
-			DomainProblemMessage problem = new DomainProblemMessage(new DefaultMessageSourceResolvable("E001"));
-			problem.addMessage(new DefaultMessageSourceResolvable("E002"));
-			problem.addMessage(new DefaultMessageSourceResolvable("E003"));
-			DomainProblemException exception = new DomainProblemMessageException(problem);
+			// 業務エラー（エラーメッセージあり）
+			DefaultDomainProblem problem = new DefaultDomainProblem();
+			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E001")));
+			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E002")));
+			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E003")));
+			DomainProblemException exception = new DomainProblemException(problem);
 			throw exception;
 		} else if (value.length() == 3) {
 			// INTERNAL SERVER ERROR
