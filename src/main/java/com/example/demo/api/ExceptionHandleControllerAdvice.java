@@ -2,8 +2,8 @@ package com.example.demo.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.demo.library.errors.DefaultDomainProblem;
@@ -29,15 +29,14 @@ public class ExceptionHandleControllerAdvice {
      * @param exception {@link DomainException}
      * @return {@link DomainProblem}
      */
-    @ExceptionHandler(exception = DomainException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
-    // returnするDomainProblemが複数種類ある場合は、すべてのクラスをoneOfに列挙する事
-    // @formatter:off
-    @ApiResponse(responseCode = "422", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, 
-        schema = @Schema(oneOf = DefaultDomainProblem.class)))
-    // @formatter:on
-    public DomainProblem<?> handleDomainProblem(DomainException exception) {
-        return exception.getProblem();
+    @ExceptionHandler(exception = DomainException.class)
+    // 複数のDomainProblemの派生型を使用する場合は@Schema(oneOf=..)を使用して列挙してください
+    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = DefaultDomainProblem.class)))
+    public ResponseEntity<DomainProblem<?>> handleDomainProblem(DomainException exception) {
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(exception.getProblem());
     }
 
 }

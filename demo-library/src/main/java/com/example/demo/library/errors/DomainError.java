@@ -2,26 +2,31 @@ package com.example.demo.library.errors;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
 public class DomainError implements Serializable {
 
-    protected final MessageSourceResolvable message;
+    @JsonIgnore
+    protected final DefaultMessageSourceResolvable resolvable;
 
-    public DomainError(String message) {
-        this(new DefaultMessageSourceResolvable(null, message));
+    public DomainError(DefaultMessageSourceResolvable resolvable) {
+        this.resolvable = resolvable;
     }
 
-    public DomainError(MessageSourceResolvable message) {
-        this.message = message;
+    public @Nullable String getCode() {
+        return resolvable.getCode();
     }
 
-    @Schema(type = "string")
+    @Schema(type = "string", requiredMode = RequiredMode.REQUIRED)
     public MessageSourceResolvable getMessage() {
-        return message;
+        return resolvable;
     }
 
 }
