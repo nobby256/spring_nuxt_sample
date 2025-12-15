@@ -22,3 +22,5 @@ spring:
   jackson:
     default-property-inclusion: non-absent
 
+springdoc:
+  writer-with-default-pretty-printer: true
