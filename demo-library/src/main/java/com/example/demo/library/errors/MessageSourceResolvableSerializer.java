@@ -11,11 +11,11 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
-public class DetailSerializer extends StdSerializer<MessageSourceResolvable> {
+public class MessageSourceResolvableSerializer extends StdSerializer<MessageSourceResolvable> {
 
     private final MessageSource messageSource;
 
-    public DetailSerializer(MessageSource messageSource) {
+    public MessageSourceResolvableSerializer(MessageSource messageSource) {
         super(MessageSourceResolvable.class);
         this.messageSource = messageSource;
     }

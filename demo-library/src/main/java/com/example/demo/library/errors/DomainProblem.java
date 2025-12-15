@@ -1,38 +1,56 @@
 package com.example.demo.library.errors;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+public abstract class DomainProblem<T> implements Serializable {
 
-import io.swagger.v3.oas.annotations.media.Schema;
+    public static final String TYPE = "/domain-problem";
+    protected static final String DETAIL = "domain problem";
 
-public class DomainProblem implements Serializable {
+    private final URI type;
+    private final @Nullable String detail;
+    private List<T> messages = new ArrayList<>();
 
-    @JsonIgnore
-    private final DefaultMessageSourceResolvable resolvable;
-
-    public DomainProblem(DefaultMessageSourceResolvable resolvable) {
-        this.resolvable = resolvable;
+    public DomainProblem() {
+        this(TYPE);
     }
 
-    public DomainProblem(String detail) {
-        this.resolvable = new DefaultMessageSourceResolvable(null, detail);
+    public DomainProblem(String type) {
+        this(TYPE, DETAIL);
     }
 
-    public @Nullable String getType() {
-        return resolvable.getCode();
+    public DomainProblem(String type, @Nullable String detail) {
+        Assert.notNull(type, "type must not be null");
+        try {
+            this.type = new URI(type);
+        } catch (Exception exception) {
+            throw new UncheckedException(exception);
+        }
+        this.detail = detail;
     }
 
-    @Schema(type = "string")
-    public DefaultMessageSourceResolvable getDetail() {
-        return resolvable;
+    public URI getType() {
+        return type;
     }
 
-    @Override
-    public String toString() {
-        return resolvable.toString();
+    public @Nullable String getDetail() {
+        return detail;
     }
+
+    public void addMessage(T message) {
+        messages.add(message);
+    }
+
+    public List<T> getMessages() {
+        return Collections.unmodifiableList(messages);
+    }
+
 }
