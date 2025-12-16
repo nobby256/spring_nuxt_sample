@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     'nuxt-open-fetch',
   ],
+
   ssr: false,
 
   compatibilityDate: '2025-07-15',
@@ -25,17 +26,8 @@ export default defineNuxtConfig({
     },
   },
 
-  foundation: {
-    fetch: {
-      baseURL: isDev ? 'http://localhost:8080' : '',
-    },
-  },
-
   // runtimeConfig: {
   //   public: {
-  //     fetch: {
-  //       baseURL: isDev ? 'http://localhost:8080' : '',
-  //     },
   //   },
   // },
 

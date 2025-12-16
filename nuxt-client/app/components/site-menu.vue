@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { profile } = useAppStore()
+const { user } = useAuthSessionStore()
 
 async function onLogout() {
   await navigateTo('/logout', { replace: true })
@@ -8,7 +8,7 @@ async function onLogout() {
 
 <template>
   <div>
-    ログインユーザー:{{ profile.username }}
+    ログインユーザー:{{ user }}
   </div>
   <div>
     <ul>
