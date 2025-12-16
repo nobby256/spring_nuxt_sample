@@ -13,7 +13,7 @@ export const useNotification = () => {
     if (isDomainError(error)) {
       messages = ['【業務エラー】']
       if (error.data.type === '/domain-problem/message') {
-        const errors = (error.data as DefaultDomainProblem).errors || []
+        const errors = (error.data as DefaultDomainProblem).errors ?? []
         for (const err of errors) {
           messages.push(err.message)
         }
