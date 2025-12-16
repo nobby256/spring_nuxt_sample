@@ -6,8 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.library.security.UnifiedWebSecurity;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * SpringSecurityのConfigurationクラス。
@@ -32,7 +36,7 @@ public class SecurityConfiguration {
 
 		http.authorizeHttpRequests(customizer -> {
 			customizer.requestMatchers(unified.publicEndpoints()).permitAll();
-			//customizer.anyRequest().authenticated();
+			// customizer.anyRequest().authenticated();
 			customizer.anyRequest().permitAll();
 		});
 		http.logout(customizer -> {
@@ -41,6 +45,14 @@ public class SecurityConfiguration {
 		});
 
 		return http.build();
+	}
+
+	@RestController
+	static class SecurityController {
+		@PostMapping("/api/logout")
+		@ApiResponse(responseCode = "204")
+		void logout() {
+		}
 	}
 
 }

@@ -24,7 +24,7 @@ import jakarta.validation.constraints.NotBlank;
  */
 // CHECKSTYLE.OFF: MagicNumber
 @RestController
-@RequestMapping(path = "/api/errorhandling", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/errorhandling")
 public class ErrorhandlingController {
 
 	/**

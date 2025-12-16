@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,7 +20,9 @@ import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.RouterFunctions;
+import org.springframework.web.servlet.function.ServerResponse;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
 import com.example.demo.library.spa.AuthSessionRouterFunction;
@@ -35,12 +38,22 @@ public class SpaAutoConfiguration {
     @Autowired
     private SpaConfigurationProperties spaProperties;
 
+    //@Bean
+    RouterFunction<ServerResponse> authSessionRouterFunction() {
+        return AuthSessionRouterFunction.create(spaProperties);
+    }
+
+    //@Bean
+    OpenApiCustomizer authSessionOpenApiCustomizer() {
+        return AuthSessionRouterFunction.openApiCustomizer(spaProperties);
+    }
+
     @Bean
     RouterFunctionMapping spaHistoryModeRouterFunctionMapping(IndexHtmlResourceFinder indexHtmlResourceFinder) {
         RouterFunctions.Builder builder = RouterFunctions.route();
 
         // AuthSessionRouterFunction
-        builder.add(AuthSessionRouterFunction.create(spaProperties));
+        // builder.add(AuthSessionRouterFunction.create(spaProperties));
 
         // HistoryModeRouterFunction
         String serverOrigin = spaProperties.getDevClient().getOrigin();

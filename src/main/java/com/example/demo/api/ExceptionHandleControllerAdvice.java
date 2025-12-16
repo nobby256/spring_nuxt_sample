@@ -30,9 +30,11 @@ public class ExceptionHandleControllerAdvice {
      * @return {@link DomainProblem}
      */
     @ExceptionHandler(exception = DomainException.class)
-    // 複数のDomainProblemの派生型を使用する場合は@Schema(oneOf=..)を使用して列挙してください
-    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = DefaultDomainProblem.class)))
-    public ResponseEntity<DomainProblem<?>> handleDomainProblem(DomainException exception) {
+    // @formatter:off
+    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", 
+        schema = @Schema(oneOf = {DefaultDomainProblem.class, DomainProblem.class})))
+    // @formatter:on
+    public ResponseEntity<DomainProblem> handleDomainProblem(DomainException exception) {
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)
