@@ -23,8 +23,7 @@ export const useDataStore = defineStore('$/crud/dataStore', {
   actions: {
     // アイテム検索
     async search(searchCriteria: SearchCriteria): Promise<void> {
-      this.items = await apiFetch<Item[]>('/api/crud', {
-        method: 'GET',
+      this.items = await useNuxtApp().$backend('/api/crud', {
         query: {
           name: searchCriteria.name,
         },
@@ -33,14 +32,15 @@ export const useDataStore = defineStore('$/crud/dataStore', {
     },
     // アイテム取得
     async get(id: string): Promise<Item> {
-      return await apiFetch(`/api/crud/${id}`, {
-        method: 'GET',
+      return await useNuxtApp().$backend('/api/crud/{id}', {
+        path: { id },
       })
     },
     // アイテム更新
     async update(item: Item): Promise<void> {
-      await apiFetch(`/api/crud/${item.id}`, {
+      await useNuxtApp().$backend('/api/crud/{id}', {
         method: 'PUT',
+        path: { id: item.id },
         body: item,
       })
       // 再検索

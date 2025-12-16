@@ -8,7 +8,7 @@ export const useDataStore = defineStore('$/errorhandling/dataStore', {
       this.initialized = true
     },
     async send(value: string): Promise<void> {
-      const data = await apiFetch<{ message: string }>('/api/errorhandling', { method: 'POST', body: { value } })
+      const data = await useNuxtApp().$backend('/api/errorhandling', { method: 'POST', body: { value } })
       this.value = JSON.stringify(data)
     },
   },

@@ -9,16 +9,9 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     '@pinia/nuxt',
     '@nuxt/eslint',
+    'nuxt-open-fetch',
   ],
   ssr: false,
-
-  // runtimeConfig: {
-  //   public: {
-  //     fetch: {
-  //       baseURL: isDev ? 'http://localhost:8080' : '',
-  //     },
-  //   },
-  // },
 
   compatibilityDate: '2025-07-15',
 
@@ -35,6 +28,23 @@ export default defineNuxtConfig({
   foundation: {
     fetch: {
       baseURL: isDev ? 'http://localhost:8080' : '',
+    },
+  },
+
+  // runtimeConfig: {
+  //   public: {
+  //     fetch: {
+  //       baseURL: isDev ? 'http://localhost:8080' : '',
+  //     },
+  //   },
+  // },
+
+  openFetch: {
+    clients: {
+      backend: {
+        baseURL: isDev ? 'http://localhost:8080' : '',
+        schema: 'http://localhost:8080/v3/api-docs',
+      },
     },
   },
 })

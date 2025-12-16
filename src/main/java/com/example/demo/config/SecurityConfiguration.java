@@ -32,17 +32,19 @@ public class SecurityConfiguration {
 		unified.login(http, customizer -> {
 			customizer.defaultSuccessUrl("/");
 		});
-		unified.applyDefaults(http);
-
 		http.authorizeHttpRequests(customizer -> {
 			customizer.requestMatchers(unified.publicEndpoints()).permitAll();
 			// customizer.anyRequest().authenticated();
 			customizer.anyRequest().permitAll();
 		});
+		http.csrf(customizer -> {
+			customizer.ignoringRequestMatchers(unified.publicEndpoints());
+		});
 		http.logout(customizer -> {
 			customizer.logoutUrl("/api/logout").permitAll();
 			customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
 		});
+		unified.applyDefaults(http);
 
 		return http.build();
 	}

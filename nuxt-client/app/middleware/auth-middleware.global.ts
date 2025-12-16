@@ -7,12 +7,16 @@
  * しかしブラウザのアドレスバーに遷移先画面のURLを手入力すれば直接移動できてしまいます。
  * そのような行為をガードする為にここでチェックする必要があります。
  */
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
+  const store = useAuthSessionStore()
+  if (!store.user) {
+    await store.fetch()
+  }
+
   if (!to.meta.authority) {
     return
   }
-  const { hasAuthority } = useAuthSessionStore()
-  if (!hasAuthority(to.meta.authority)) {
+  if (!store.hasAuthority(to.meta.authority)) {
     throw createError({ statusCode: 403, statusMessage: 'UNAUTHORIZED' })
   }
 })

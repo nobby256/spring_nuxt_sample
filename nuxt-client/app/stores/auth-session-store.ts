@@ -4,22 +4,22 @@ export const useAuthSessionStore = defineStore('$/global/AuthSession', {
   state: () => ({
     user: '',
     authorities: [] as string[],
-    isAuthenticated: false,
+    authenticated: false,
   }),
   actions: {
     async fetch(): Promise<void> {
-      const response = await $apifetch<{
-        user: string
-        authorities: string[]
-        isAuthenticated: boolean
-        csrfParameterToken: string
-        csrfParameterName: string
-      }
-      >('/api/auth-session')
+      try {
+        const response = await useNuxtApp().$backend('/api/auth-session')
 
-      this.user = response.user
-      this.authorities = response.authorities
-      this.isAuthenticated = response.isAuthenticated
+        this.user = response.user!
+        this.authorities = response.authorities!
+        this.authenticated = response.authenticated!
+      }
+      catch (error) {
+        const nuxtError = normalizeError(error)
+        nuxtError.fatal = true // ユーザー情報取得でのエラーは継続不能エラーとする
+        throw nuxtError
+      }
     },
     hasAuthority(authority?: string): boolean {
       if (!authority) {
@@ -29,7 +29,7 @@ export const useAuthSessionStore = defineStore('$/global/AuthSession', {
     },
     async logout(): Promise<void> {
       try {
-        await $apifetch('/api/logout', { method: 'POST' })
+        await useNuxtApp().$backend('/api/logout')
       }
       catch (error) {
       // ログアウトでのエラーは無視する

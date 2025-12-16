@@ -1,4 +1,5 @@
 import type { NuxtError } from '#app'
+import type { DefaultDomainProblem } from '~/utils/domain-error'
 
 /**
  * アプリケーション全体で使用する共通データストア。
@@ -21,8 +22,8 @@ export const useAppStore = defineStore('$/global/application', {
     // アプリケーションの初期情報を取得する
     async load(): Promise<void> {
       try {
-        const data = await apiFetch<InitialData>('/api/initial-data', { method: 'GET' })
-        this.profile.user = data.usr
+        const data = await useNuxtApp().$backend('/api/initial-data')
+        this.profile.user = data.user
         this.profile.username = data.username
         // ロード完了
         this.loaded = true
@@ -41,9 +42,17 @@ export const useAppStore = defineStore('$/global/application', {
     },
     notifyError(error: NuxtError) {
       let messages = [] as string[]
-      if (isBusinessError(error)) {
+      if (isDomainError(error)) {
         messages = ['【業務エラー】']
-        messages.push(JSON.stringify(error.data))
+        if (error.data.type === '/domain-problem/message') {
+          const errors = (error.data as DefaultDomainProblem).errors || []
+          for (const err of errors) {
+            messages.push(err.message)
+          }
+        }
+        else {
+          messages.push('えらいことが起きました')
+        }
       }
       else {
         messages = ['【その他のエラー】']

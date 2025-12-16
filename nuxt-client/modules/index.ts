@@ -1,4 +1,4 @@
-import { addImportsDir, addImportsSources, addPlugin, addRouteMiddleware, createResolver, defineNuxtModule, type Resolver } from '@nuxt/kit'
+import { addImportsDir, addPlugin, addRouteMiddleware, createResolver, defineNuxtModule, type Resolver } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import { glob } from 'tinyglobby'
@@ -26,6 +26,8 @@ export default defineNuxtModule<ModuleOptions>
   moduleDependencies: {
     '@pinia/nuxt': {
     },
+    'nuxt-open-fetch': {
+    },
   },
   async setup(moduleOptions, nuxt) {
     nuxt.options.runtimeConfig.public.foundation = defu(
@@ -36,34 +38,14 @@ export default defineNuxtModule<ModuleOptions>
     )
 
     const resolver = createResolver(import.meta.url)
-    addPlugins(resolver)
-    addUtils(resolver)
-    addStores(resolver)
+
+    addPlugin(resolver.resolve('./runtime/plugins/10-error-handling-plugin'))
+    addPlugin(resolver.resolve('./runtime/plugins/20-openapi-plugin'))
+    addImportsDir(resolver.resolve('./runtime/utils'))
+    addImportsDir(resolver.resolve('./runtime/stores'))
     await addPagesMiddleware(nuxt, resolver)
   },
 })
-
-function addPlugins(resolver: Resolver) {
-  addPlugin(resolver.resolve('./runtime/plugins/auth-session-plugin'))
-  addPlugin(resolver.resolve('./runtime/plugins/error-handling-plugin'))
-
-  addPlugin(resolver.resolve('./runtime/plugins/10-apifetch-plugin'))
-  addImportsSources({
-    from: resolver.resolve('./runtime/plugins/10-apifetch-plugin'),
-    imports: [
-      { name: '$apifetch' },
-      { name: 'ApiFetch', type: true },
-    ],
-  })
-}
-
-function addUtils(resolver: Resolver) {
-  addImportsDir(resolver.resolve('./runtime/utils'))
-}
-
-function addStores(resolver: Resolver) {
-  addImportsDir(resolver.resolve('./runtime/stores'))
-}
 
 async function addPagesMiddleware(nuxt: Nuxt, resolver: Resolver) {
   // カレントディレクトリの絶対パス

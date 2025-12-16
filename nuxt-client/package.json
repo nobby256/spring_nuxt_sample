@@ -23,6 +23,7 @@
     "@nuxt/eslint": "1.10.0",
     "@types/node": "22.19.0",
     "@types/nprogress": "0.2.3",
+    "nuxt-open-fetch": "^0.13.7",
     "vue-tsc": "3.1.3"
   }
 }
