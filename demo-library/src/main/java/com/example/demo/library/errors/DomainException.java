@@ -6,19 +6,19 @@ import org.springframework.util.Assert;
 
 public class DomainException extends ContextedRuntimeException {
 
-    private final DomainProblem<?> problem;
+    private final DomainProblem problem;
 
-    public DomainException(DomainProblem<?> problem) {
+    public DomainException(DomainProblem problem) {
         this(null, problem);
     }
 
-    public DomainException(Throwable cause, DomainProblem<?> problem) {
+    public DomainException(Throwable cause, DomainProblem problem) {
         super(cause);
         Assert.notNull(problem, "problem must not be null.");
         this.problem = problem;
     }
 
-    public DomainProblem<?> getProblem() {
+    public DomainProblem getProblem() {
         return problem;
     }
 
