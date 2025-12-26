@@ -2,7 +2,6 @@ import type { NuxtError } from '#app'
 import type { components } from '#open-fetch-schemas/backend'
 
 export type DomainProblem = components['schemas']['DomainProblem']
-export type DefaultDomainProblem = components['schemas']['DefaultDomainProblem']
 
 /**
  * 業務エラー。

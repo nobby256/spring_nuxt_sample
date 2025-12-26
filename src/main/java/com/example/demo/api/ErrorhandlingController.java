@@ -4,16 +4,15 @@ import java.io.Serializable;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.library.errors.DefaultDomainProblem;
-import com.example.demo.library.errors.DomainError;
-import com.example.demo.library.errors.DomainException;
+import com.example.demo.exception.ProblemMessage;
+import com.example.demo.exception.DomainException;
+import com.example.demo.exception.DomainProblem;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -38,33 +37,27 @@ public class ErrorhandlingController {
 	public ResponseData send(@RequestBody @Valid RequestData requestData, HttpServletRequest request) {
 		String value = requestData.getValue();
 		if (value.length() == 1) {
-			// 業務エラー（エラーメッセージなし）
-			DefaultDomainProblem problem = new DefaultDomainProblem();
+			// 業務エラー
+			DomainProblem problem = new DomainProblem(new ProblemMessage(new DefaultMessageSourceResolvable("E001")));
+			problem.addMessage(new ProblemMessage(new DefaultMessageSourceResolvable("E002")));
+			problem.addMessage(new ProblemMessage(new DefaultMessageSourceResolvable("E003")));
 			DomainException exception = new DomainException(problem);
 			throw exception;
 		} else if (value.length() == 2) {
-			// 業務エラー（エラーメッセージあり）
-			DefaultDomainProblem problem = new DefaultDomainProblem();
-			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E001")));
-			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E002")));
-			problem.addError(new DomainError(new DefaultMessageSourceResolvable("E003")));
-			DomainException exception = new DomainException(problem);
-			throw exception;
-		} else if (value.length() == 3) {
 			// INTERNAL SERVER ERROR
 			RuntimeException exception = new RuntimeException("システムエラーが発生しました");
 			throw exception;
-		} else if (value.length() == 4) {
+		} else if (value.length() == 3) {
 			// UNAUTHORIZED
 			// セッションタイムアウトを仮想で実現する為にセッションを意図的に破棄する
 			request.getSession().invalidate();
 			ResponseStatusException exception = new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 			throw exception;
-		} else if (value.length() == 5) {
+		} else if (value.length() == 4) {
 			// FORBIDDEN
 			ResponseStatusException exception = new ResponseStatusException(HttpStatus.FORBIDDEN);
 			throw exception;
-		} else if (value.length() == 6) {
+		} else if (value.length() == 5) {
 			// NOT FOUND
 			ResponseStatusException exception = new ResponseStatusException(HttpStatus.NOT_FOUND);
 			throw exception;

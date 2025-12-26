@@ -24,6 +24,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.apache.commons:commons-lang3'
 
 	// https://springdoc.org/
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'

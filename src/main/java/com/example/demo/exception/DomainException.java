@@ -1,4 +1,4 @@
-package com.example.demo.library.errors;
+package com.example.demo.exception;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.exception.ContextedRuntimeException;

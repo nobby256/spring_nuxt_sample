@@ -6,9 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.example.demo.library.errors.DefaultDomainProblem;
-import com.example.demo.library.errors.DomainException;
-import com.example.demo.library.errors.DomainProblem;
+import com.example.demo.exception.DomainException;
+import com.example.demo.exception.DomainProblem;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,10 +29,7 @@ public class ExceptionHandleControllerAdvice {
      * @return {@link DomainProblem}
      */
     @ExceptionHandler(exception = DomainException.class)
-    // @formatter:off
-    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", 
-        schema = @Schema(oneOf = {DefaultDomainProblem.class, DomainProblem.class})))
-    // @formatter:on
+    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = DomainProblem.class)))
     public ResponseEntity<DomainProblem> handleDomainProblem(DomainException exception) {
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_CONTENT)

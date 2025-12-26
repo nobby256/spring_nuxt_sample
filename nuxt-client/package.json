@@ -17,7 +17,8 @@
     "@vee-validate/nuxt": "4.15.1",
     "@vee-validate/yup": "4.15.1",
     "nprogress": "0.2.0",
-    "nuxt": "4.2.1"
+    "nuxt": "4.2.1",
+    "nuxt-toast": "1.4.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "1.10.0",

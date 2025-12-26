@@ -6,7 +6,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api'
-	implementation 'org.apache.commons:commons-lang3'
 	
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 

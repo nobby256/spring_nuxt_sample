@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/eslint',
     'nuxt-open-fetch',
+    'nuxt-toast',
   ],
 
   ssr: false,

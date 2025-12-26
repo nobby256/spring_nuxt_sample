@@ -17,7 +17,7 @@ const inputValue = ref('')
 async function onClick() {
   await dataStore.send(inputValue.value)
   // 呼び出し成功のケース
-  alert(dataStore.value)
+  useNotification().notifyMessage(dataStore.value)
 }
 </script>
 

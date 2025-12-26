@@ -1,33 +1,31 @@
 import type { NuxtError } from '#app'
 
 export const useNotification = () => {
+  const toast = useToast()
   const notifyMessage = (message: string) => {
-    let messages = [] as string[]
-    messages = ['【メッセージ】']
-    messages.push(message)
-    // サンプルなのでシンプルにalertで表示
-    alert(messages.join('\n'))
+    toast.info({
+      title: 'Info',
+      message: message,
+      timeout: 30000,
+    })
   }
   const notifyError = (error: NuxtError) => {
-    let messages = [] as string[]
     if (isDomainError(error)) {
-      messages = ['【業務エラー】']
-      if (error.data.type === '/domain-problem/message') {
-        const errors = (error.data as DefaultDomainProblem).errors ?? []
-        for (const err of errors) {
-          messages.push(err.message)
-        }
-      }
-      else {
-        messages.push('えらいことが起きました')
+      for (const message of error.data.messages ?? []) {
+        toast.error({
+          title: 'Error!',
+          message: message.text,
+          timeout: 30000,
+        })
       }
     }
     else {
-      messages = ['【その他のエラー】']
-      messages.push(`status: ${error.statusCode}`)
+      toast.error({
+        title: 'Error!',
+        message: `status: ${error.statusCode}`,
+        timeout: 30000,
+      })
     }
-    // サンプルなのでシンプルにalertで表示
-    alert(messages.join('\n'))
   }
 
   return {

@@ -1,4 +1,4 @@
-package com.example.demo.library.errors;
+package com.example.demo.exception;
 
 import java.io.Serializable;
 
@@ -11,12 +11,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 
-public class DomainError implements Serializable {
+public class ProblemMessage implements Serializable {
 
     @JsonIgnore
     protected final DefaultMessageSourceResolvable resolvable;
 
-    public DomainError(DefaultMessageSourceResolvable resolvable) {
+    public ProblemMessage(DefaultMessageSourceResolvable resolvable) {
         this.resolvable = resolvable;
     }
 
@@ -25,7 +25,7 @@ public class DomainError implements Serializable {
     }
 
     @Schema(type = "string", requiredMode = RequiredMode.REQUIRED)
-    public MessageSourceResolvable getMessage() {
+    public MessageSourceResolvable getText() {
         return resolvable;
     }
 
