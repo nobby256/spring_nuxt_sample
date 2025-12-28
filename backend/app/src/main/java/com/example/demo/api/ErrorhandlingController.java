@@ -1,7 +1,9 @@
 package com.example.demo.api;
 
 import java.io.Serializable;
+import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.exception.ProblemMessage;
 import com.example.demo.exception.DomainException;
 import com.example.demo.exception.DomainProblem;
+import com.example.demo.exception.ProblemMessage;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -36,6 +38,7 @@ public class ErrorhandlingController {
 	@PostMapping
 	public ResponseData send(@RequestBody @Valid RequestData requestData, HttpServletRequest request) {
 		String value = requestData.getValue();
+		Objects.requireNonNull(value);
 		if (value.length() == 1) {
 			// 業務エラー
 			DomainProblem problem = new DomainProblem(new ProblemMessage(new DefaultMessageSourceResolvable("E001")));
@@ -71,6 +74,7 @@ public class ErrorhandlingController {
 	public static class RequestData implements Serializable {
 		/** リクエストの値。 */
 		@NotBlank
+		@Nullable
 		private String value;
 
 		/**
@@ -78,7 +82,7 @@ public class ErrorhandlingController {
 		 *
 		 * @return リクエストの値
 		 */
-		public String getValue() {
+		public @Nullable String getValue() {
 			return value;
 		}
 

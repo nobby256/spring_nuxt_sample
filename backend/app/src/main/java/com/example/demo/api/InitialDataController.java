@@ -1,5 +1,7 @@
 package com.example.demo.api;
 
+import java.lang.reflect.UndeclaredThrowableException;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +29,8 @@ public class InitialDataController {
         // サンプルなのでわざと重いデータを読み込んでいることを演出します
         try {
             Thread.sleep(WAIT_MS);
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            // 発生しません
         }
         return new InitialData("user", "山田 太郎");
     }
