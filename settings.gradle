@@ -8,8 +8,10 @@ pluginManagement {
 	plugins {
 		id 'org.springframework.boot' version springBootVersion
 		id 'io.spring.dependency-management' version '1.1.7'
-		id 'com.github.spotbugs' version '6.1.13'
+		id 'com.github.spotbugs' version '6.4.8'
 		id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+		id 'net.ltgt.errorprone' version '4.3.0'
+		id 'net.ltgt.nullaway' version '2.3.0'
 		id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 	}
 }
@@ -17,9 +19,6 @@ pluginManagement {
 // Gradleプラグインをロードします。
 // =====================================================
 plugins {
-	id 'org.springframework.boot' apply false
-	id 'io.spring.dependency-management' apply false
-	id 'com.github.spotbugs' apply false
 	id 'org.gradle.toolchains.foojay-resolver-convention'
 }
 
@@ -40,4 +39,7 @@ rootProject.name = 'demo'
 // =====================================================
 // サブプロジェクトを指定します
 // =====================================================
-include 'demo-library'
+include 'backend:app'
+project(':backend:app').name = 'demo-app'
+include 'backend:lib'
+project(':backend:lib').name = 'demo-lib'

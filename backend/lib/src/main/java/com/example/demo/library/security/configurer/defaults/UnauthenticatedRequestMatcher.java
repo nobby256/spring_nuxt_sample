@@ -1,6 +1,7 @@
 package com.example.demo.library.security.configurer.defaults;
 
 import java.util.Collections;
+import java.util.Locale;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.MediaType;
@@ -53,7 +54,7 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
                 return false; // セッションタイムアウトではない
             } else if (!request.isRequestedSessionIdValid()) { // セッションIDを受信、かつ、IDが無効？
                 // 利用中のタイムアウト、もしくは、タブ閉じ → （タイムアウト） → 再アクセス
-                if (request.getMethod().toUpperCase().equals("GET")) {
+                if (request.getMethod().toUpperCase(Locale.ROOT).equals("GET")) {
                     if (forceRedirectMatcher.matches(request)) { // ブックマーク想定URLか？
                         return false; // セッションタイムアウトではない
                     }

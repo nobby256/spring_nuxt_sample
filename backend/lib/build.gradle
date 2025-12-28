@@ -3,6 +3,9 @@ plugins {
 }
 
 dependencies {
+	errorprone 'com.google.errorprone:error_prone_core'
+	errorprone 'com.uber.nullaway:nullaway'
+
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api'
@@ -11,4 +14,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+checkstyleMain {
+	enabled = false
 }

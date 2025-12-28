@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.servlet.function.RequestPredicate;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.RouterFunctions;
-import org.springframework.web.servlet.function.RouterFunctions.Builder;
 import org.springframework.web.servlet.function.ServerResponse;
 
 public class HistoryModeRouterFunction {
@@ -24,7 +23,7 @@ public class HistoryModeRouterFunction {
         RequestPredicate predicate = GET("/**")
                 .and(accept(MediaType.TEXT_HTML).and(request -> match().test(request)));
 
-        Builder builder = RouterFunctions.route();
+        RouterFunctions.Builder builder = RouterFunctions.route();
         if (serverOrign == null) {
             builder.add(RouterFunctions.resource(predicate, resource));
         } else {

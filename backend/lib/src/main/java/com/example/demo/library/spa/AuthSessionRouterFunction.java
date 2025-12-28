@@ -52,7 +52,7 @@ public class AuthSessionRouterFunction {
             }
 
             CsrfToken csrfToken = (CsrfToken) request.attribute(CsrfToken.class.getName()).orElseThrow();
-            String token = csrfToken != null ? csrfToken.getToken() : null;
+            String token = csrfToken.getToken();
 
             AuthSessionResponse body = new AuthSessionResponse(
                     name,

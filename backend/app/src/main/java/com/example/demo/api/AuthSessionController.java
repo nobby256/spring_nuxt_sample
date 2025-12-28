@@ -36,7 +36,7 @@ public class AuthSessionController {
 
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         Objects.requireNonNull(csrfToken);
-        String token = csrfToken != null ? csrfToken.getToken() : null;
+        String token = csrfToken.getToken();
 
         return AuthSession.builder()
                 .user(name)

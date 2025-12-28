@@ -1,5 +1,6 @@
 package com.example.demo.library.spa;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "spa")
@@ -12,7 +13,7 @@ public class SpaConfigurationProperties {
         return endpoints;
     }
 
-    public class Endpoints {
+    public static class Endpoints {
         private String authSessionPath = "/api/auth-session";
 
         public String getAuthSessionPath() {
@@ -28,13 +29,13 @@ public class SpaConfigurationProperties {
         return devClient;
     }
 
-    public class DevClient {
-        private String origin;
+    public static class DevClient {
+        private @Nullable String origin;
 
         DevClient() {
         }
 
-        public String getOrigin() {
+        public @Nullable String getOrigin() {
             return origin;
         }
 
