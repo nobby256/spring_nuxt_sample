@@ -12,7 +12,7 @@ error-prone = "4.3.0"
 nullaway = "2.3.0"
 
 # --------------------------------------------------
-# 品質チェックツール（Convention Plugin で toolVersion として使用）
+# 特定のプラグインのプロパティに与えるバージョン（toolVersion として使用）
 # --------------------------------------------------
 jacoco = "0.8.13"
 checkstyle = "10.26.1"
@@ -31,7 +31,7 @@ error-prone-plugin = { module = "net.ltgt.gradle:gradle-errorprone-plugin", vers
 nullaway-plugin = { module = "net.ltgt.gradle:gradle-nullaway-plugin", version.ref = "nullaway" }
 
 # --------------------------------------------------
-# 依存関係として追加するライブラリ（非プラグイン）
+# Convention Plugin が依存関係として追加するライブラリ（非プラグイン）
 # --------------------------------------------------
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version = "6.0.1" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version = "6.0.1" }
