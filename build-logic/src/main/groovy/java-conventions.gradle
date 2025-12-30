@@ -1,0 +1,152 @@
+// =====================================================
+// Java プロジェクトの基本設定
+// =====================================================
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'com.github.spotbugs'
+}
+
+// =====================================================
+// 共通設定から取得
+// =====================================================
+def continueOnError = ConventionDefaults.getContinueOnError(project)
+
+// =====================================================
+// Java ツールチェーン設定
+// =====================================================
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// =====================================================
+// テスト設定
+// =====================================================
+test {
+    useJUnitPlatform()
+
+    // テストエラーをビルドエラーとしない
+    ignoreFailures = continueOnError
+    finalizedBy 'jacocoTestReport'
+
+    reports {
+        // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+        html.required = true
+        junitXml {
+            outputPerTestCase = true
+            //mergeReruns = true
+        }
+    }
+}
+
+// =====================================================
+// ソースセット設定
+// =====================================================
+sourceSets {
+    main {
+        java {
+            exclude '**/.gitkeep'
+        }
+        resources {
+            exclude '**/.gitkeep'
+        }
+    }
+    test {
+        java {
+            exclude '**/.gitkeep'
+        }
+        resources {
+            exclude '**/.gitkeep'
+        }
+    }
+}
+
+// =====================================================
+// コンパイル設定
+// =====================================================
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:deprecation,unchecked']
+}
+
+// =====================================================
+// Javadoc 設定
+// =====================================================
+tasks.withType(Javadoc) {
+    failOnError = !continueOnError
+    options.locale = 'ja_JP'
+    options.encoding = 'UTF-8'
+
+    // javadoc側ではコメントの存在チェックを行わないようにする。
+    // （存在した場合の表記チェックはそのまま残す）
+    // 切っ掛けはJDK21のjavadocでデフォルトコンストラクタの存在が強要されるようになった事。
+    // このチェックはデフォルトコンストラクタが定義されているがコメントは無いという状態を警告するのではなく、
+    // デフォルトコンストラクタの定義が無くても警告が発せられる。
+    // つまり、この警告を抑えるにはデフォルトコンストラクタを作成し、コメントも記述しなければならない。
+    // しかしそれではlombokを積極的に使っているアプリ側は非常に困る。
+    // そこで、javadocではコメントの存在チェックを行わず、checkstyle側でコメントの存在チェックを行うことにした。
+    // checkstyleはソースコードとして定義されているものにしかチェックを行わない為、lombokが生成するコードはチェック対象外となる。
+    options.addBooleanOption('Xdoclint:all,-missing', true)
+}
+
+// =====================================================
+// Jacoco 設定
+// =====================================================
+jacoco {
+    toolVersion = '0.8.13'
+}
+jacocoTestReport {
+    dependsOn 'test'
+    reports {
+        // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+        html.required = true
+        xml.required = true
+    }
+}
+
+// =====================================================
+// Checkstyle 設定
+// =====================================================
+checkstyle {
+    toolVersion = '10.26.1'
+    ignoreFailures = continueOnError
+    configFile = ConventionDefaults.getCheckstyleConfigFile(project)
+}
+// テストに対しては実行しない
+checkstyleTest.enabled = false
+
+// =====================================================
+// SpotBugs 設定
+// =====================================================
+spotbugs {
+    ignoreFailures = continueOnError
+    excludeFilter = ConventionDefaults.getSpotBugsExclusion(project)
+    showProgress = false
+}
+// テストに対しては実行しない
+spotbugsTest.enabled = false
+spotbugsMain {
+    // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+    reports {
+        xml {
+            required = true
+        }
+        html {
+            required = true
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+// =====================================================
+// 依存関係
+// =====================================================
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.1' // ← org.springframework.boot:spring-boot-starter-testでも追加してくれる
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.1'
+}

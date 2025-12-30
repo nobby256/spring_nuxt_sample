@@ -8,7 +8,4 @@ version = '0.0.1-SNAPSHOT'
 ext {
 	// 各種ディレクトリ
 	confDir = "${projectDir}/config"
-
-	//品質チェックエラー発生時はビルドを停止する
-	ignoreCheckFailures = Boolean.valueOf(ignoreCheckError)
 }

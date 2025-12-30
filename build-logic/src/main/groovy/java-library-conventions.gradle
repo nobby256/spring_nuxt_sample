@@ -1,0 +1,19 @@
+// =====================================================
+// Java ライブラリプロジェクトの設定
+// =====================================================
+plugins {
+    id 'java-conventions'
+    id 'java-library'
+    id 'publish-conventions'
+}
+
+// =====================================================
+// Maven 公開設定
+// =====================================================
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

@@ -1,0 +1,18 @@
+// =====================================================
+// BOM（Bill of Materials）プロジェクトの設定
+// =====================================================
+plugins {
+    id 'java-platform'
+    id 'publish-conventions'
+}
+
+// =====================================================
+// Maven 公開設定
+// =====================================================
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
