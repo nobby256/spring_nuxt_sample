@@ -25,17 +25,14 @@ dependencies {
 // コンパイル設定
 // =====================================================
 tasks.withType(JavaCompile).configureEach {
-    options.errorprone.nullaway {
-        warn()
-        jspecifyMode = true
+    if (name == 'compileTestJava') {
+    	options.errorprone.enabled = false
+    } else {
+        options.errorprone.nullaway {
+            warn()
+            jspecifyMode = true
+        }
     }
-}
-
-// =====================================================
-// テストコードでは NullAway を無効化
-// =====================================================
-tasks.named('compileTestJava').configure {
-    options.errorprone.enabled = false
 }
 
 // =====================================================

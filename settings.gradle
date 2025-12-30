@@ -1,5 +1,5 @@
 // =====================================================
-// Gradleプラグインのバージョンを一元管理します。
+// プラグインの共通設定を行います。
 // =====================================================
 pluginManagement {
 	repositories {
@@ -9,17 +9,19 @@ pluginManagement {
 		id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 		id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 	}
+	// 規約プラグインを登録します
 	includeBuild("gradle/plugins/build-logic")
 }
+
 // =====================================================
-// Gradleプラグインをロードします。
+// プラグインをロードします。
 // =====================================================
 plugins {
 	id 'org.gradle.toolchains.foojay-resolver-convention'
 }
 
 // =====================================================
-// プロジェクト全体の共通設定を行います。
+// プロジェクトの共通設定を行います。
 // =====================================================
 dependencyResolutionManagement {
 	repositories {

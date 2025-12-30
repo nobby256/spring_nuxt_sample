@@ -1,6 +1,7 @@
 plugins {
 	alias(libs.plugins.spring.boot) apply false
 	alias(libs.plugins.spring.dependency.management) apply false
+	id 'nullaway-conventions' apply false
 }
 
 subprojects {
@@ -15,4 +16,12 @@ subprojects {
 			dependency 'org.apache.commons:commons-lang3:3.20.0'
 		}
 	}
+
+	apply plugin: 'checkstyle'
+	tasks.withType(Checkstyle) {
+		enabled = false
+	}
+
+	apply plugin: 'nullaway-conventions'
+
 }
