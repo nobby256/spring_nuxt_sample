@@ -9,7 +9,7 @@ pluginManagement {
 		id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 		id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
 	}
-	includeBuild("build-logic")
+	includeBuild("gradle/plugins/build-logic")
 }
 // =====================================================
 // Gradleプラグインをロードします。
