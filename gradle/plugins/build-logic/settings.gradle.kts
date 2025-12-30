@@ -5,19 +5,22 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
     }
+    plugins {
+        id("org.jetbrains.kotlin.jvm") version "2.3.0"
+    }
 }
 
 // =====================================================
 // プロジェクト全体で共通する設定を行います。
 // =====================================================
 dependencyResolutionManagement {
- 	repositories {
-		mavenCentral()
+    repositories {
+        mavenCentral()
         gradlePluginPortal()
-	}
+    }
     versionCatalogs {
-        libs {
-            from(files('../../libs.versions.toml'))
+        create("libs") {
+            from(files("../../libs.versions.toml"))
         }
     }
 }
@@ -25,4 +28,4 @@ dependencyResolutionManagement {
 // =====================================================
 // プロジェクトの名前を指定します
 // =====================================================
-rootProject.name = 'buildSrc'
+rootProject.name = "buildSrc"
