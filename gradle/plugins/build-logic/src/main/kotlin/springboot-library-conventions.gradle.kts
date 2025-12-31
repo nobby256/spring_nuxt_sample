@@ -2,7 +2,7 @@
 // Spring Boot ライブラリプロジェクトの設定
 // =====================================================
 plugins {
-    java-library
+    `java-library`
     id("publish-conventions")
     id("springboot-conventions")
     id("io.spring.dependency-management")

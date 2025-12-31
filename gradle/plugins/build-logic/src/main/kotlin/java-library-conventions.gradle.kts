@@ -3,7 +3,7 @@
 // =====================================================
 plugins {
     id("java-conventions")
-    java-library
+    `java-library`
     id("publish-conventions")
 }
 

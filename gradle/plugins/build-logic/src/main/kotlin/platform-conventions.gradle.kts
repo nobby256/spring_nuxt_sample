@@ -2,7 +2,7 @@
 // BOM（Bill of Materials）プロジェクトの設定
 // =====================================================
 plugins {
-    java-platform
+    `java-platform`
     id("publish-conventions")
 }
 

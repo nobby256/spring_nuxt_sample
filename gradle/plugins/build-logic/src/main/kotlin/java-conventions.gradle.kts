@@ -32,15 +32,14 @@ tasks.test {
 
     // テストエラーをビルドエラーとしない
     ignoreFailures = continueOnError
-    finalizedBy(tasks.jacocoTestReport)  // 型安全な参照
+    finalizedBy(tasks.jacocoTestReport)
 
     reports {
         // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
-        html.required.set(true)  // .set() を使用
-        junitXml {
-            isOutputPerTestCase = true
-            //mergeReruns = true
-        }
+        html.required.set(true)
+        junitXml.required.set(true)
+        junitXml.isOutputPerTestCase = true
+        junitXml.mergeReruns = true
     }
 }
 
@@ -119,7 +118,7 @@ tasks.jacocoTestReport {
 checkstyle {
     toolVersion = "10.26.1"
     isIgnoreFailures = continueOnError
-    configFile = ConventionDefaults.getCheckstyleConfigFile(project)
+    config = ConventionDefaults.getCheckstyleConfig(project)
 }
 
 // テストに対しては実行しない

@@ -1,8 +1,9 @@
 import org.gradle.api.Project
 import org.gradle.api.GradleException
+import org.gradle.api.resources.TextResource
 import java.io.File
 
-object ConventionDefaults2 {
+object ConventionDefaults {
     @JvmStatic
     fun getContinueOnError(project: Project): Boolean {
         return project.findProperty("continueOnError")?.toString()?.toBoolean() ?: false
@@ -15,21 +16,23 @@ object ConventionDefaults2 {
      * 2. buildSrc/src/main/resources/checkstyle/checkstyle.xml
      */
     @JvmStatic
-    fun getCheckstyleConfigFile(project: Project): File {
+    fun getCheckstyleConfig(project: Project): TextResource {
         val projectConfig = project.rootProject.file("config/checkstyle/checkstyle.xml")
         if (projectConfig.exists()) {
-            return projectConfig
+            // FileをTextResourceに変換
+            return project.resources.text.fromFile(projectConfig)
         }
 
-        val url = ConventionDefaults2::class.java.getResource("/checkstyle/checkstyle.xml")
-        if (url != null) {
-            return File(url.toURI())
+        // リソースからTextResourceを取得
+        val resourceUrl = ConventionDefaults::class.java.getResource("/checkstyle/checkstyle.xml")
+        if (resourceUrl != null) {
+            return project.resources.text.fromUri(resourceUrl)
         }
 
         throw GradleException(
             "Checkstyle設定ファイルが見つかりません。\n" +
                 "- ${projectConfig.absolutePath} または\n" +
-                "- buildSrc/src/main/resources/checkstyle/checkstyle.xml\n" +
+                "- build-logic/src/main/resources/checkstyle/checkstyle.xml\n" +
                 "のいずれかに配置してください。"
         )
     }
@@ -47,7 +50,7 @@ object ConventionDefaults2 {
             return projectConfig
         }
 
-        val url = ConventionDefaults2::class.java.getResource("/spotbugs/exclusion_filter.xml")
+        val url = ConventionDefaults::class.java.getResource("/spotbugs/exclusion_filter.xml")
         if (url != null) {
             return File(url.toURI())
         }

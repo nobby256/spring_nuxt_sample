@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+	<!-- メソッドはミュータブルなオブジェクトの参照を返すことにより内部表現を暴露しています。 -->
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP" />
+	</Match>
+
+	<!-- ミュータブルオブジェクトへの参照を自らに格納してしまうことにより内部表現を暴露してしまう可能性があります。 -->
+	<Match>
+		<Bug pattern="EI_EXPOSE_REP2" />
+	</Match>
+
+	<!-- ～は、ガベージコレクションを強制しています。ベンチマークコードを除いて非常に疑わしいです。 -->
+	<Match>
+		<Bug pattern="DM_GC" />
+	</Match>
+
+	<!-- テストクラスを対象外にする -->
+	<!-- XxxxTest -->
+	<!-- XxxxTest$1 -->
+	<!-- XxxxTest$1$1 -->
+	<!-- XxxxTest1 -->
+	<!-- XxxxTest1$1 -->
+	<!-- XxxxTest1$1$1 -->
+	<!-- XxxxTest1_1 -->
+	<Match>
+		<Class name="~.*Test[0-9]{0,2}_?[0-9]{0,2}\$?[0-9]{0,2}\$?[0-9]{0,2}$" />
+	</Match>
+
+	<!-- テスト支援クラスを対象外にする -->
+	<!-- MockXxxx -->
+	<!-- ItestXxxx -->
+	<!-- XxxxTestBase -->
+	<Match>
+		<Class name="~.*(Mock|Itest|TestBase).*" />
+	</Match>
+
+	<!-- すべてのクラスに対して指定パターンの問題を検出しないようにする -->
+	<Match>
+		<!-- クラス名はスーパークラスの単純名を遮るべきではない -->
+		<Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
+	</Match>
+
+	<Or>
+		<Rank value="16" />
+		<Rank value="17" />
+		<Rank value="18" />
+		<Rank value="19" />
+		<Rank value="20" />
+	</Or>
+
+</FindBugsFilter>

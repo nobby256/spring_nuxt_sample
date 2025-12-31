@@ -1,3 +1,6 @@
+import net.ltgt.gradle.errorprone.errorprone
+import net.ltgt.gradle.nullaway.nullaway
+
 // =====================================================
 // NullAway による Null 安全性チェック設定
 // =====================================================
@@ -25,12 +28,14 @@ dependencies {
 // コンパイル設定
 // =====================================================
 tasks.withType<JavaCompile>().configureEach {
-    if (name == "compileTestJava") {
-        options.errorprone.enabled = false
-    } else {
-        options.errorprone.nullaway {
-            warn()
-            jspecifyMode.set(true)
+    options.errorprone {
+        if (name == "compileTestJava") {
+            isEnabled.set(false)
+        } else {
+            nullaway {
+                warn()
+                isJSpecifyMode.set(true)
+            }
         }
     }
 }
