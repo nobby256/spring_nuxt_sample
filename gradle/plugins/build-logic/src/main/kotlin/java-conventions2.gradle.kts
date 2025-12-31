@@ -1,6 +1,3 @@
-import com.github.spotbugs.snom.SpotBugsExtension
-import com.github.spotbugs.snom.SpotBugsTask
-
 // =====================================================
 // Java プロジェクトの基本設定
 // =====================================================
@@ -21,7 +18,7 @@ val continueOnError = ConventionDefaults.getContinueOnError(project)
 // =====================================================
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))  // .set() を使用
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
     withSourcesJar()
     withJavadocJar()
@@ -72,7 +69,7 @@ sourceSets {
 // =====================================================
 // コンパイル設定
 // =====================================================
-tasks.withType<JavaCompile>().configureEach {  // configureEach を使用
+tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.addAll(listOf("-Xlint:deprecation,unchecked"))
 }
@@ -80,7 +77,7 @@ tasks.withType<JavaCompile>().configureEach {  // configureEach を使用
 // =====================================================
 // Javadoc 設定
 // =====================================================
-tasks.withType<Javadoc>().configureEach {  // configureEach を使用
+tasks.withType<Javadoc>().configureEach {
     isFailOnError = !continueOnError
     
     (options as StandardJavadocDocletOptions).apply {
@@ -108,7 +105,7 @@ jacoco {
 }
 
 tasks.jacocoTestReport {
-    dependsOn(tasks.test)  // 型安全な参照
+    dependsOn(tasks.test)
     reports {
         // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
         html.required.set(true)  // .set() を使用
@@ -126,25 +123,25 @@ checkstyle {
 }
 
 // テストに対しては実行しない
-tasks.named<Checkstyle>("checkstyleTest") {  // 型パラメータを明示
+tasks.checkstyleTest {
     enabled = false
 }
 
 // =====================================================
 // SpotBugs 設定
 // =====================================================
-configure<SpotBugsExtension> {  // 型安全な設定
-    ignoreFailures.set(continueOnError)  // .set() を使用
+spotbugs {  // 型安全な設定
+    ignoreFailures.set(continueOnError)
     excludeFilter.set(ConventionDefaults.getSpotBugsExclusion(project))
     showProgress.set(false)
 }
 
 // テストに対しては実行しない
-tasks.named<SpotBugsTask>("spotbugsTest") {  // 型パラメータを明示
+tasks.spotbugsTest {
     enabled = false
 }
 
-tasks.named<SpotBugsTask>("spotbugsMain") {
+tasks.spotbugsMain {
     // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
     reports {
         create("xml") {
