@@ -23,7 +23,7 @@ subprojects {
 
     apply(plugin = "checkstyle")
     tasks.withType<Checkstyle> {
-        isEnabled = false
+        enabled = false
     }
 
     apply(plugin = "nullaway-conventions")
