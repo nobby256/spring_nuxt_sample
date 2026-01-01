@@ -8,7 +8,13 @@ plugins {
     id("nullaway-conventions") apply false
 }
 
+group = rootProject.group
+version = rootProject.version
+
 subprojects {
+    group = parent!!.group
+    version = parent!!.version
+
     apply(plugin = "io.spring.dependency-management")
     configure<DependencyManagementExtension> {
         imports {

@@ -48,23 +48,8 @@ tasks.test {
 // =====================================================
 // ソースセット設定
 // =====================================================
-sourceSets {
-    main {
-        java {
-            exclude("**/.gitkeep")
-        }
-        resources {
-            exclude("**/.gitkeep")
-        }
-    }
-    test {
-        java {
-            exclude("**/.gitkeep")
-        }
-        resources {
-            exclude("**/.gitkeep")
-        }
-    }
+sourceSets.configureEach {
+    allSource.exclude("**/.gitkeep")
 }
 
 // =====================================================
