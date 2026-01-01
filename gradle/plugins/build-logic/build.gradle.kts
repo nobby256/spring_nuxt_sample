@@ -2,9 +2,12 @@
 // buildSrc を Gradle プラグインとしてビルドします
 // =====================================================
 plugins {
-    id("groovy-gradle-plugin")
     `kotlin-dsl`
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
+}
+
+kotlin {
+    jvmToolchain(21) // gradle 9.2.1時点ではgradli付属のkotlinはまだJVM25を未サポート
 }
 
 // =====================================================
@@ -17,5 +20,5 @@ dependencies {
     implementation(libs.error.prone.plugin)
     implementation(libs.nullaway.plugin)
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
+    implementation(libs.kotlin.stdlib)
 }
