@@ -1,3 +1,5 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
 // =====================================================
 // Java プロジェクトの基本設定
 // =====================================================
@@ -102,7 +104,6 @@ tasks.withType<Javadoc>().configureEach {
 jacoco {
     toolVersion = "0.8.13"
 }
-
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
@@ -120,36 +121,36 @@ checkstyle {
     isIgnoreFailures = continueOnError
     config = ConventionDefaults.getCheckstyleConfig(project)
 }
-
-// テストに対しては実行しない
-tasks.checkstyleTest {
-    enabled = false
+tasks.withType<Checkstyle>().configureEach {
+    // mainソースセットのみを対象にする
+    if (name != "checkstyleMain") {
+        enabled = false
+    }
 }
 
 // =====================================================
 // SpotBugs 設定
 // =====================================================
-spotbugs {  // 型安全な設定
+spotbugs {
     ignoreFailures.set(continueOnError)
     excludeFilter.set(ConventionDefaults.getSpotBugsExclusion(project))
     showProgress.set(false)
 }
-
-// テストに対しては実行しない
-tasks.spotbugsTest {
-    enabled = false
-}
-
-tasks.spotbugsMain {
-    // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
-    reports {
-        create("xml") {
-            required.set(true)  // .set() を使用
+tasks.withType<SpotBugsTask>().configureEach {
+    // mainソースセットのみを対象にする
+    if (name == "spotbugsMain") {
+        // ローカルはeclipse or html、CIはcodebuild/jenkinsで確認
+        reports {
+            create("xml") {
+                required.set(true)
+            }
+            create("html") {
+                required.set(true)
+                setStylesheet("fancy-hist.xsl")
+            }
         }
-        create("html") {
-            required.set(true)
-            setStylesheet("fancy-hist.xsl")
-        }
+    } else {
+        enabled = false
     }
 }
 

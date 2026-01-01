@@ -3,7 +3,7 @@
 // =====================================================
 plugins {
     `kotlin-dsl`
-    alias(libs.plugins.kotlin.jvm)
+    kotlin("jvm") version "2.2.20"
 }
 
 kotlin {
@@ -14,11 +14,13 @@ kotlin {
 // Convention Plugin で使用するプラグインを依存に追加します
 // =====================================================
 dependencies {
+    // Kotlin DSL 用
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
+
+    // 各種コード品質プラグイン
     implementation(libs.spring.boot.plugin)
     implementation(libs.spring.dependency.management.plugin)
     implementation(libs.spotbugs.plugin)
     implementation(libs.error.prone.plugin)
     implementation(libs.nullaway.plugin)
-
-    implementation(libs.kotlin.stdlib)
 }

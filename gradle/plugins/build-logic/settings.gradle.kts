@@ -5,9 +5,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
     }
-    plugins {
-        id("org.jetbrains.kotlin.jvm") version "2.2.20"
-    }
 }
 
 // =====================================================
@@ -35,4 +32,4 @@ dependencyResolutionManagement {
 // =====================================================
 // プロジェクトの名前を指定します
 // =====================================================
-rootProject.name = "buildSrc"
+rootProject.name = "build-logic"
