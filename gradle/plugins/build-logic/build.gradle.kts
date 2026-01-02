@@ -23,4 +23,5 @@ dependencies {
     implementation(libs.spotbugs.plugin)
     implementation(libs.error.prone.plugin)
     implementation(libs.nullaway.plugin)
+    implementation(libs.nullability.plugin)
 }

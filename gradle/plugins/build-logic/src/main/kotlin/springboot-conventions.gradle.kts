@@ -1,3 +1,5 @@
+import io.spring.gradle.nullability.NullabilityOptions;
+
 // =====================================================
 // Spring Boot プロジェクトの基本設定
 // =====================================================
@@ -5,6 +7,7 @@ plugins {
     id("java-conventions")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    id("io.spring.nullability")
 }
 
 // =====================================================
@@ -44,4 +47,22 @@ dependencies {
     
     // 開発時の自動リロード（本番では自動的に無効化される）
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+}
+
+// =====================================================
+// Nullability 設定
+// =====================================================
+tasks.withType<JavaCompile>().configureEach {
+    if (project.findProperty("nullability.enabled")?.toString()?.toBoolean() == true) {
+        if (name != "compileJava") {
+            // mainソースセット以外は@NullMarkedを強要しない
+            val nullabilityOptions = (options as ExtensionAware).extensions.getByName("nullability") as NullabilityOptions
+            nullabilityOptions.requireExplicitNullMarking.set(false)
+            // kotlinで下記の実装が出来るようにプラグインのバージョンアップ待ち
+            //options.nullability.requireExplicitNullMarking.set(false)
+        }
+    } else {
+        val nullabilityOptions = (options as ExtensionAware).extensions.getByName("nullability") as NullabilityOptions
+        nullabilityOptions.checking.set("disabled")
+    }
 }

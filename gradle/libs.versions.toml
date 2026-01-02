@@ -5,6 +5,7 @@ spotbugs = "6.4.8"
 error-prone = "4.3.0"
 nullaway = "2.3.0"
 kotlin = "2.2.20"
+nullability = "0.0.9"
 
 [libraries]
 # --------------------------------------------------
@@ -15,6 +16,7 @@ spring-dependency-management-plugin = { module = "io.spring.gradle:dependency-ma
 spotbugs-plugin = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }
 error-prone-plugin = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "error-prone" }
 nullaway-plugin = { module = "net.ltgt.gradle:gradle-nullaway-plugin", version.ref = "nullaway" }
+nullability-plugin = { module = "io.spring.gradle.nullability:nullability-plugin", version.ref="nullability" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
@@ -23,3 +25,4 @@ spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }
 error-prone = { id = "net.ltgt.errorprone", version.ref = "error-prone" }
 nullaway = { id = "net.ltgt.nullaway", version.ref = "nullaway" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+nullability = { id = "io.spring.nullability", version.ref = "nullability" }
