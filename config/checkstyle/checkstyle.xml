@@ -4,10 +4,6 @@
 <!--
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
-<!--
-    Checkstyle-Configuration: FFCOREv3 Checks
-    Description: FFCOREv3基盤用のチェック構成です。
--->
 <module name="Checker">
   <!--以下Checker階層-->
   <property name="severity" value="warning"/>
@@ -230,10 +226,5 @@
     <module name="WhitespaceAround">
       <property name="tokens" value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV,DIV_ASSIGN,EQUAL,GE,GT,LAND,LCURLY,LE,LITERAL_ASSERT,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS,PLUS_ASSIGN,QUESTION,RCURLY,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,TYPE_EXTENSION_AND"/>
     </module>
-  </module>
-  <module name="SuppressionFilter">
-  	<!-- ${config_loc}はgradleが定義する暗黙のプロパティ。値は`${rootProject.projectDir}/config/checkstyle`を指す。 -->
-  	<!-- vscodeのCheckStyleプラグインに対応するには.vscode/settings.jsonから`config_loc`に${workspaseFolder}/config/checkstyleを指定すればよい。 -->
-    <property name="file" value="${config_loc}/suppressions.xml" />
   </module>
 </module>
