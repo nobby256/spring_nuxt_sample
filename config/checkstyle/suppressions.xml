@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+  "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<!-- 【ポイント】 -->
+<!-- windows/linux問わず、Gradleから呼び出されるとパスには‘/‘が使用される -->
+<!-- ただし、windows環境下でvscodeのプラグインから呼び出されると`\`が使用される -->
+<!-- 両対応を行うには正規表現で`[/\\]`を使用しければならない -->
+<suppressions>
+	<!-- Interceptorのthrows Throwableを警告ださない  -->
+	<suppress checks="IllegalThrows" files=".*Interceptor.java$" />
+
+	<!-- テストは対象外 -->
+	<suppress checks=".*" files=".*[/\\]src[/\\](test|itest)[/\\]java[/\\].*" />
+</suppressions>
