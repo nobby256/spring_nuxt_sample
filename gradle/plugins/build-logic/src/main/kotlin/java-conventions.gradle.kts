@@ -144,7 +144,10 @@ tasks.withType<SpotBugsTask>().configureEach {
 // Spotless 設定
 // =====================================================
 spotless {
+    lineEndings = com.diffplug.spotless.LineEnding.PLATFORM_NATIVE;
     java {
+        target("src/**/*.java")
+
         importOrder();
         removeUnusedImports();
         forbidWildcardImports();
