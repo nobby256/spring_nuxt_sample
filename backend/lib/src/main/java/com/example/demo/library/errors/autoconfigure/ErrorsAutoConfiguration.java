@@ -11,11 +11,11 @@ import tools.jackson.databind.module.SimpleModule;
 @AutoConfiguration
 public class ErrorsAutoConfiguration {
 
-    @Bean
-    SimpleModule detailSerializerModule(MessageSource messageSource) {
-        SimpleModule module = new SimpleModule("errorsModule");
-        module.addSerializer(new MessageSourceResolvableSerializer(messageSource));
-        return module;
-    }
+	@Bean
+	SimpleModule detailSerializerModule(MessageSource messageSource) {
+		SimpleModule module = new SimpleModule("errorsModule");
+		module.addSerializer(new MessageSourceResolvableSerializer(messageSource));
+		return module;
+	}
 
 }

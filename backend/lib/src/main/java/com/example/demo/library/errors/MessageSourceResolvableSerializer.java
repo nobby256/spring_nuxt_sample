@@ -13,25 +13,25 @@ import tools.jackson.databind.ser.std.StdSerializer;
 
 public class MessageSourceResolvableSerializer extends StdSerializer<MessageSourceResolvable> {
 
-    private final MessageSource messageSource;
+	private final MessageSource messageSource;
 
-    public MessageSourceResolvableSerializer(MessageSource messageSource) {
-        super(MessageSourceResolvable.class);
-        this.messageSource = messageSource;
-    }
+	public MessageSourceResolvableSerializer(MessageSource messageSource) {
+		super(MessageSourceResolvable.class);
+		this.messageSource = messageSource;
+	}
 
-    @Override
-    public void serialize(MessageSourceResolvable value, JsonGenerator gen, SerializationContext ctxt)
-            throws JacksonException {
-        if (value == null) {
-            gen.writeNull();
-            return;
-        }
+	@Override
+	public void serialize(MessageSourceResolvable value, JsonGenerator gen, SerializationContext ctxt)
+					throws JacksonException {
+		if (value == null) {
+			gen.writeNull();
+			return;
+		}
 
-        Locale locale = LocaleContextHolder.getLocale();
-        String resolved = messageSource.getMessage(value, locale);
+		Locale locale = LocaleContextHolder.getLocale();
+		String resolved = messageSource.getMessage(value, locale);
 
-        gen.writeString(resolved);
-    }
+		gen.writeString(resolved);
+	}
 
 }

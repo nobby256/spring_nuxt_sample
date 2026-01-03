@@ -19,59 +19,59 @@ import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
 public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
 
-    private static final String PATTERN_WITH_EXT = ".*\\.[a-zA-Z0-9]+$";
+	private static final String PATTERN_WITH_EXT = ".*\\.[a-zA-Z0-9]+$";
 
-    // AdditionalHealthEndpointPathsWebMvcHandlerMapping:-100
-    // WebMvcEndpointHandlerMapping:-100
-    // ControllerEndpointHandlerMapping:-100
-    // RouterFunctionMapping:-1
-    // RequestMappingHandlerMapping:0
-    // WelcomePageHandlerMapping:2
-    // BeanNameUrlHandlerMapping:2
-    // WelcomePageNotAcceptableHandlerMapping:LOWEST_PRECEDENCE - 10
-    // SimpleUrlHandlerMapping(静的リソース用）:Ordered.LOWEST_PRECEDENCE - 1
-    private static final int ORDER = 1;
+	// AdditionalHealthEndpointPathsWebMvcHandlerMapping:-100
+	// WebMvcEndpointHandlerMapping:-100
+	// ControllerEndpointHandlerMapping:-100
+	// RouterFunctionMapping:-1
+	// RequestMappingHandlerMapping:0
+	// WelcomePageHandlerMapping:2
+	// BeanNameUrlHandlerMapping:2
+	// WelcomePageNotAcceptableHandlerMapping:LOWEST_PRECEDENCE - 10
+	// SimpleUrlHandlerMapping(静的リソース用）:Ordered.LOWEST_PRECEDENCE - 1
+	private static final int ORDER = 1;
 
-    @Nullable
-    private final Resource indexResource;
+	@Nullable
+	private final Resource indexResource;
 
-    public SpaIndexHtlmRouterFunctionMapping(@Nullable Resource indexResource) {
-        this.indexResource = indexResource;
+	public SpaIndexHtlmRouterFunctionMapping(@Nullable Resource indexResource) {
+		this.indexResource = indexResource;
 
-        setRouterFunction(createRouterFunction());
-        setOrder(ORDER);
-    }
+		setRouterFunction(createRouterFunction());
+		setOrder(ORDER);
+	}
 
-    RouterFunction<ServerResponse> createRouterFunction() {
-        return RouterFunctions.route()
-                .GET("/**", this::match, this::handle)
-                .build();
-    }
+	RouterFunction<ServerResponse> createRouterFunction() {
+		return RouterFunctions.route()
+						.GET("/**", this::match, this::handle)
+						.build();
+	}
 
-    boolean match(ServerRequest request) {
-        String path = request.path();
-        if (!"/".equals(path)) {
-            if (path.matches(PATTERN_WITH_EXT)) {
-                return false;
-            }
-        }
-        if (indexResource == null) {
-            return false;
-        }
-        return true;
-    }
+	boolean match(ServerRequest request) {
+		String path = request.path();
+		if (!"/".equals(path)) {
+			if (path.matches(PATTERN_WITH_EXT)) {
+				return false;
+			}
+		}
+		if (indexResource == null) {
+			return false;
+		}
+		return true;
+	}
 
-    ServerResponse handle(ServerRequest request) {
-        Assert.state(indexResource != null, "indexResource must not be null.");
-        String html;
-        try (InputStream istream = indexResource.getInputStream()) {
-            html = FileCopyUtils.copyToString(new InputStreamReader(istream, StandardCharsets.UTF_8));
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        return ServerResponse
-                .ok()
-                .contentType(MediaType.TEXT_HTML)
-                .body(html);
-    }
+	ServerResponse handle(ServerRequest request) {
+		Assert.state(indexResource != null, "indexResource must not be null.");
+		String html;
+		try (InputStream istream = indexResource.getInputStream()) {
+			html = FileCopyUtils.copyToString(new InputStreamReader(istream, StandardCharsets.UTF_8));
+		} catch (IOException ex) {
+			throw new UncheckedIOException(ex);
+		}
+		return ServerResponse
+						.ok()
+						.contentType(MediaType.TEXT_HTML)
+						.body(html);
+	}
 }

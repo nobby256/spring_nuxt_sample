@@ -8,11 +8,11 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 public class UnifiedPublicEndpointsProvider {
 
-    public RequestMatcher provide() {
-        return new OrRequestMatcher(
-                PathPatternRequestMatcher.withDefaults().matcher("/**"),
-                PathRequest.toStaticResources().atCommonLocations(),
-                EndpointRequest.toAnyEndpoint());
-    }
+	public RequestMatcher provide() {
+		return new OrRequestMatcher(
+						PathPatternRequestMatcher.withDefaults().matcher("/**"),
+						PathRequest.toStaticResources().atCommonLocations(),
+						EndpointRequest.toAnyEndpoint());
+	}
 
 }

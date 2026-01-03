@@ -3,6 +3,10 @@ package com.example.demo.api;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -16,10 +20,6 @@ import com.example.demo.exception.DomainException;
 import com.example.demo.exception.DomainProblem;
 import com.example.demo.exception.ProblemMessage;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-
 /**
  * SPAのサンプルプログラム（エラーハンドリング）から呼び出されるRESTコントローラ。
  */
@@ -32,7 +32,7 @@ public class ErrorhandlingController {
 	 * リクエストを受け取り、エラーを発生させる。
 	 *
 	 * @param requestData リクエストボディ
-	 * @param request     {@link HttpServletRequest}
+	 * @param request {@link HttpServletRequest}
 	 * @return レスポンスボディ
 	 */
 	@PostMapping

@@ -146,14 +146,15 @@ tasks.withType<SpotBugsTask>().configureEach {
 spotless {
     lineEndings = com.diffplug.spotless.LineEnding.PLATFORM_NATIVE;
     java {
-        target("src/**/*.java")
-
-        importOrder();
+        var importOrderFile = "${rootProject.projectDir}/config/formatter/importorder.txt"
+        importOrderFile(importOrderFile);
         removeUnusedImports();
         forbidWildcardImports();
         forbidModuleImports();
-        palantirJavaFormat().formatJavadoc(false);
-        formatAnnotations();
+        //palantirJavaFormat().formatJavadoc(false);
+        var formatterPath = "${rootProject.projectDir}/config/formatter/formatter.xml"
+        eclipse().configFile(formatterPath)
+        //formatAnnotations();
     }
 }
 

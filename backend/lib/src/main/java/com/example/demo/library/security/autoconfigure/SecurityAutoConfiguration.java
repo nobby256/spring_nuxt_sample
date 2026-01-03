@@ -12,10 +12,10 @@ import com.example.demo.library.security.configurer.login.UnifiedLoginConfigurer
 @ConditionalOnWebApplication
 public class SecurityAutoConfiguration {
 
-    @Bean
-    UnifiedWebSecurity unifiedWebSecurity() {
-        UnifiedLoginConfigurer loginConfigurer = new UnifiedFormLoginConfigurer();
-        return new UnifiedWebSecurity(loginConfigurer);
-    }
+	@Bean
+	UnifiedWebSecurity unifiedWebSecurity() {
+		UnifiedLoginConfigurer loginConfigurer = new UnifiedFormLoginConfigurer();
+		return new UnifiedWebSecurity(loginConfigurer);
+	}
 
 }

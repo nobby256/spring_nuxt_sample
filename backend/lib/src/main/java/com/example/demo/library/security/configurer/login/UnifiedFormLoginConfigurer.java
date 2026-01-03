@@ -9,43 +9,43 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 public class UnifiedFormLoginConfigurer extends UnifiedLoginConfigurer {
 
-    public UnifiedFormLoginConfigurer() {
-    }
+	public UnifiedFormLoginConfigurer() {
+	}
 
-    @Override
-    public void loginPage(String loginPage) {
-        getConfigurer().loginPage(loginPage);
-    }
+	@Override
+	public void loginPage(String loginPage) {
+		getConfigurer().loginPage(loginPage);
+	}
 
-    @Override
-    public void defaultSuccessUrl(String defaultSuccessUrl) {
-        getConfigurer().defaultSuccessUrl(defaultSuccessUrl);
-    }
+	@Override
+	public void defaultSuccessUrl(String defaultSuccessUrl) {
+		getConfigurer().defaultSuccessUrl(defaultSuccessUrl);
+	}
 
-    @Override
-    public void defaultSuccessUrl(String defaultSuccessUrl, boolean alwaysUse) {
-        getConfigurer().defaultSuccessUrl(defaultSuccessUrl, alwaysUse);
-    }
+	@Override
+	public void defaultSuccessUrl(String defaultSuccessUrl, boolean alwaysUse) {
+		getConfigurer().defaultSuccessUrl(defaultSuccessUrl, alwaysUse);
+	}
 
-    @Override
-    public void successHandler(AuthenticationSuccessHandler successHandler) {
-        getConfigurer().successHandler(successHandler);
-    }
+	@Override
+	public void successHandler(AuthenticationSuccessHandler successHandler) {
+		getConfigurer().successHandler(successHandler);
+	}
 
-    @Override
-    public void failureHandler(AuthenticationFailureHandler failureHandler) {
-        getConfigurer().failureHandler(failureHandler);
-    }
+	@Override
+	public void failureHandler(AuthenticationFailureHandler failureHandler) {
+		getConfigurer().failureHandler(failureHandler);
+	}
 
-    @Override
-    public void setBuilder(HttpSecurity http) {
-        super.setBuilder(http);
-        http.formLogin(Customizer.withDefaults());
-    }
+	@Override
+	public void setBuilder(HttpSecurity http) {
+		super.setBuilder(http);
+		http.formLogin(Customizer.withDefaults());
+	}
 
-    @SuppressWarnings("unchecked")
-    private FormLoginConfigurer<? extends HttpSecurityBuilder<?>> getConfigurer() {
-        return getBuilder().getConfigurer(FormLoginConfigurer.class);
-    }
+	@SuppressWarnings("unchecked")
+	private FormLoginConfigurer<? extends HttpSecurityBuilder<?>> getConfigurer() {
+		return getBuilder().getConfigurer(FormLoginConfigurer.class);
+	}
 
 }

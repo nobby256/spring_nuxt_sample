@@ -22,7 +22,7 @@ public class SecurityConfiguration {
 	/**
 	 * {@link SecurityFilterChain}を作成する。
 	 *
-	 * @param http    {@link HttpSecurity}
+	 * @param http {@link HttpSecurity}
 	 * @param unified {@link UnifiedWebSecurity}
 	 * @return {@link SecurityFilterChain}
 	 */

@@ -13,45 +13,45 @@ import org.springframework.web.servlet.function.ServerRequest;
 @ExtendWith(MockitoExtension.class)
 public class HistoryModeRouterFunctionTest {
 
-    @Nested
-    class PatternTest {
-        @Mock
-        ServerRequest request;
+	@Nested
+	class PatternTest {
+		@Mock
+		ServerRequest request;
 
-        @Test
-        void case1() {
-            doReturn("/").when(request).path();
-            assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
-        }
+		@Test
+		void case1() {
+			doReturn("/").when(request).path();
+			assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
+		}
 
-        @Test
-        void case2() {
-            doReturn("/hoo").when(request).path();
-            assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
-        }
+		@Test
+		void case2() {
+			doReturn("/hoo").when(request).path();
+			assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
+		}
 
-        @Test
-        void case3() {
-            doReturn("/hoo/").when(request).path();
-            assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
-        }
+		@Test
+		void case3() {
+			doReturn("/hoo/").when(request).path();
+			assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
+		}
 
-        @Test
-        void case4() {
-            doReturn("/hoo/bar").when(request).path();
-            assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
-        }
+		@Test
+		void case4() {
+			doReturn("/hoo/bar").when(request).path();
+			assertThat(HistoryModeRouterFunction.match().test(request)).isTrue();
+		}
 
-        @Test
-        void case5() {
-            doReturn("/hoo.png").when(request).path();
-            assertThat(HistoryModeRouterFunction.match().test(request)).isFalse();
-        }
+		@Test
+		void case5() {
+			doReturn("/hoo.png").when(request).path();
+			assertThat(HistoryModeRouterFunction.match().test(request)).isFalse();
+		}
 
-        @Test
-        void case6() {
-            doReturn("/hoo/bar.png").when(request).path();
-            assertThat(HistoryModeRouterFunction.match().test(request)).isFalse();
-        }
-    }
+		@Test
+		void case6() {
+			doReturn("/hoo/bar.png").when(request).path();
+			assertThat(HistoryModeRouterFunction.match().test(request)).isFalse();
+		}
+	}
 }
