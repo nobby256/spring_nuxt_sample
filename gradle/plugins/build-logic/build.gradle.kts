@@ -17,11 +17,13 @@ dependencies {
     // Kotlin DSL 用
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
 
-    // 各種コード品質プラグイン
+    // メインプロジェクトに提供するプラグイン
     implementation(libs.spring.boot.plugin)
     implementation(libs.spring.dependency.management.plugin)
     implementation(libs.spotbugs.plugin)
+    implementation(libs.nullability.plugin)
+    implementation(libs.spotless.plugin)
+
     implementation(libs.error.prone.plugin)
     implementation(libs.nullaway.plugin)
-    implementation(libs.nullability.plugin)
 }

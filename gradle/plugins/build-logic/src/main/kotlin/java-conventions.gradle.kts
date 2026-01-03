@@ -8,6 +8,7 @@ plugins {
     jacoco
     checkstyle
     id("com.github.spotbugs")
+    id("com.diffplug.spotless")
 }
 
 // =====================================================
@@ -136,6 +137,20 @@ tasks.withType<SpotBugsTask>().configureEach {
         }
     } else {
         enabled = false
+    }
+}
+
+// =====================================================
+// Spotless 設定
+// =====================================================
+spotless {
+    java {
+        importOrder();
+        removeUnusedImports();
+        forbidWildcardImports();
+        forbidModuleImports();
+        palantirJavaFormat().formatJavadoc(true);
+        formatAnnotations();
     }
 }
 

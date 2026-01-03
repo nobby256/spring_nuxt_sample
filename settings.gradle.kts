@@ -6,6 +6,7 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
+        id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
         id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
     }
     // 規約プラグインを登録します
@@ -16,7 +17,7 @@ pluginManagement {
 // プラグインをロードします。
 // =====================================================
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+    id("org.gradle.toolchains.foojay-resolver-convention")
 }
 
 // =====================================================
