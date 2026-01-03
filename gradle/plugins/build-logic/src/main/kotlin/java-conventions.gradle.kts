@@ -149,7 +149,7 @@ spotless {
         removeUnusedImports();
         forbidWildcardImports();
         forbidModuleImports();
-        palantirJavaFormat().formatJavadoc(true);
+        palantirJavaFormat().formatJavadoc(false);
         formatAnnotations();
     }
 }
