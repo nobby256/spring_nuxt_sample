@@ -1,4 +1,6 @@
 {
+    //"java.gradle.buildServer.enabled": "off",
+    //
     "java.configuration.updateBuildConfiguration": "interactive",
     "java.compile.nullAnalysis.mode": "disabled",
     "java.import.exclusions": [
@@ -8,12 +10,6 @@
         "**/archetype-resources/**",
         "**/META-INF/maven/**"
     ],
-    //"java.gradle.buildServer.enabled": "off",
-    //
-    "[java]": {
-        "editor.defaultFormatter": "redhat.java",
-        "editor.formatOnSave": true,
-    },
     "java.saveActions.organizeImports": true,
     "java.completion.importOrder": [
         "#",
@@ -22,5 +18,10 @@
         "jakarta",
         "org",
         "com",
-    ]
+    ],
+    "[java]": {
+        "editor.defaultFormatter": "redhat.java",
+        "editor.formatOnSave": true,
+    },
+    "java.format.settings.url": "config/formatter/eclipse-formatter.xml"
 }

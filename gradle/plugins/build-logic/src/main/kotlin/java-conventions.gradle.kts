@@ -152,7 +152,7 @@ spotless {
         forbidWildcardImports();
         forbidModuleImports();
         //palantirJavaFormat().formatJavadoc(false);
-        var formatterPath = "${rootProject.projectDir}/config/formatter/formatter.xml"
+        var formatterPath = "${rootProject.projectDir}/config/formatter/eclipse-formatter.xml"
         eclipse().configFile(formatterPath)
         //formatAnnotations();
     }
