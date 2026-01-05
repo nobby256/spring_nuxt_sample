@@ -146,15 +146,24 @@ tasks.withType<SpotBugsTask>().configureEach {
 spotless {
     lineEndings = com.diffplug.spotless.LineEnding.PLATFORM_NATIVE;
     java {
-        var importOrderFile = "${rootProject.projectDir}/config/formatter/importorder.txt"
-        importOrderFile(importOrderFile);
+        palantirJavaFormat().formatJavadoc(false);
+        //var formatterPath = "${rootProject.projectDir}/config/formatter/eclipse-formatter.xml"
+        //eclipse().configFile(formatterPath)
+
+        // 選択したフォーマッターによってのimportの差を吸収するためにフォーマット後にspotlessでimport整理を行う
+        // 実行する順序が重要。必ずformatterの後に実行されるようにすること。
         removeUnusedImports();
         forbidWildcardImports();
         forbidModuleImports();
-        //palantirJavaFormat().formatJavadoc(false);
-        var formatterPath = "${rootProject.projectDir}/config/formatter/eclipse-formatter.xml"
-        eclipse().configFile(formatterPath)
         //formatAnnotations();
+
+        // eclipseのデフォルトのimport順序に合わせる
+        // eclipseとvscodeではデフォルトのimport順が違う。jakarta系の順序が違う。
+        // import順序の設定方法のドキュメント
+        // https://github.com/diffplug/spotless/blob/main/ECLIPSE_SCREENSHOTS.md#creating-spotlessimportorder
+        // var importOrderFile = "${rootProject.projectDir}/config/formatter/importorder.txt"
+        // importOrderFile(importOrderFile);
+        importOrder("#", "java", "javax", "jakarta", "org", "com");
     }
 }
 
