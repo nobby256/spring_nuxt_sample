@@ -44,8 +44,10 @@ public class CrudController {
 	 * @throws Exception 例外
 	 */
 	@GetMapping
-	public List<Item> search(@RequestParam(name = "name", required = false) @Nullable String name,
-			@RequestParam(name = "maker", required = false) @Nullable String maker) throws Exception {
+	public List<Item> search(
+			@RequestParam(name = "name", required = false) @Nullable String name,
+			@RequestParam(name = "maker", required = false) @Nullable String maker)
+			throws Exception {
 		Thread.sleep(2000);
 		return items;
 	}
@@ -93,7 +95,10 @@ public class CrudController {
 	 * @param price       価格
 	 * @param description 商品説明
 	 */
-	record Item(String id, String name, String maker, int price, @Nullable String description) {
-
-	}
+	record Item(
+			String id,
+			String name,
+			String maker,
+			int price,
+			@Nullable String description) {}
 }

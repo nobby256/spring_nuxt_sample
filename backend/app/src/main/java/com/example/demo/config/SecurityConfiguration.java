@@ -53,7 +53,6 @@ public class SecurityConfiguration {
 	static class SecurityController {
 		@PostMapping("/api/logout")
 		@ApiResponse(responseCode = "204")
-		void logout() {
-		}
+		void logout() {}
 	}
 }

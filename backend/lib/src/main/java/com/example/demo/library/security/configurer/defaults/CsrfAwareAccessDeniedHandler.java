@@ -20,8 +20,9 @@ public class CsrfAwareAccessDeniedHandler implements AccessDeniedHandler {
 	protected static final Log logger = LogFactory.getLog(CsrfAwareAccessDeniedHandler.class);
 
 	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response,
-			AccessDeniedException accessDeniedException) throws IOException, ServletException {
+	public void handle(
+			HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
+			throws IOException, ServletException {
 		if (response.isCommitted()) {
 			logger.trace("Did not write to response since already committed");
 			return;

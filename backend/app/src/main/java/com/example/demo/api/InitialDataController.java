@@ -39,6 +39,5 @@ public class InitialDataController {
 	 * @param user     ユーザーID
 	 * @param username ユーザー名
 	 */
-	public record InitialData(String user, String username) {
-	}
+	public record InitialData(String user, String username) {}
 }

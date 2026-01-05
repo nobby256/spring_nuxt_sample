@@ -62,9 +62,10 @@ public class SpaAutoConfiguration {
 			builder.add(HistoryModeRouterFunction.create(resource, serverOrigin));
 		}
 
-		HttpMessageConverters messageConverters = HttpMessageConverters.forServer().registerDefaults().build();
-		List<HttpMessageConverter<?>> converters = StreamSupport.stream(messageConverters.spliterator(), false)
-				.collect(Collectors.toList());
+		HttpMessageConverters messageConverters =
+				HttpMessageConverters.forServer().registerDefaults().build();
+		List<HttpMessageConverter<?>> converters =
+				StreamSupport.stream(messageConverters.spliterator(), false).collect(Collectors.toList());
 		RouterFunctionMapping mapping = new RouterFunctionMapping();
 		mapping.setMessageConverters(converters);
 		mapping.setRouterFunction(builder.build());
@@ -84,9 +85,7 @@ public class SpaAutoConfiguration {
 	}
 
 	@Bean
-	IndexHtmlResourceFinder indexHtmlResourceFinder(
-			ResourceLoader resourceLoader,
-			WebProperties webProperties) {
+	IndexHtmlResourceFinder indexHtmlResourceFinder(ResourceLoader resourceLoader, WebProperties webProperties) {
 		return new IndexHtmlResourceFinder(resourceLoader, webProperties.getResources());
 	}
 

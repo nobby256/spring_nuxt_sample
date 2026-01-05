@@ -8,8 +8,7 @@ import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
 
 public class UnifiedDefaultsConfigurer extends AbstractHttpConfigurer<UnifiedDefaultsConfigurer, HttpSecurity> {
 
-	public UnifiedDefaultsConfigurer() {
-	}
+	public UnifiedDefaultsConfigurer() {}
 
 	@Override
 	public void init(HttpSecurity http) {
@@ -28,7 +27,5 @@ public class UnifiedDefaultsConfigurer extends AbstractHttpConfigurer<UnifiedDef
 	}
 
 	@Override
-	public void configure(HttpSecurity http) {
-
-	}
+	public void configure(HttpSecurity http) {}
 }

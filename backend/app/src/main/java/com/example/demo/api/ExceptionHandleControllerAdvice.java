@@ -29,10 +29,14 @@ public class ExceptionHandleControllerAdvice {
 	 * @return {@link DomainProblem}
 	 */
 	@ExceptionHandler(exception = DomainException.class)
-	@ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = DomainProblem.class)))
+	@ApiResponse(
+			responseCode = "422",
+			content =
+					@Content(
+							mediaType = "application/problem+json",
+							schema = @Schema(implementation = DomainProblem.class)))
 	public ResponseEntity<DomainProblem> handleDomainProblem(DomainException exception) {
-		return ResponseEntity
-				.status(HttpStatus.UNPROCESSABLE_CONTENT)
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
 				.contentType(MediaType.APPLICATION_PROBLEM_JSON)
 				.body(exception.getProblem());
 	}

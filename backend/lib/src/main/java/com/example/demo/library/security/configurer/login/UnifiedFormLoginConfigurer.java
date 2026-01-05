@@ -9,8 +9,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 public class UnifiedFormLoginConfigurer extends UnifiedLoginConfigurer {
 
-	public UnifiedFormLoginConfigurer() {
-	}
+	public UnifiedFormLoginConfigurer() {}
 
 	@Override
 	public void loginPage(String loginPage) {

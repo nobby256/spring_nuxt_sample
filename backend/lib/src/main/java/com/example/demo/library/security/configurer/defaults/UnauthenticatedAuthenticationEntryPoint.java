@@ -19,8 +19,9 @@ public class UnauthenticatedAuthenticationEntryPoint implements AuthenticationEn
 	private static final Logger logger = LoggerFactory.getLogger(UnauthenticatedAuthenticationEntryPoint.class);
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
+	public void commence(
+			HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+			throws IOException, ServletException {
 		// HTML系の要求とREST系のレスポンスの違いはErrorControllerに任せる。
 		// HTMLフラグメントを返すAJAXのレスポンスはカスタムのErrorViewResolver内で対応を想定。
 		logger.debug("Responding with 401 status code");

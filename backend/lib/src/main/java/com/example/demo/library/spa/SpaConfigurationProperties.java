@@ -32,8 +32,7 @@ public class SpaConfigurationProperties {
 	public static class DevClient {
 		private @Nullable String origin;
 
-		DevClient() {
-		}
+		DevClient() {}
 
 		public @Nullable String getOrigin() {
 			return origin;

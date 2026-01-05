@@ -17,8 +17,7 @@ public final class HttpSecurityCustomizeUtil {
 	/**
 	 * コンストラクタ。
 	 */
-	private HttpSecurityCustomizeUtil() {
-	}
+	private HttpSecurityCustomizeUtil() {}
 
 	/**
 	 * {@link AbstractConfiguredSecurityBuilder#getSharedObject(Class)}もしくは{@link ApplicationContext#getBean(Class)}からコンポーネントを取得する。
@@ -73,7 +72,7 @@ public final class HttpSecurityCustomizeUtil {
 			combineCookies[0] = sessionCookie;
 			System.arraycopy(cookies, 0, combineCookies, 1, cookies.length);
 		} else {
-			combineCookies = new String[] { sessionCookie };
+			combineCookies = new String[] {sessionCookie};
 		}
 		return combineCookies;
 	}

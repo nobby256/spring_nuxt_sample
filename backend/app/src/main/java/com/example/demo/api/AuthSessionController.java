@@ -32,7 +32,9 @@ public class AuthSessionController {
 			if (authentication instanceof AnonymousAuthenticationToken) {
 				name = authentication.getName();
 			}
-			authorities = authentication.getAuthorities().stream().map(it -> it.getAuthority()).toList();
+			authorities = authentication.getAuthorities().stream()
+					.map(it -> it.getAuthority())
+					.toList();
 		}
 
 		CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());

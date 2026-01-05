@@ -101,7 +101,5 @@ public class ErrorhandlingController {
 	 *
 	 * @param message メッセージ
 	 */
-	record ResponseData(String message) {
-
-	}
+	record ResponseData(String message) {}
 }

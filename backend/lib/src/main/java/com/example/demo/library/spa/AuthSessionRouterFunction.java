@@ -29,10 +29,11 @@ public class AuthSessionRouterFunction {
 
 	public static RouterFunction<ServerResponse> create(SpaConfigurationProperties spaProperties) {
 		String path = spaProperties.getEndpoints().getAuthSessionPath();
-		return RouterFunctions.route().path(path,
-				(RouterFunctions.Builder builder) -> {
+		return RouterFunctions.route()
+				.path(path, (RouterFunctions.Builder builder) -> {
 					builder.GET(new GetHandler());
-				}).build();
+				})
+				.build();
 	}
 
 	public static class GetHandler implements HandlerFunction<ServerResponse> {
@@ -48,21 +49,19 @@ public class AuthSessionRouterFunction {
 				if (authentication instanceof AnonymousAuthenticationToken) {
 					name = authentication.getName();
 				}
-				authorities = authentication.getAuthorities().stream().map(it -> it.getAuthority()).toList();
+				authorities = authentication.getAuthorities().stream()
+						.map(it -> it.getAuthority())
+						.toList();
 			}
 
-			CsrfToken csrfToken = (CsrfToken) request.attribute(CsrfToken.class.getName()).orElseThrow();
+			CsrfToken csrfToken =
+					(CsrfToken) request.attribute(CsrfToken.class.getName()).orElseThrow();
 			String token = csrfToken.getToken();
 
-			AuthSessionResponse body = new AuthSessionResponse(
-					name,
-					authorities,
-					isAuthenticated,
-					token,
-					csrfToken.getParameterName());
+			AuthSessionResponse body =
+					new AuthSessionResponse(name, authorities, isAuthenticated, token, csrfToken.getParameterName());
 
-			return ServerResponse
-					.ok()
+			return ServerResponse.ok()
 					.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
 					.body(body);
 		}
@@ -115,8 +114,7 @@ public class AuthSessionRouterFunction {
 			List<String> authorities,
 			boolean isAuthenticated,
 			String csrfParameterToken,
-			String csrfParameterName) {
-	}
+			String csrfParameterName) {}
 
 	public static OpenApiCustomizer openApiCustomizer(SpaConfigurationProperties spaProperties) {
 		String path = spaProperties.getEndpoints().getAuthSessionPath();
@@ -145,12 +143,10 @@ public class AuthSessionRouterFunction {
 			if (openApi.getPaths() == null) {
 				openApi.setPaths(new Paths());
 			}
-			PathItem pathItem = openApi.getPaths()
-					.computeIfAbsent(path, p -> new PathItem());
+			PathItem pathItem = openApi.getPaths().computeIfAbsent(path, p -> new PathItem());
 
-			Operation getOperation = new Operation()
-					.operationId("getAuthSession")
-					.responses(responses);
+			Operation getOperation =
+					new Operation().operationId("getAuthSession").responses(responses);
 
 			pathItem.setGet(getOperation);
 			openApi.getPaths().addPathItem(path, pathItem);
