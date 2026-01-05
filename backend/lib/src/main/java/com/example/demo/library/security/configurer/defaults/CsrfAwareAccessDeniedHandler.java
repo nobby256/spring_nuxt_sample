@@ -21,7 +21,7 @@ public class CsrfAwareAccessDeniedHandler implements AccessDeniedHandler {
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
-					AccessDeniedException accessDeniedException) throws IOException, ServletException {
+			AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		if (response.isCommitted()) {
 			logger.trace("Did not write to response since already committed");
 			return;
@@ -40,5 +40,4 @@ public class CsrfAwareAccessDeniedHandler implements AccessDeniedHandler {
 		logger.debug("Responding with 403 status code");
 		response.sendError(HttpStatus.FORBIDDEN.value());
 	}
-
 }

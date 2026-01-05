@@ -22,9 +22,9 @@ public final class HttpSecurityCustomizeUtil {
 
 	/**
 	 * {@link AbstractConfiguredSecurityBuilder#getSharedObject(Class)}もしくは{@link ApplicationContext#getBean(Class)}からコンポーネントを取得する。
-	 * 
-	 * @param <C> コンポーネントの型
-	 * @param http {@link HttpSecurity}
+	 *
+	 * @param <C>   コンポーネントの型
+	 * @param http  {@link HttpSecurity}
 	 * @param clazz コンポーネントの型
 	 * @return コンポーネント
 	 */
@@ -39,9 +39,9 @@ public final class HttpSecurityCustomizeUtil {
 
 	/**
 	 * {@link ApplicationContext#getBean(Class)}からコンポーネントを取得する。
-	 * 
-	 * @param <C> コンポーネントの型
-	 * @param http {@link HttpSecurity}
+	 *
+	 * @param <C>   コンポーネントの型
+	 * @param http  {@link HttpSecurity}
 	 * @param clazz コンポーネントの型
 	 * @return コンポーネント
 	 */
@@ -61,7 +61,7 @@ public final class HttpSecurityCustomizeUtil {
 	/**
 	 * ログアウト時に削除するクッキー名の配列にセッションIDのクッキー名を追加する。
 	 *
-	 * @param http {@link HttpSecurity}
+	 * @param http    {@link HttpSecurity}
 	 * @param cookies クッキー名
 	 * @return クッキーの配列
 	 */
@@ -93,5 +93,4 @@ public final class HttpSecurityCustomizeUtil {
 		}
 		return cookieName;
 	}
-
 }

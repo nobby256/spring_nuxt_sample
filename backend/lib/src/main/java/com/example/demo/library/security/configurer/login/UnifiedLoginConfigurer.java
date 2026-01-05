@@ -16,5 +16,4 @@ public abstract class UnifiedLoginConfigurer extends AbstractHttpConfigurer<Unif
 	public abstract void successHandler(AuthenticationSuccessHandler successHandler);
 
 	public abstract void failureHandler(AuthenticationFailureHandler failureHandler);
-
 }

@@ -22,7 +22,7 @@ public class MessageSourceResolvableSerializer extends StdSerializer<MessageSour
 
 	@Override
 	public void serialize(MessageSourceResolvable value, JsonGenerator gen, SerializationContext ctxt)
-					throws JacksonException {
+			throws JacksonException {
 		if (value == null) {
 			gen.writeNull();
 			return;
@@ -33,5 +33,4 @@ public class MessageSourceResolvableSerializer extends StdSerializer<MessageSour
 
 		gen.writeString(resolved);
 	}
-
 }

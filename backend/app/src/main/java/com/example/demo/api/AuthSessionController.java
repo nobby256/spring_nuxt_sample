@@ -40,12 +40,12 @@ public class AuthSessionController {
 		String token = csrfToken.getToken();
 
 		return AuthSession.builder()
-						.user(name)
-						.authorities(authorities)
-						.isAuthenticated(isAuthenticated)
-						.csrfParameterToken(token)
-						.csrfParameterName(csrfToken.getParameterName())
-						.build();
+				.user(name)
+				.authorities(authorities)
+				.isAuthenticated(isAuthenticated)
+				.csrfParameterToken(token)
+				.csrfParameterName(csrfToken.getParameterName())
+				.build();
 	}
 
 	@Getter
@@ -57,5 +57,4 @@ public class AuthSessionController {
 		private String csrfParameterToken;
 		private String csrfParameterName;
 	}
-
 }

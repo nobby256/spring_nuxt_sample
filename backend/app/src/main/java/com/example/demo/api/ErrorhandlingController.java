@@ -32,7 +32,7 @@ public class ErrorhandlingController {
 	 * リクエストを受け取り、エラーを発生させる。
 	 *
 	 * @param requestData リクエストボディ
-	 * @param request {@link HttpServletRequest}
+	 * @param request     {@link HttpServletRequest}
 	 * @return レスポンスボディ
 	 */
 	@PostMapping
@@ -94,12 +94,11 @@ public class ErrorhandlingController {
 		public void setValue(String value) {
 			this.value = value;
 		}
-
 	}
 
 	/**
 	 * レスポンスデータ。
-	 * 
+	 *
 	 * @param message メッセージ
 	 */
 	record ResponseData(String message) {

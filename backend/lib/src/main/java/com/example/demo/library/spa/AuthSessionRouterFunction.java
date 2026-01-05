@@ -30,9 +30,9 @@ public class AuthSessionRouterFunction {
 	public static RouterFunction<ServerResponse> create(SpaConfigurationProperties spaProperties) {
 		String path = spaProperties.getEndpoints().getAuthSessionPath();
 		return RouterFunctions.route().path(path,
-						(RouterFunctions.Builder builder) -> {
-							builder.GET(new GetHandler());
-						}).build();
+				(RouterFunctions.Builder builder) -> {
+					builder.GET(new GetHandler());
+				}).build();
 	}
 
 	public static class GetHandler implements HandlerFunction<ServerResponse> {
@@ -55,16 +55,16 @@ public class AuthSessionRouterFunction {
 			String token = csrfToken.getToken();
 
 			AuthSessionResponse body = new AuthSessionResponse(
-							name,
-							authorities,
-							isAuthenticated,
-							token,
-							csrfToken.getParameterName());
+					name,
+					authorities,
+					isAuthenticated,
+					token,
+					csrfToken.getParameterName());
 
 			return ServerResponse
-							.ok()
-							.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-							.body(body);
+					.ok()
+					.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+					.body(body);
 		}
 	}
 
@@ -111,11 +111,11 @@ public class AuthSessionRouterFunction {
 	// }
 
 	public static record AuthSessionResponse(
-					String user,
-					List<String> authorities,
-					boolean isAuthenticated,
-					String csrfParameterToken,
-					String csrfParameterName) {
+			String user,
+			List<String> authorities,
+			boolean isAuthenticated,
+			String csrfParameterToken,
+			String csrfParameterName) {
 	}
 
 	public static OpenApiCustomizer openApiCustomizer(SpaConfigurationProperties spaProperties) {
@@ -146,11 +146,11 @@ public class AuthSessionRouterFunction {
 				openApi.setPaths(new Paths());
 			}
 			PathItem pathItem = openApi.getPaths()
-							.computeIfAbsent(path, p -> new PathItem());
+					.computeIfAbsent(path, p -> new PathItem());
 
 			Operation getOperation = new Operation()
-							.operationId("getAuthSession")
-							.responses(responses);
+					.operationId("getAuthSession")
+					.responses(responses);
 
 			pathItem.setGet(getOperation);
 			openApi.getPaths().addPathItem(path, pathItem);

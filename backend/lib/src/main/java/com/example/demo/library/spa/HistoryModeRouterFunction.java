@@ -21,14 +21,14 @@ public class HistoryModeRouterFunction {
 	public static RouterFunction<ServerResponse> create(Resource resource, @Nullable String serverOrign) {
 
 		RequestPredicate predicate = GET("/**")
-						.and(accept(MediaType.TEXT_HTML).and(request -> match().test(request)));
+				.and(accept(MediaType.TEXT_HTML).and(request -> match().test(request)));
 
 		RouterFunctions.Builder builder = RouterFunctions.route();
 		if (serverOrign == null) {
 			builder.add(RouterFunctions.resource(predicate, resource));
 		} else {
 			builder.add(RouterFunctions.route(predicate,
-							request -> ServerResponse.permanentRedirect(URI.create(serverOrign + request.path())).build()));
+					request -> ServerResponse.permanentRedirect(URI.create(serverOrign + request.path())).build()));
 		}
 		return builder.build();
 	}
@@ -36,5 +36,4 @@ public class HistoryModeRouterFunction {
 	static RequestPredicate match() {
 		return request -> !request.path().matches(PATTERN_WITH_EXT);
 	}
-
 }

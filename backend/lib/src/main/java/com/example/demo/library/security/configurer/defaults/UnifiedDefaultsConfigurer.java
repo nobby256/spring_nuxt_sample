@@ -31,5 +31,4 @@ public class UnifiedDefaultsConfigurer extends AbstractHttpConfigurer<UnifiedDef
 	public void configure(HttpSecurity http) {
 
 	}
-
 }

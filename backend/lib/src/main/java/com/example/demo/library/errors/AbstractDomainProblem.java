@@ -21,5 +21,4 @@ public abstract class AbstractDomainProblem {
 	public void setDetail(@Nullable String detail) {
 		this.detail = detail;
 	}
-
 }

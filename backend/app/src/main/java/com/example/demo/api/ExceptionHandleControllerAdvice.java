@@ -24,7 +24,7 @@ public class ExceptionHandleControllerAdvice {
 
 	/**
 	 * 業務例外をRFC7807準拠のレスポンスに変換する。
-	 * 
+	 *
 	 * @param exception {@link DomainException}
 	 * @return {@link DomainProblem}
 	 */
@@ -32,9 +32,8 @@ public class ExceptionHandleControllerAdvice {
 	@ApiResponse(responseCode = "422", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = DomainProblem.class)))
 	public ResponseEntity<DomainProblem> handleDomainProblem(DomainException exception) {
 		return ResponseEntity
-						.status(HttpStatus.UNPROCESSABLE_CONTENT)
-						.contentType(MediaType.APPLICATION_PROBLEM_JSON)
-						.body(exception.getProblem());
+				.status(HttpStatus.UNPROCESSABLE_CONTENT)
+				.contentType(MediaType.APPLICATION_PROBLEM_JSON)
+				.body(exception.getProblem());
 	}
-
 }

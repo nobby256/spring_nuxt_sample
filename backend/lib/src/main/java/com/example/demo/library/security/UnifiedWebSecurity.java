@@ -39,5 +39,4 @@ public class UnifiedWebSecurity {
 	public RequestMatcher publicEndpoints() {
 		return publicEndpointsProvider.provide();
 	}
-
 }

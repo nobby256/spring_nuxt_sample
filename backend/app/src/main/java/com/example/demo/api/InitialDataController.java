@@ -18,7 +18,7 @@ public class InitialDataController {
 
 	/**
 	 * アプリケーションの初期データを取得する。
-	 * 
+	 *
 	 * @param userDetails {@link UserDetails}
 	 * @return {@link InitialData}
 	 */
@@ -35,11 +35,10 @@ public class InitialDataController {
 
 	/**
 	 * アプリケーションの初期データ。
-	 * 
-	 * @param user ユーザーID
+	 *
+	 * @param user     ユーザーID
 	 * @param username ユーザー名
 	 */
 	public record InitialData(String user, String username) {
 	}
-
 }

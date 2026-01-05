@@ -44,8 +44,8 @@ public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
 
 	RouterFunction<ServerResponse> createRouterFunction() {
 		return RouterFunctions.route()
-						.GET("/**", this::match, this::handle)
-						.build();
+				.GET("/**", this::match, this::handle)
+				.build();
 	}
 
 	boolean match(ServerRequest request) {
@@ -70,8 +70,8 @@ public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
 			throw new UncheckedIOException(ex);
 		}
 		return ServerResponse
-						.ok()
-						.contentType(MediaType.TEXT_HTML)
-						.body(html);
+				.ok()
+				.contentType(MediaType.TEXT_HTML)
+				.body(html);
 	}
 }

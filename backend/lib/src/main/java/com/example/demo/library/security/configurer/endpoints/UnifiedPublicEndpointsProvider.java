@@ -10,9 +10,8 @@ public class UnifiedPublicEndpointsProvider {
 
 	public RequestMatcher provide() {
 		return new OrRequestMatcher(
-						PathPatternRequestMatcher.withDefaults().matcher("/**"),
-						PathRequest.toStaticResources().atCommonLocations(),
-						EndpointRequest.toAnyEndpoint());
+				PathPatternRequestMatcher.withDefaults().matcher("/**"),
+				PathRequest.toStaticResources().atCommonLocations(),
+				EndpointRequest.toAnyEndpoint());
 	}
-
 }

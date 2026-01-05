@@ -47,5 +47,4 @@ public class UnifiedFormLoginConfigurer extends UnifiedLoginConfigurer {
 	private FormLoginConfigurer<? extends HttpSecurityBuilder<?>> getConfigurer() {
 		return getBuilder().getConfigurer(FormLoginConfigurer.class);
 	}
-
 }

@@ -20,7 +20,7 @@ public class UnauthenticatedAuthenticationEntryPoint implements AuthenticationEn
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
-					AuthenticationException authException) throws IOException, ServletException {
+			AuthenticationException authException) throws IOException, ServletException {
 		// HTML系の要求とREST系のレスポンスの違いはErrorControllerに任せる。
 		// HTMLフラグメントを返すAJAXのレスポンスはカスタムのErrorViewResolver内で対応を想定。
 		logger.debug("Responding with 401 status code");
@@ -28,5 +28,4 @@ public class UnauthenticatedAuthenticationEntryPoint implements AuthenticationEn
 		// ErrorControllerやErrorViewResolverで例外クラスを取得できるようにする為に例外を格納
 		request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, authException);
 	}
-
 }

@@ -17,5 +17,4 @@ public class SecurityAutoConfiguration {
 		UnifiedLoginConfigurer loginConfigurer = new UnifiedFormLoginConfigurer();
 		return new UnifiedWebSecurity(loginConfigurer);
 	}
-
 }

@@ -21,7 +21,7 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
 
 	/**
 	 * コンストラクタ。
-	 * 
+	 *
 	 * @param forceRedirectMatcher タイムアウトを検出した時にログイン画面にリダイレクトするURLを判定するMatcher
 	 */
 	public UnauthenticatedRequestMatcher(@Nullable RequestMatcher forceRedirectMatcher) {
@@ -29,8 +29,8 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
 		RequestMatcher restOrAjaxMatcher = getRestOrAjaxRequestMatcher();
 		// セッションタイムアウト
 		RequestMatcher forceMatcher = forceRedirectMatcher != null
-						? forceRedirectMatcher
-						: PathPatternRequestMatcher.withDefaults().matcher("/**");
+				? forceRedirectMatcher
+				: PathPatternRequestMatcher.withDefaults().matcher("/**");
 		RequestMatcher timeoutMatcher = getSessionTimeoutRequestMatcher(forceMatcher);
 		// UNAUTHORIZED判定
 		this.matcher = new OrRequestMatcher(restOrAjaxMatcher, timeoutMatcher);
@@ -43,7 +43,7 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
 
 	/**
 	 * セッションタイムアウトを判定するMatcherを取得する。
-	 * 
+	 *
 	 * @param forceRedirectMatcher タイムアウトを検出した時にログイン画面にリダイレクトするURLを判定するMatcher
 	 * @return セッションタイムアウトを判定するMatcher
 	 */
@@ -66,7 +66,7 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
 
 	/**
 	 * RESTもしくはAJAX要求を判定するMatcherを取得する。
-	 * 
+	 *
 	 * @return RESTもしくはAJAX要求を判定するMatcher
 	 */
 	private RequestMatcher getRestOrAjaxRequestMatcher() {
@@ -79,5 +79,4 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
 		RequestMatcher ajaxMatcher = new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest");
 		return new OrRequestMatcher(notHtmlMatcher, ajaxMatcher);
 	}
-
 }

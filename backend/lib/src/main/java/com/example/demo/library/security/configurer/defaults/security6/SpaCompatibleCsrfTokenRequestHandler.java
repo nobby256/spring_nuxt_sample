@@ -27,7 +27,7 @@ public class SpaCompatibleCsrfTokenRequestHandler implements CsrfTokenRequestHan
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
-					Supplier<CsrfToken> csrfToken) {
+			Supplier<CsrfToken> csrfToken) {
 		// hiddenタグ、metaタグが使用するXOR化したトークン値（BREACH対策）をリクエスト毎に準備します。
 		xor.handle(request, response, csrfToken);
 
@@ -47,6 +47,6 @@ public class SpaCompatibleCsrfTokenRequestHandler implements CsrfTokenRequestHan
 		// 最初にリクエストヘッダーのトークン（素の値）を確認し、無ければパラメーターのトークン（XOR化された値）を確認します
 		String headerValue = request.getHeader(csrfToken.getHeaderName());
 		return (StringUtils.hasText(headerValue) ? this.plain : this.xor).resolveCsrfTokenValue(request,
-						csrfToken);
+				csrfToken);
 	}
 }

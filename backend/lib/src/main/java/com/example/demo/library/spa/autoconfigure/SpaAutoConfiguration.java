@@ -64,7 +64,7 @@ public class SpaAutoConfiguration {
 
 		HttpMessageConverters messageConverters = HttpMessageConverters.forServer().registerDefaults().build();
 		List<HttpMessageConverter<?>> converters = StreamSupport.stream(messageConverters.spliterator(), false)
-						.collect(Collectors.toList());
+				.collect(Collectors.toList());
 		RouterFunctionMapping mapping = new RouterFunctionMapping();
 		mapping.setMessageConverters(converters);
 		mapping.setRouterFunction(builder.build());
@@ -85,8 +85,8 @@ public class SpaAutoConfiguration {
 
 	@Bean
 	IndexHtmlResourceFinder indexHtmlResourceFinder(
-					ResourceLoader resourceLoader,
-					WebProperties webProperties) {
+			ResourceLoader resourceLoader,
+			WebProperties webProperties) {
 		return new IndexHtmlResourceFinder(resourceLoader, webProperties.getResources());
 	}
 
@@ -106,7 +106,7 @@ public class SpaAutoConfiguration {
 		 * 戻り値の型（UrlBasedCorsConfigurationSource）と名前（corsConfigurationSource）が重要。<br/>
 		 * この通りでないとSpringSecurityのCORS設定に自動登録されない。
 		 * </p>
-		 * 
+		 *
 		 * @return {@link UrlBasedCorsConfigurationSource}
 		 */
 		@Bean("corsConfigurationSource")

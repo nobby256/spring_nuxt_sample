@@ -25,5 +25,4 @@ public class DomainProblem extends AbstractDomainProblem {
 	public List<ProblemMessage> getMessages() {
 		return Collections.unmodifiableList(messages);
 	}
-
 }

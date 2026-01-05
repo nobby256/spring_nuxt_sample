@@ -17,5 +17,4 @@ public class ErrorsAutoConfiguration {
 		module.addSerializer(new MessageSourceResolvableSerializer(messageSource));
 		return module;
 	}
-
 }

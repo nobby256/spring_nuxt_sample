@@ -28,5 +28,4 @@ public class ProblemMessage implements Serializable {
 	public MessageSourceResolvable getText() {
 		return resolvable;
 	}
-
 }

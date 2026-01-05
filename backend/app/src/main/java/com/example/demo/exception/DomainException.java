@@ -27,5 +27,4 @@ public class DomainException extends ContextedRuntimeException {
 	public String getMessage() {
 		return ToStringBuilder.reflectionToString(problem);
 	}
-
 }

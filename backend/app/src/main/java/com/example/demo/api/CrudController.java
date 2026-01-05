@@ -37,15 +37,15 @@ public class CrudController {
 
 	/**
 	 * 商品を検索する。
-	 * 
-	 * @param name 商品名
+	 *
+	 * @param name  商品名
 	 * @param maker メーカー
 	 * @return 商品リスト
 	 * @throws Exception 例外
 	 */
 	@GetMapping
 	public List<Item> search(@RequestParam(name = "name", required = false) @Nullable String name,
-					@RequestParam(name = "maker", required = false) @Nullable String maker) throws Exception {
+			@RequestParam(name = "maker", required = false) @Nullable String maker) throws Exception {
 		Thread.sleep(2000);
 		return items;
 	}
@@ -64,7 +64,7 @@ public class CrudController {
 	/**
 	 * 商品を更新する。
 	 *
-	 * @param id 商品ID
+	 * @param id         商品ID
 	 * @param updateItem 更新する商品
 	 * @return 更新後の商品
 	 */
@@ -86,15 +86,14 @@ public class CrudController {
 
 	/**
 	 * 商品情報。
-	 * 
-	 * @param id 商品ID
-	 * @param name 商品名
-	 * @param maker メーカー
-	 * @param price 価格
+	 *
+	 * @param id          商品ID
+	 * @param name        商品名
+	 * @param maker       メーカー
+	 * @param price       価格
 	 * @param description 商品説明
 	 */
 	record Item(String id, String name, String maker, int price, @Nullable String description) {
 
 	}
-
 }
