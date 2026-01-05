@@ -155,7 +155,6 @@ spotless {
         removeUnusedImports();
         forbidWildcardImports();
         forbidModuleImports();
-        //formatAnnotations();
 
         // eclipseのデフォルトのimport順序に合わせる
         // eclipseとvscodeではデフォルトのimport順が違う。jakarta系の順序が違う。
@@ -164,6 +163,9 @@ spotless {
         // var importOrderFile = "${rootProject.projectDir}/config/formatter/importorder.txt"
         // importOrderFile(importOrderFile);
         importOrder("#", "java", "javax", "jakarta", "org", "com");
+
+        //formatAnnotations();
+        leadingSpacesToTabs(4); // インデントはスペース4つ分
     }
 }
 
