@@ -1,4 +1,4 @@
-
+{
     "java.configuration.updateBuildConfiguration": "interactive",
     "java.compile.nullAnalysis.mode": "disabled",
     "java.import.exclusions": [
@@ -58,4 +58,5 @@
     //     配列初期化子
     //       <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_brace_in_array_initializer" value="do not insert"/>
     //       <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_brace_in_array_initializer" value="do not insert"/>
-    "java.format.settings.url": "config/formatter/java-formatter.xml"
+    "java.format.settings.url": "config/formatter/java-formatter.xml",
+}
