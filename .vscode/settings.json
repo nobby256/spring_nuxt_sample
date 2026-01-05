@@ -26,16 +26,16 @@
     // オリジナルはコマンドパレットで`Java: Open Java Formatter Settings with Preview`で作成。
     // 変更前:java-formatter_org.xml 変更後:java-formatter.xml
     // ・インデント
-    //   タブ・ポリシー:タブのみ
+    //   タブ・ポリシー
     //       <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
     //       <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
     //       <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab"/>
     // ・プランク行
     //   型宣言内のブランク行
-    //     最後のメンバー宣言の後:余分なブランク行の除去
+    //     最後のメンバー宣言の後
     //       <setting id="org.eclipse.jdt.core.formatter.blank_lines_after_last_class_body_declaration" value="-1"/>
     // ・行折り返し
-    //   既に折り返した行を結合しない:on
+    //   既に折り返した行を結合しない
     //       <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
     // ・改行
     //   波括弧を１行のコードに保持
