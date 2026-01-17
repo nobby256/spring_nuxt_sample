@@ -28,10 +28,9 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
         // REST or AJAX
         RequestMatcher restOrAjaxMatcher = getRestOrAjaxRequestMatcher();
         // セッションタイムアウト
-        RequestMatcher forceMatcher =
-                forceRedirectMatcher != null
-                        ? forceRedirectMatcher
-                        : PathPatternRequestMatcher.withDefaults().matcher("/**");
+        RequestMatcher forceMatcher = forceRedirectMatcher != null
+                ? forceRedirectMatcher
+                : PathPatternRequestMatcher.withDefaults().matcher("/**");
         RequestMatcher timeoutMatcher = getSessionTimeoutRequestMatcher(forceMatcher);
         // UNAUTHORIZED判定
         this.matcher = new OrRequestMatcher(restOrAjaxMatcher, timeoutMatcher);

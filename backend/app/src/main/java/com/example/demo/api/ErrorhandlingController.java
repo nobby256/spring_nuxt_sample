@@ -42,9 +42,8 @@ public class ErrorhandlingController {
         Objects.requireNonNull(value);
         if (value.length() == 1) {
             // 業務エラー
-            DomainProblem problem =
-                    new DomainProblem(
-                            new ProblemMessage(new DefaultMessageSourceResolvable("E001")));
+            DomainProblem problem = new DomainProblem(
+                    new ProblemMessage(new DefaultMessageSourceResolvable("E001")));
             problem.addMessage(new ProblemMessage(new DefaultMessageSourceResolvable("E002")));
             problem.addMessage(new ProblemMessage(new DefaultMessageSourceResolvable("E003")));
             DomainException exception = new DomainException(problem);
@@ -77,7 +76,9 @@ public class ErrorhandlingController {
      */
     public static class RequestData implements Serializable {
         /** リクエストの値。 */
-        @NotBlank @Nullable private String value;
+        @NotBlank
+        @Nullable
+        private String value;
 
         /**
          * リクエストの値を取得する。

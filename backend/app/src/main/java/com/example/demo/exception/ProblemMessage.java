@@ -13,7 +13,8 @@ import java.io.Serializable;
 
 public class ProblemMessage implements Serializable {
 
-    @JsonIgnore protected final DefaultMessageSourceResolvable resolvable;
+    @JsonIgnore
+    protected final DefaultMessageSourceResolvable resolvable;
 
     public ProblemMessage(DefaultMessageSourceResolvable resolvable) {
         this.resolvable = resolvable;

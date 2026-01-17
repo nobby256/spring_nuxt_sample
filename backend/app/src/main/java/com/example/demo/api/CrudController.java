@@ -95,5 +95,10 @@ public class CrudController {
      * @param price       価格
      * @param description 商品説明
      */
-    record Item(String id, String name, String maker, int price, @Nullable String description) {}
+    record Item(
+            String id,
+            String name,
+            String maker,
+            int price,
+            @Nullable String description) {}
 }

@@ -35,7 +35,8 @@ import java.util.stream.StreamSupport;
 @EnableConfigurationProperties(SpaConfigurationProperties.class)
 public class SpaAutoConfiguration {
 
-    @Autowired private SpaConfigurationProperties spaProperties;
+    @Autowired
+    private SpaConfigurationProperties spaProperties;
 
     // @Bean
     RouterFunction<ServerResponse> authSessionRouterFunction() {
@@ -64,9 +65,9 @@ public class SpaAutoConfiguration {
 
         HttpMessageConverters messageConverters =
                 HttpMessageConverters.forServer().registerDefaults().build();
-        List<HttpMessageConverter<?>> converters =
-                StreamSupport.stream(messageConverters.spliterator(), false)
-                        .collect(Collectors.toList());
+        List<HttpMessageConverter<?>> converters = StreamSupport.stream(
+                        messageConverters.spliterator(), false)
+                .collect(Collectors.toList());
         RouterFunctionMapping mapping = new RouterFunctionMapping();
         mapping.setMessageConverters(converters);
         mapping.setRouterFunction(builder.build());

@@ -30,11 +30,9 @@ public class AuthSessionRouterFunction {
     public static RouterFunction<ServerResponse> create(SpaConfigurationProperties spaProperties) {
         String path = spaProperties.getEndpoints().getAuthSessionPath();
         return RouterFunctions.route()
-                .path(
-                        path,
-                        (RouterFunctions.Builder builder) -> {
-                            builder.GET(new GetHandler());
-                        })
+                .path(path, (RouterFunctions.Builder builder) -> {
+                    builder.GET(new GetHandler());
+                })
                 .build();
     }
 
@@ -51,23 +49,17 @@ public class AuthSessionRouterFunction {
                 if (authentication instanceof AnonymousAuthenticationToken) {
                     name = authentication.getName();
                 }
-                authorities =
-                        authentication.getAuthorities().stream()
-                                .map(it -> it.getAuthority())
-                                .toList();
+                authorities = authentication.getAuthorities().stream()
+                        .map(it -> it.getAuthority())
+                        .toList();
             }
 
             CsrfToken csrfToken =
                     (CsrfToken) request.attribute(CsrfToken.class.getName()).orElseThrow();
             String token = csrfToken.getToken();
 
-            AuthSessionResponse body =
-                    new AuthSessionResponse(
-                            name,
-                            authorities,
-                            isAuthenticated,
-                            token,
-                            csrfToken.getParameterName());
+            AuthSessionResponse body = new AuthSessionResponse(
+                    name, authorities, isAuthenticated, token, csrfToken.getParameterName());
 
             return ServerResponse.ok()
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON)

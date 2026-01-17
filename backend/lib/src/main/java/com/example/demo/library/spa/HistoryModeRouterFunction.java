@@ -29,12 +29,9 @@ public class HistoryModeRouterFunction {
             builder.add(RouterFunctions.resource(predicate, resource));
         } else {
             builder.add(
-                    RouterFunctions.route(
-                            predicate,
-                            request ->
-                                    ServerResponse.permanentRedirect(
-                                                    URI.create(serverOrign + request.path()))
-                                            .build()));
+                    RouterFunctions.route(predicate, request -> ServerResponse.permanentRedirect(
+                                    URI.create(serverOrign + request.path()))
+                            .build()));
         }
         return builder.build();
     }

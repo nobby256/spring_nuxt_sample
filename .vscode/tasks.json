@@ -2,14 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "spotlessApply",
+            "label": "Javaファイルのフォーマット",
             "type": "shell",
             "command": "./gradlew spotlessApply",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
         }
     ]
 }

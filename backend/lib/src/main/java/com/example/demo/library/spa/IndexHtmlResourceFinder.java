@@ -29,7 +29,8 @@ public class IndexHtmlResourceFinder {
         return null;
     }
 
-    @Nullable Resource findIndexHtmlResource(Resource location) {
+    @Nullable
+    Resource findIndexHtmlResource(Resource location) {
         try {
             Resource resource = location.createRelative("/index.html");
             if (resource.exists() && resource.getURL() != null) {

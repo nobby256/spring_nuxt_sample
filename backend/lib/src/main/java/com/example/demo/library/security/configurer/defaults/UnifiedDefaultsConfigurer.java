@@ -13,22 +13,19 @@ public class UnifiedDefaultsConfigurer
 
     @Override
     public void init(HttpSecurity http) {
-        http.logout(
-                customizer -> {
-                    customizer.deleteCookies(HttpSecurityCustomizeUtil.createDeleteCookies(http));
-                });
-        http.csrf(
-                customizer -> {
-                    customizer.spa();
-                });
-        http.exceptionHandling(
-                customizer -> {
-                    UnauthenticatedAuthenticationEntryPoint entryPoint =
-                            new UnauthenticatedAuthenticationEntryPoint();
-                    RequestMatcher matcher = new UnauthenticatedRequestMatcher(null);
-                    customizer.defaultAuthenticationEntryPointFor(entryPoint, matcher);
-                    customizer.accessDeniedHandler(new CsrfAwareAccessDeniedHandler());
-                });
+        http.logout(customizer -> {
+            customizer.deleteCookies(HttpSecurityCustomizeUtil.createDeleteCookies(http));
+        });
+        http.csrf(customizer -> {
+            customizer.spa();
+        });
+        http.exceptionHandling(customizer -> {
+            UnauthenticatedAuthenticationEntryPoint entryPoint =
+                    new UnauthenticatedAuthenticationEntryPoint();
+            RequestMatcher matcher = new UnauthenticatedRequestMatcher(null);
+            customizer.defaultAuthenticationEntryPointFor(entryPoint, matcher);
+            customizer.accessDeniedHandler(new CsrfAwareAccessDeniedHandler());
+        });
     }
 
     @Override

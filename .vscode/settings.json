@@ -8,55 +8,11 @@
         "**/archetype-resources/**",
         "**/META-INF/maven/**"
     ],
-    "java.saveActions.organizeImports": true,
-    "java.completion.importOrder": [
-        "#",
-        "java",
-        "javax",
-        "jakarta",
-        "org",
-        "com",
-    ],
     "files.trimTrailingWhitespace": true,
+    "java.saveActions.organizeImports": true,
+    "java.format.settings.google.extra": "--aosp --skip-javadoc-formatting",
     "[java]": {
-        "editor.defaultFormatter": "redhat.java",
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "josevseb.google-java-format-for-vs-code",
     },
-    // vscodeのデフォルトのJavaフォーマットに対して下記の設定のみを変更。
-    // オリジナルはコマンドパレットで`Java: Open Java Formatter Settings with Preview`で作成。
-    // 変更前:java-formatter_org.xml 変更後:java-formatter.xml
-    // ・インデント
-    //   タブ・ポリシー
-    //       <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab"/>
-    // ・プランク行
-    //   型宣言内のブランク行
-    //     最後のメンバー宣言の後
-    //       <setting id="org.eclipse.jdt.core.formatter.blank_lines_after_last_class_body_declaration" value="-1"/>
-    // ・行折り返し
-    //   既に折り返した行を結合しない
-    //       <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
-    // ・改行
-    //   波括弧を１行のコードに保持
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_annotation_declaration_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_enum_constant_declaration_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_anonymous_type_declaration_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_if_then_body_block_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_method_body_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_loop_body_block_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_type_declaration_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_record_declaration_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_code_block_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_lambda_body_block_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_record_constructor_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_enum_declaration_on_one_line" value="one_line_if_empty"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_switch_body_block_on_one_line" value="one_line_if_empty"/> ←追加
-    //       <setting id="org.eclipse.jdt.core.formatter.keep_switch_case_with_arrow_on_one_line" value="one_line_if_empty"/> ←追加
-    // ・空白
-    //   配列
-    //     配列初期化子
-    //       <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_brace_in_array_initializer" value="do not insert"/>
-    //       <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_brace_in_array_initializer" value="do not insert"/>
-    "java.format.settings.url": "config/formatter/java-formatter.xml",
 }

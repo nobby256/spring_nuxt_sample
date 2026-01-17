@@ -32,7 +32,8 @@ public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
     // SimpleUrlHandlerMapping(静的リソース用）:Ordered.LOWEST_PRECEDENCE - 1
     private static final int ORDER = 1;
 
-    @Nullable private final Resource indexResource;
+    @Nullable
+    private final Resource indexResource;
 
     public SpaIndexHtlmRouterFunctionMapping(@Nullable Resource indexResource) {
         this.indexResource = indexResource;
@@ -62,9 +63,8 @@ public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
         Assert.state(indexResource != null, "indexResource must not be null.");
         String html;
         try (InputStream istream = indexResource.getInputStream()) {
-            html =
-                    FileCopyUtils.copyToString(
-                            new InputStreamReader(istream, StandardCharsets.UTF_8));
+            html = FileCopyUtils.copyToString(
+                    new InputStreamReader(istream, StandardCharsets.UTF_8));
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

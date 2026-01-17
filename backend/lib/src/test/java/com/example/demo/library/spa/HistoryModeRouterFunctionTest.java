@@ -15,7 +15,8 @@ public class HistoryModeRouterFunctionTest {
 
     @Nested
     class PatternTest {
-        @Mock ServerRequest request;
+        @Mock
+        ServerRequest request;
 
         @Test
         void case1() {
