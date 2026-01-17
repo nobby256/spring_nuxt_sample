@@ -9,12 +9,11 @@
         "**/META-INF/maven/**"
     ],
     //"java.saveActions.organizeImports": true,
-    "java.format.settings.google.executable": "C:\\Users\\hello\\git\\spring_nuxt_sample\\config\\formatter\\palantir-cli-2.85.0-standalone.jar",
-    //"java.format.settings.google.executable": "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/2.85.0/palantir-cli-2.85.0-standalone.jar",
+    //"java.completion.importOrder": [],
+    "java.format.settings.google.executable": "https://github.com/jsonschema2dataclass/palantir-cli/releases/download/2.85.0/palantir-cli-2.85.0-standalone.jar",
     "java.format.settings.google.extra": "--skip-removing-unused-imports --palantir",
     "[java]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "josevseb.google-java-format-for-vs-code",
     },
-    //"java.completion.importOrder": [],
 }
