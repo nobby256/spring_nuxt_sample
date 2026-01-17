@@ -3,7 +3,7 @@ package com.example.demo.library.security.configurer.defaults;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -13,17 +13,13 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.web.util.WebUtils;
 
-import java.io.IOException;
-
 public class CsrfAwareAccessDeniedHandler implements AccessDeniedHandler {
 
     protected static final Log logger = LogFactory.getLog(CsrfAwareAccessDeniedHandler.class);
 
     @Override
     public void handle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AccessDeniedException accessDeniedException)
+            HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
         if (response.isCommitted()) {
             logger.trace("Did not write to response since already committed");

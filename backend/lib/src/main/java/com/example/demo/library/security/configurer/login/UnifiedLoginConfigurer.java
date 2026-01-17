@@ -5,8 +5,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-public abstract class UnifiedLoginConfigurer
-        extends AbstractHttpConfigurer<UnifiedLoginConfigurer, HttpSecurity> {
+public abstract class UnifiedLoginConfigurer extends AbstractHttpConfigurer<UnifiedLoginConfigurer, HttpSecurity> {
 
     public abstract void loginPage(String loginPage);
 

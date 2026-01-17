@@ -1,13 +1,11 @@
 package com.example.demo.library.security.configurer.defaults;
 
 import com.example.demo.library.security.configurer.HttpSecurityCustomizeUtil;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-public class UnifiedDefaultsConfigurer
-        extends AbstractHttpConfigurer<UnifiedDefaultsConfigurer, HttpSecurity> {
+public class UnifiedDefaultsConfigurer extends AbstractHttpConfigurer<UnifiedDefaultsConfigurer, HttpSecurity> {
 
     public UnifiedDefaultsConfigurer() {}
 
@@ -20,8 +18,7 @@ public class UnifiedDefaultsConfigurer
             customizer.spa();
         });
         http.exceptionHandling(customizer -> {
-            UnauthenticatedAuthenticationEntryPoint entryPoint =
-                    new UnauthenticatedAuthenticationEntryPoint();
+            UnauthenticatedAuthenticationEntryPoint entryPoint = new UnauthenticatedAuthenticationEntryPoint();
             RequestMatcher matcher = new UnauthenticatedRequestMatcher(null);
             customizer.defaultAuthenticationEntryPointFor(entryPoint, matcher);
             customizer.accessDeniedHandler(new CsrfAwareAccessDeniedHandler());

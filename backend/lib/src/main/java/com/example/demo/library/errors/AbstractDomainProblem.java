@@ -1,8 +1,7 @@
 package com.example.demo.library.errors;
 
-import org.jspecify.annotations.Nullable;
-
 import java.net.URI;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractDomainProblem {
 

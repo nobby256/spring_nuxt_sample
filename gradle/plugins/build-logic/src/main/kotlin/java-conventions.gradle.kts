@@ -147,7 +147,7 @@ tasks.withType<SpotBugsTask>().configureEach {
 spotless {
     lineEndings = com.diffplug.spotless.LineEnding.PLATFORM_NATIVE;
     java {
-        palantirJavaFormat().style("AOSP").formatJavadoc(false);
+        palantirJavaFormat("2.85.0").formatJavadoc(false);
         //leadingSpacesToTabs(4); // インデントはスペース4つ分
     }
 }

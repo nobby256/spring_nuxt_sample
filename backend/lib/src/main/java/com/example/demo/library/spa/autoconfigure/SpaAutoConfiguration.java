@@ -4,7 +4,9 @@ import com.example.demo.library.spa.AuthSessionRouterFunction;
 import com.example.demo.library.spa.HistoryModeRouterFunction;
 import com.example.demo.library.spa.IndexHtmlResourceFinder;
 import com.example.demo.library.spa.SpaConfigurationProperties;
-
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -26,10 +28,6 @@ import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerResponse;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 @AutoConfiguration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(SpaConfigurationProperties.class)
@@ -49,8 +47,7 @@ public class SpaAutoConfiguration {
     }
 
     @Bean
-    RouterFunctionMapping spaHistoryModeRouterFunctionMapping(
-            IndexHtmlResourceFinder indexHtmlResourceFinder) {
+    RouterFunctionMapping spaHistoryModeRouterFunctionMapping(IndexHtmlResourceFinder indexHtmlResourceFinder) {
         RouterFunctions.Builder builder = RouterFunctions.route();
 
         // AuthSessionRouterFunction
@@ -65,9 +62,8 @@ public class SpaAutoConfiguration {
 
         HttpMessageConverters messageConverters =
                 HttpMessageConverters.forServer().registerDefaults().build();
-        List<HttpMessageConverter<?>> converters = StreamSupport.stream(
-                        messageConverters.spliterator(), false)
-                .collect(Collectors.toList());
+        List<HttpMessageConverter<?>> converters =
+                StreamSupport.stream(messageConverters.spliterator(), false).collect(Collectors.toList());
         RouterFunctionMapping mapping = new RouterFunctionMapping();
         mapping.setMessageConverters(converters);
         mapping.setRouterFunction(builder.build());
@@ -87,8 +83,7 @@ public class SpaAutoConfiguration {
     }
 
     @Bean
-    IndexHtmlResourceFinder indexHtmlResourceFinder(
-            ResourceLoader resourceLoader, WebProperties webProperties) {
+    IndexHtmlResourceFinder indexHtmlResourceFinder(ResourceLoader resourceLoader, WebProperties webProperties) {
         return new IndexHtmlResourceFinder(resourceLoader, webProperties.getResources());
     }
 

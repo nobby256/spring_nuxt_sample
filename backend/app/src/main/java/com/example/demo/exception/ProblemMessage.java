@@ -1,15 +1,12 @@
 package com.example.demo.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
-
+import java.io.Serializable;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-
-import java.io.Serializable;
 
 public class ProblemMessage implements Serializable {
 

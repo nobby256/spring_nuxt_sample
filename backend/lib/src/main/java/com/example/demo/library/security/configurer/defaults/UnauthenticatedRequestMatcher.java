@@ -1,7 +1,8 @@
 package com.example.demo.library.security.configurer.defaults;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+import java.util.Collections;
+import java.util.Locale;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -10,9 +11,6 @@ import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.Collections;
-import java.util.Locale;
 
 public class UnauthenticatedRequestMatcher implements RequestMatcher {
 
@@ -76,8 +74,7 @@ public class UnauthenticatedRequestMatcher implements RequestMatcher {
         // REST（非HTML要求）
         RequestMatcher notHtmlMatcher = new NegatedRequestMatcher(htmlMatcher);
         // AJAX
-        RequestMatcher ajaxMatcher =
-                new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest");
+        RequestMatcher ajaxMatcher = new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest");
         return new OrRequestMatcher(notHtmlMatcher, ajaxMatcher);
     }
 }

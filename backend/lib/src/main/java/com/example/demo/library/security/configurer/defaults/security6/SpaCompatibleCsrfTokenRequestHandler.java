@@ -2,15 +2,13 @@ package com.example.demo.library.security.configurer.defaults.security6;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.util.StringUtils;
-
-import java.util.function.Supplier;
 
 /**
  * MPA/SPA両対応の{@link CsrfTokenRequestHandler}。
@@ -27,10 +25,7 @@ public class SpaCompatibleCsrfTokenRequestHandler implements CsrfTokenRequestHan
     private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
 
     @Override
-    public void handle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Supplier<CsrfToken> csrfToken) {
+    public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
         // hiddenタグ、metaタグが使用するXOR化したトークン値（BREACH対策）をリクエスト毎に準備します。
         xor.handle(request, response, csrfToken);
 
@@ -49,7 +44,6 @@ public class SpaCompatibleCsrfTokenRequestHandler implements CsrfTokenRequestHan
     public @Nullable String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
         // 最初にリクエストヘッダーのトークン（素の値）を確認し、無ければパラメーターのトークン（XOR化された値）を確認します
         String headerValue = request.getHeader(csrfToken.getHeaderName());
-        return (StringUtils.hasText(headerValue) ? this.plain : this.xor)
-                .resolveCsrfTokenValue(request, csrfToken);
+        return (StringUtils.hasText(headerValue) ? this.plain : this.xor).resolveCsrfTokenValue(request, csrfToken);
     }
 }

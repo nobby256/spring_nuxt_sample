@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-
+import java.util.List;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,8 +22,6 @@ import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
-
-import java.util.List;
 
 public class AuthSessionRouterFunction {
 
@@ -58,8 +56,8 @@ public class AuthSessionRouterFunction {
                     (CsrfToken) request.attribute(CsrfToken.class.getName()).orElseThrow();
             String token = csrfToken.getToken();
 
-            AuthSessionResponse body = new AuthSessionResponse(
-                    name, authorities, isAuthenticated, token, csrfToken.getParameterName());
+            AuthSessionResponse body =
+                    new AuthSessionResponse(name, authorities, isAuthenticated, token, csrfToken.getParameterName());
 
             return ServerResponse.ok()
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON)

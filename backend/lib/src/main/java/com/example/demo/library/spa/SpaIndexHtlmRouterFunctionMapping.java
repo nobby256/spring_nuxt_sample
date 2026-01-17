@@ -1,5 +1,10 @@
 package com.example.demo.library.spa;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -10,12 +15,6 @@ import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 
 public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
 
@@ -63,8 +62,7 @@ public class SpaIndexHtlmRouterFunctionMapping extends RouterFunctionMapping {
         Assert.state(indexResource != null, "indexResource must not be null.");
         String html;
         try (InputStream istream = indexResource.getInputStream()) {
-            html = FileCopyUtils.copyToString(
-                    new InputStreamReader(istream, StandardCharsets.UTF_8));
+            html = FileCopyUtils.copyToString(new InputStreamReader(istream, StandardCharsets.UTF_8));
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

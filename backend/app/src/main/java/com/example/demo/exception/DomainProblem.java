@@ -1,10 +1,8 @@
 package com.example.demo.exception;
 
 import com.example.demo.library.errors.AbstractDomainProblem;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

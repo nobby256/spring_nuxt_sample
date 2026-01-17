@@ -1,9 +1,7 @@
 package com.example.demo.config;
 
 import com.example.demo.library.security.UnifiedWebSecurity;
-
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -42,8 +40,7 @@ public class SecurityConfiguration {
         });
         http.logout(customizer -> {
             customizer.logoutUrl("/api/logout").permitAll();
-            customizer.logoutSuccessHandler(
-                    new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
+            customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT));
         });
         unified.applyDefaults(http);
 

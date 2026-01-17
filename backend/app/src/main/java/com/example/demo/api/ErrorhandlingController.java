@@ -3,11 +3,11 @@ package com.example.demo.api;
 import com.example.demo.exception.DomainException;
 import com.example.demo.exception.DomainProblem;
 import com.example.demo.exception.ProblemMessage;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-
+import java.io.Serializable;
+import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * SPAのサンプルプログラム（エラーハンドリング）から呼び出されるRESTコントローラ。
@@ -36,14 +33,12 @@ public class ErrorhandlingController {
      * @return レスポンスボディ
      */
     @PostMapping
-    public ResponseData send(
-            @RequestBody @Valid RequestData requestData, HttpServletRequest request) {
+    public ResponseData send(@RequestBody @Valid RequestData requestData, HttpServletRequest request) {
         String value = requestData.getValue();
         Objects.requireNonNull(value);
         if (value.length() == 1) {
             // 業務エラー
-            DomainProblem problem = new DomainProblem(
-                    new ProblemMessage(new DefaultMessageSourceResolvable("E001")));
+            DomainProblem problem = new DomainProblem(new ProblemMessage(new DefaultMessageSourceResolvable("E001")));
             problem.addMessage(new ProblemMessage(new DefaultMessageSourceResolvable("E002")));
             problem.addMessage(new ProblemMessage(new DefaultMessageSourceResolvable("E003")));
             DomainException exception = new DomainException(problem);
@@ -56,8 +51,7 @@ public class ErrorhandlingController {
             // UNAUTHORIZED
             // セッションタイムアウトを仮想で実現する為にセッションを意図的に破棄する
             request.getSession().invalidate();
-            ResponseStatusException exception =
-                    new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            ResponseStatusException exception = new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             throw exception;
         } else if (value.length() == 4) {
             // FORBIDDEN

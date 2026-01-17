@@ -2,11 +2,9 @@ package com.example.demo.api;
 
 import com.example.demo.exception.DomainException;
 import com.example.demo.exception.DomainProblem;
-
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

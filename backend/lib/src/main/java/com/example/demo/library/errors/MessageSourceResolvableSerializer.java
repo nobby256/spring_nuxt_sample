@@ -1,15 +1,13 @@
 package com.example.demo.library.errors;
 
+import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.i18n.LocaleContextHolder;
-
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
-
-import java.util.Locale;
 
 public class MessageSourceResolvableSerializer extends StdSerializer<MessageSourceResolvable> {
 
@@ -21,8 +19,7 @@ public class MessageSourceResolvableSerializer extends StdSerializer<MessageSour
     }
 
     @Override
-    public void serialize(
-            MessageSourceResolvable value, JsonGenerator gen, SerializationContext ctxt)
+    public void serialize(MessageSourceResolvable value, JsonGenerator gen, SerializationContext ctxt)
             throws JacksonException {
         if (value == null) {
             gen.writeNull();

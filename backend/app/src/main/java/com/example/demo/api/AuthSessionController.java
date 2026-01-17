@@ -1,10 +1,10 @@
 package com.example.demo.api;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+import java.util.List;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
-
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,9 +12,6 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Objects;
 
 @RequestMapping("/api/auth-session")
 @RestController
